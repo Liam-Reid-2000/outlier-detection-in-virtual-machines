@@ -1,0 +1,40 @@
+QUEEN’S UNIVERSITY OF BELFAST COMPUTER SCIENCE
+
+Minute of Project Supervision Meeting
+======================================
+
+Student Name:	Liam ReidProject Module Code:	CSC3002
+Project Supervisor:	Dr Son T. Mai
+Meeting Number:	3
+Date of Meeting:	23/11/21
+
+Progress since last meeting, and decisions arrived at during meeting:
+======================================
+
+Continued research of classifiers and outlier detection
+
+
+Action Points:
+==============
+
+Build a small website to display results of applying traditional data to classifiers
+Discover a technique of detection with one assisting to detect outliers
+
+
+Date of next meeting:
+====================+
+
+2 weeks
+
+
+
+
+Agreed minute should be initialled by the supervisor.
+
+Supervisor's Initials:	_____________________________________________	Date: _________________
+
+
+
+Supervisor's Comments:
+=======================
+

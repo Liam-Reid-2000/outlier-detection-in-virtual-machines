@@ -1,0 +1,38 @@
+QUEEN’S UNIVERSITY OF BELFAST COMPUTER SCIENCE
+
+Minute of Project Supervision Meeting
+======================================
+
+Student Name:	Liam ReidProject Module Code:	CSC3002
+Project Supervisor:	Dr Son T. Mai
+Meeting Number:	1
+Date of Meeting:	11/10/21
+
+Progress since last meeting, and decisions arrived at during meeting:
+======================================
+
+Basic research and understand of problem description
+
+
+Action Points:
+==============
+
+Research classifiers and what an outlier is
+
+
+Date of next meeting:
+====================+
+
+2 weeks
+
+
+
+Agreed minute should be initialled by the supervisor.
+
+Supervisor's Initials:	_____________________________________________	Date: _________________
+
+
+
+Supervisor's Comments:
+=======================
+
