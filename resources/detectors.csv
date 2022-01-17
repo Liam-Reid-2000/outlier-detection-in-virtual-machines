@@ -1,0 +1,8 @@
+name,value,threshold
+Local Outlier Factor,lof,0
+Isolation Forest,iforest,0
+K Nearest Neighbor,knn,0
+Support Vector Machine,svm,0
+Histogram,histogram,0
+Moving Average,moving_average,34
+Moving Median,moving_median,25
