@@ -6,4 +6,4 @@ before_script:
 unit_test:
   stage: test
   script:
-  - python test/test.py
+  - python test.py
