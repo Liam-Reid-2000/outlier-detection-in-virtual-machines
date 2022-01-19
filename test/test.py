@@ -1,5 +1,11 @@
 import unittest
 
-class TestCalc(unittest.TestCase):
-    def test_addition(self):
-        self.assertEqual(5 + 4, 10)
+class outlier_detection_test(unittest.TestCase):
+
+    # Test method
+    def test_upper(self):
+        self.assertEqual(1 + 2, 3)
+
+
+if __name__ == '__main__':
+    unittest.main()

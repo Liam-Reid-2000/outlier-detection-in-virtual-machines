@@ -2,9 +2,8 @@ image: "python:3.8"
 
 before_script:
   - python --version
-  - pip install -r requirements.txt
 
 unit_test:
   stage: test
   script:
-  - python test/test.py
+  - python -m test/test.py
