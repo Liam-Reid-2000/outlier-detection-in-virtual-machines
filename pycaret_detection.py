@@ -6,7 +6,7 @@ import csv
 import json
 from moving_average_detection import *
 from moving_median_detection import *
-from display_results import *
+from display_results import display_results
 
 
 points_x = []
@@ -109,7 +109,7 @@ def run_detection(model, data_csv, anomalies_csv, threshold):
     detection_data.append(outliers['data'])
     detection_data.append(true_outliers['first_x'])
     detection_data.append(true_outliers['second_x'])
-    detection_data.append(results)
+    detection_data.append(results.display_results())
 
     return detection_data
 
