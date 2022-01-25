@@ -6,12 +6,12 @@ import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
 from collections import deque
-from csv_helper import *
+from app_helper_scripts.csv_helper import *
 
-from outlier_detection_som import detect_som_outliers, detect_som_outliers_circle
-from moving_average_median_ensemble import get_ensemble_result
-from average_outlier_detection_stream import get_average, get_data_coordinates, get_stream_fig
-from app_helper import *
+from som.outlier_detection_som import detect_som_outliers, detect_som_outliers_circle
+from ensemble_detectors.moving_average_median_ensemble import get_ensemble_result
+from app_helper_scripts.average_outlier_detection_stream import get_average, get_data_coordinates, get_stream_fig
+from app_helper_scripts.app_helper import *
 
 app = dash.Dash(__name__)
 

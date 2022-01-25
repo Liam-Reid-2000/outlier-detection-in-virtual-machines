@@ -5,8 +5,8 @@ from dash import html
 import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
-from pycaret_detection import run_detection
-from csv_helper import *
+from app_helper_scripts.pycaret_detection import run_detection
+from app_helper_scripts.csv_helper import *
 
 def get_detector_threshold(ref):
     available_detector_df = pd.read_csv('resources/detectors.csv')

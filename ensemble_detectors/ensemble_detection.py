@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 from moving_median_detection import *
 from moving_average_detection import *
-from plot import *
-from display_results import display_results
+from app_helper_scripts.plot import *
+from app_helper_scripts.display_results import display_results
 
 from moving_average_median_ensemble import get_ensemble_result
 

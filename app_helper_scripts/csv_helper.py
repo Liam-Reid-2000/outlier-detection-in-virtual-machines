@@ -1,4 +1,3 @@
-import os
 import csv
 
 def write_to_csv(path, data):

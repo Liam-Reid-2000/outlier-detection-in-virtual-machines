@@ -1,7 +1,6 @@
-from minisom import MiniSom
+from som.minisom import MiniSom
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 from sklearn.datasets import make_blobs
 from sklearn.preprocessing import scale

@@ -4,9 +4,9 @@ from pycaret.anomaly import *
 import pandas as pd
 import csv
 import json
-from moving_average_detection import *
-from moving_median_detection import *
-from display_results import display_results
+from ensemble_detectors.moving_average_detection import *
+from ensemble_detectors.moving_median_detection import *
+from app_helper_scripts.display_results import display_results
 
 
 points_x = []

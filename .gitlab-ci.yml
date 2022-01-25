@@ -6,4 +6,5 @@ before_script:
 unit_test:
   stage: test
   script:
-  - python test.py
+  - python app_helper_scripts/results_test.py
+  - python ensemble_detectors/ensemble_test.py
