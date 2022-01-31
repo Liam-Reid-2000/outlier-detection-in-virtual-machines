@@ -1,2 +1,3 @@
 generated_data/
 logs.log
+ensemble_detectors/__pycache__/
