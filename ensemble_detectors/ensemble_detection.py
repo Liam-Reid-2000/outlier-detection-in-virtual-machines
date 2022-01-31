@@ -4,7 +4,7 @@ from moving_average_detection import *
 from app_helper_scripts.plot import *
 from app_helper_scripts.display_results import display_results
 
-from moving_average_median_ensemble import get_ensemble_result
+from ensemble_detectors.ensemble_voting import get_ensemble_result
 
 
 

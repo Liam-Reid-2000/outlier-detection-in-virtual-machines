@@ -9,7 +9,7 @@ from collections import deque
 from app_helper_scripts.csv_helper import *
 
 from som.outlier_detection_som import detect_som_outliers, detect_som_outliers_circle
-from ensemble_detectors.moving_average_median_ensemble import get_ensemble_result
+from ensemble_detectors.ensemble_voting import get_ensemble_result
 from app_helper_scripts.average_outlier_detection_stream import get_average, get_data_coordinates, get_stream_fig
 from app_helper_scripts.app_helper import *
 
@@ -141,6 +141,13 @@ app.layout = html.Div([
             value='On',
             labelStyle={'display': 'inline-block', 'marginTop': '5px'}
         ),
+        html.H3('Moving Boxplot'),
+        dcc.RadioItems(
+            id='ensemble-boxplot-radio-btns',
+            options=[{'label': i, 'value': i} for i in ['On', 'Off']],
+            value='On',
+            labelStyle={'display': 'inline-block', 'marginTop': '5px'}
+        ),
         dcc.Graph(id = 'ensemble-graph'),
     ],style={"border":"2px black solid"}),
 ])
@@ -185,9 +192,10 @@ def plot_graph(data, detector):
 @app.callback(
     Output('ensemble-graph', 'figure'),
     [Input('ensemble-average-radio-btns','value'),
-    Input('ensemble-median-radio-btns','value')]
+    Input('ensemble-median-radio-btns','value'),
+    Input('ensemble-boxplot-radio-btns','value')]
 )
-def update_results_title(average_rd, median_rd):
+def update_results_title(average_rd, median_rd, boxplot_rd):
     if (average_rd == 'Off' and median_rd == 'Off'):
         return go.figure()
     if (average_rd == 'On' and median_rd == 'Off'):
