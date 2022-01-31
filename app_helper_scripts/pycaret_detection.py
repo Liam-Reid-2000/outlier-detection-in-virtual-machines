@@ -6,6 +6,7 @@ import csv
 import json
 from ensemble_detectors.moving_average_detection import *
 from ensemble_detectors.moving_median_detection import *
+from ensemble_detectors.moving_boxplot import *
 from app_helper_scripts.display_results import display_results
 
 
@@ -93,6 +94,10 @@ def run_detection(model, data_csv, anomalies_csv, threshold):
         outliers_y = outliers_['data']
     elif (model == 'moving_median'):
         outliers_ = detect_median_outliers(threshold, get_moving_median_coordinates(10, pd.DataFrame({'points_x': points_x,'points_y': points_y})), pd.DataFrame({'points_x': points_x,'points_y': points_y}))
+        outliers_x = outliers_['timestamp']
+        outliers_y = outliers_['data']
+    elif (model == 'moving_boxplot'):
+        outliers_ = detect_boxplot_outliers(threshold, 50, pd.DataFrame({'points_x': points_x,'points_y': points_y}))
         outliers_x = outliers_['timestamp']
         outliers_y = outliers_['data']
     else:
