@@ -196,15 +196,15 @@ def plot_graph(data, detector):
     Input('ensemble-boxplot-radio-btns','value')]
 )
 def update_results_title(average_rd, median_rd, boxplot_rd):
-    if (average_rd == 'Off' and median_rd == 'Off'):
+    if (average_rd == 'Off' and median_rd == 'Off' and boxplot_rd == 'Off'):
         return go.figure()
-    if (average_rd == 'On' and median_rd == 'Off'):
+    if (average_rd == 'On' and median_rd == 'Off' and boxplot_rd == 'Off'):
         detection_data = get_detection_data('moving_average', 'speed_7578', 'realTraffic/speed_7578.csv', 25)
         return get_fig(detection_data, 'speed_7578.csv', 'moving_average')
-    if (average_rd == 'Off' and median_rd == 'On'):
+    if (average_rd == 'Off' and median_rd == 'On' and boxplot_rd == 'Off'):
         detection_data = get_detection_data('moving_median', 'speed_7578', 'realTraffic/speed_7578.csv', 34)
         return get_fig(detection_data, 'speed_7578', 'moving_median')
-    if (average_rd == 'On' and median_rd == 'On'):
+    if (average_rd == 'On' and median_rd == 'On' and boxplot_rd == 'Off'):
         
         average_detection_data = get_detection_data('moving_average', 'speed_7578', 'realTraffic/speed_7578.csv', 25)
         median_detection_data = get_detection_data('moving_median', 'speed_7578', 'realTraffic/speed_7578.csv', 34)
@@ -219,12 +219,21 @@ def update_results_title(average_rd, median_rd, boxplot_rd):
 
         median_outliers = pd.DataFrame({'timestamp': median_outliers_x, 'data': median_outliers_y})
 
-        ensemble_outliers = get_ensemble_result(average_outliers, median_outliers)
+        all_outliers = []
+        all_outliers.append(average_outliers)
+        all_outliers.append(median_outliers)
+
+        ensemble_outliers = get_ensemble_result(all_outliers)
 
         average_detection_data[2] = ensemble_outliers['timestamp']
         average_detection_data[3] = ensemble_outliers['data']
 
         return get_fig(average_detection_data, 'speed_7578', 'moving median and average ensemble')
+    
+    
+    if (average_rd == 'On' and median_rd == 'On' and boxplot_rd == 'On'):
+        detection_data = get_detection_data('moving_boxplot', 'speed_7578', 'realTraffic/speed_7578.csv', get_detector_threshold('moving_boxplot'))
+        return get_fig(detection_data, 'speed_7578', 'moving_boxplot')
 
 
 
