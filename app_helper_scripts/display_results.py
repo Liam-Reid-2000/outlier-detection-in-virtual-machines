@@ -32,7 +32,11 @@ class display_results:
 
 
     def get_false_positive(self):
-        return (len(self.outliers_x[0]) - self.get_true_positive())
+        false_positive = len(self.outliers_x[0]) - self.get_true_positive()
+        if (false_positive > 0):
+            return false_positive
+        else:
+            return 0
 
 
 
@@ -51,7 +55,10 @@ class display_results:
                 actual_negative_count = actual_negative_count + 1
         f.close()
         true_negative = actual_negative_count - self.get_false_positive()
-        return true_negative
+        if (true_negative > 0):
+            return true_negative
+        else:
+            return 0
 
 
 
@@ -64,7 +71,11 @@ class display_results:
                 if (str(outlier) == str(i)):
                     hit_count = hit_count + 1
         f.close()
-        return (len(data[self.target_data]) - hit_count)
+        false_negative = (len(data[self.target_data]) - hit_count)
+        if (false_negative > 0):
+            return false_negative
+        else:
+            return 0
 
 
 
@@ -77,19 +88,29 @@ class display_results:
         tn = self.get_true_negative()
         fn = self.get_false_negative()
 
-        accuracy = (tn+tp)/n
-        recall = tp/(tp+fn)
+        ## Accuracy
+        try:
+            accuracy = (tn+tp)/n
+        except:
+            accuracy = 0
 
+        ## Recall
+        try:
+            recall = tp/(tp+fn)
+        except:
+            recall = 0
+
+        ## Precision
         try:
             precision = tp/(tp+fp)
         except:
             precision = 0
 
+        ## F1
         try:
             f1 = (2*(recall*precision))/(precision+recall)
         except:
             f1 = 0
-            print("error")
 
         results = []
         results.append(accuracy)
@@ -107,20 +128,13 @@ class display_results:
         print('Accuracy: ' + str(accuracy))
         print('Recall: ' + str(recall))
         print('Precision: ' + str(precision))
-        try:
-            print('f1 score: ' + str(f1))
-        except:
-            print('f1 score: 0')
-
+        print('f1 score: ' + str(f1))
 
         print('\n\nDETECTION RESULTS AS PERCENTAGES \n')
         
         print('Accuracy: ' + str(round(accuracy*100,1))+'%')
         print('Recall: ' + str(round(recall*100,1))+'%')
         print('Precision: ' + str(round(precision*100,1))+'%')
-        try:
-            print('f1 score: ' + str(round(f1*100,1))+'%')
-        except:
-            print('f1 score: 0.0%')
+        print('f1 score: ' + str(round(f1*100,1))+'%')
 
         return results

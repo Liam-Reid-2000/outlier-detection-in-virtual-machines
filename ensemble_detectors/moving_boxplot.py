@@ -35,34 +35,18 @@ def detect_boxplot_outliers(threshold, boxplot_dataset_size, data_points):
         q3, q1 = np.percentile(dataArr, [75 ,25])
         iqr = q3 - q1
 
-        #print("subset\n")
-        #print('q1 = ' + str(q1))
-        #print('q3 = ' + str(q3))
-        #print('iqr = ' + str(iqr))
-
         #calculate class boundaries
         lower_bound = q1 - iqr*threshold
         upper_bound = q3 + iqr*threshold
 
-        #print('\n Boundaries')
-        #print('Lower bound = ' + str(lower_bound))
-        #print('Upper bound = ' + str(upper_bound))
 
         #is next data item an outlier?
         data_point = points_y[i + boxplot_dataset_size]
         if ((data_point < lower_bound) or (data_point > upper_bound)):
             outlier_count +=1
-            print('outlier')
             outliers_x.append(points_x[i + boxplot_dataset_size])
             outliers_y.append(points_y[i + boxplot_dataset_size])
-        else:
-            print('inlier')
-        print(outlier_count)
         i = i + 1
-
-        #Plotting Boxplot of value column
-        #boxplot = subset_data.boxplot(column=['value'],grid = False)
-        #plt.show()
 
     return pd.DataFrame({'timestamp': outliers_x,'data': outliers_y})
 

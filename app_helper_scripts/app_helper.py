@@ -54,6 +54,17 @@ def get_result_data(path):
     return (html.P([output[0],html.Br(),output[1],html.Br(),output[2],html.Br(),output[3]]))
 
 
+def save_generated_data(requested_data, detection_data):
+    if not os.path.exists('generated_data/' + requested_data):
+        os.makedirs('generated_data/' + requested_data)
+    write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_plots.csv', detection_data[0],'w')
+    write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_plots.csv', detection_data[1],'a')
+    write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_detected_outliers.csv', detection_data[2],'w')
+    write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_detected_outliers.csv', detection_data[3],'a')
+    write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_true_outliers.csv', detection_data[4],'w')
+    write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_true_outliers.csv', detection_data[5],'a')
+    write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_results.csv', detection_data[6],'w')
+
 
 def get_detection_data(model, data_to_run, target_data, threshold):
     requested_data = model + '_' + data_to_run
@@ -78,17 +89,11 @@ def get_detection_data(model, data_to_run, target_data, threshold):
             detection_data.append(row)
     else:
         detection_data = run_detection(model, 'resources/'+data_to_run+'.csv', target_data, threshold)
-        if not os.path.exists('generated_data/' + requested_data):
-            os.makedirs('generated_data/' + requested_data)
-        write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_plots.csv', detection_data[0])
-        write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_plots.csv', detection_data[1])
-        write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_detected_outliers.csv', detection_data[2])
-        write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_detected_outliers.csv', detection_data[3])
-        write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_true_outliers.csv', detection_data[4])
-        write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_true_outliers.csv', detection_data[5])
-        write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_results.csv', detection_data[6])
+        save_generated_data(requested_data, detection_data)
 
     return detection_data
+
+
 
 
 def get_fig(detection_data, data_to_run, model):

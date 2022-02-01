@@ -75,6 +75,22 @@ def detect_anomalies(model, outlierCount):
 
 
 
+def collect_detection_data(outliers_passed, anomalies_csv_passed, points_x_passed, points_y_passed):
+    true_outliers = plot_anomalies(anomalies_csv_passed)
+    outliers_x_detected.append(outliers_passed['timestamp'])
+    results = display_results(anomalies_csv_passed, points_x, outliers_x_detected)
+    detection_data = []
+    detection_data.clear()
+    detection_data.append(points_x_passed)
+    detection_data.append(points_y_passed)
+    detection_data.append(outliers_passed['timestamp'])
+    detection_data.append(outliers_passed['data'])
+    detection_data.append(true_outliers['first_x'])
+    detection_data.append(true_outliers['second_x'])
+    detection_data.append(results.display_results())
+
+    return detection_data
+
 
 
 def run_detection(model, data_csv, anomalies_csv, threshold):
@@ -85,7 +101,6 @@ def run_detection(model, data_csv, anomalies_csv, threshold):
     outliers_x_detected.clear()
     
     plot_data(data_csv)
-    true_outliers = plot_anomalies(anomalies_csv)
     outliers_x = []
     outliers_y = []
     if (model == 'moving_average'):
@@ -105,18 +120,9 @@ def run_detection(model, data_csv, anomalies_csv, threshold):
         outliers_x = outliers_['timestamp']
         outliers_y = outliers_['data']
     outliers = pd.DataFrame({'timestamp': outliers_x,'data': outliers_y})
-    outliers_x_detected.append(outliers_x)
-    results = display_results(anomalies_csv, points_x, outliers_x_detected)
-    detection_data = []
-    detection_data.append(points_x)
-    detection_data.append(points_y)
-    detection_data.append(outliers['timestamp'])
-    detection_data.append(outliers['data'])
-    detection_data.append(true_outliers['first_x'])
-    detection_data.append(true_outliers['second_x'])
-    detection_data.append(results.display_results())
+    
+    return collect_detection_data(outliers, anomalies_csv, points_x, points_y)
 
-    return detection_data
 
 def plot_detection_data(detection_data, title, target_data):
     plt.plot(detection_data[0], detection_data[1], color = 'b',label = "Data",linewidth=0.5)
@@ -139,16 +145,3 @@ def plot_detection_data(detection_data, title, target_data):
 
     plt.show()
 
-def main():
-    detection_data = run_detection('svm', 'resources/speed_7578.csv', 'realTraffic/speed_7578.csv')
-    #run_detection('knn', 'nyc_taxi.csv', 'realKnownCause/nyc_taxi.csv', 'NYC Taxi Data against Time (Using knn-based outlier detection)')
-    #run_detection('knn', 'Twitter_volume_UPS.csv', 'realTweets/Twitter_volume_UPS.csv', 'Twitter Data against Time (Using knn-based outlier detection)')
-    #run_detection('knn', 'machine_temperature_system_failure.csv', 'realKnownCause/machine_temperature_system_failure.csv', 'Machine Temperature Data against Time (Using knn-based outlier detection)')
-    #detection_data = run_detection('knn', 'ec2_cpu_utilization_fe7f93.csv', 'realAWSCloudwatch/ec2_cpu_utilization_fe7f93.csv', 'AWS Cloud Watch Data against Time (Using knn-based outlier detection)')
-
-    plot_detection_data(detection_data, 'Speed Data against Time (Using svm-based outlier detection)', 'realTraffic/speed_7578.csv')
-    
-
-
-if __name__=="__main__":
-    main()

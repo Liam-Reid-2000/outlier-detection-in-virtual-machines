@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from dash import dcc
 from dash import html
 import dash
@@ -5,6 +6,7 @@ from dash.dependencies import Output, Input
 import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
+import datetime
 from collections import deque
 from app_helper_scripts.csv_helper import *
 
@@ -12,6 +14,7 @@ from som.outlier_detection_som import detect_som_outliers, detect_som_outliers_c
 from ensemble_detectors.ensemble_voting import get_ensemble_result
 from app_helper_scripts.average_outlier_detection_stream import get_average, get_data_coordinates, get_stream_fig
 from app_helper_scripts.app_helper import *
+from app_helper_scripts.pycaret_detection import collect_detection_data
 
 app = dash.Dash(__name__)
 
@@ -131,30 +134,50 @@ app.layout = html.Div([
         dcc.RadioItems(
             id='ensemble-average-radio-btns',
             options=[{'label': i, 'value': i} for i in ['On', 'Off']],
-            value='On',
+            value='Off',
             labelStyle={'display': 'inline-block', 'marginTop': '5px'}
         ),
         html.H3('Moving Median'),
         dcc.RadioItems(
             id='ensemble-median-radio-btns',
             options=[{'label': i, 'value': i} for i in ['On', 'Off']],
-            value='On',
+            value='Off',
             labelStyle={'display': 'inline-block', 'marginTop': '5px'}
         ),
         html.H3('Moving Boxplot'),
         dcc.RadioItems(
             id='ensemble-boxplot-radio-btns',
             options=[{'label': i, 'value': i} for i in ['On', 'Off']],
-            value='On',
+            value='Off',
             labelStyle={'display': 'inline-block', 'marginTop': '5px'}
         ),
         dcc.Graph(id = 'ensemble-graph'),
+        html.Div([
+            html.H2('Ensemble Detection Results'),
+            html.Button('Refresh Results', id='btn_refresh_ensemble', n_clicks=0),
+            html.Br(),
+            html.Br(),
+            html.Div([
+                html.Div(id='live-update-results_ensemble')
+            ],)
+        ],),
     ],style={"border":"2px black solid"}),
 ])
 
 
-
-
+@app.callback(
+    Output('live-update-results_ensemble', 'children'),
+    [Input('ensemble-average-radio-btns','value'),
+    Input('ensemble-median-radio-btns','value'),
+    Input('ensemble-boxplot-radio-btns','value'),
+    Input('btn_refresh_ensemble', 'n_clicks')]
+)
+def update_results(a, b, c, n_clicks):
+    try:
+        return get_result_data('ensemble/ensemble_results.csv')
+    except:
+        print('Error when getting results')
+        
 
 @app.callback(
     Output('results_title', 'children'),
@@ -176,6 +199,7 @@ def update_results(data, detector, n_clicks):
         return get_result_data(detector + '_' + data + '/' + detector + '_' + data + '_results.csv')
     except:
         print('Error when getting results')
+        
 
 
 @app.callback(
@@ -196,44 +220,61 @@ def plot_graph(data, detector):
     Input('ensemble-boxplot-radio-btns','value')]
 )
 def update_results_title(average_rd, median_rd, boxplot_rd):
-    if (average_rd == 'Off' and median_rd == 'Off' and boxplot_rd == 'Off'):
-        return go.figure()
-    if (average_rd == 'On' and median_rd == 'Off' and boxplot_rd == 'Off'):
-        detection_data = get_detection_data('moving_average', 'speed_7578', 'realTraffic/speed_7578.csv', 25)
-        return get_fig(detection_data, 'speed_7578.csv', 'moving_average')
-    if (average_rd == 'Off' and median_rd == 'On' and boxplot_rd == 'Off'):
-        detection_data = get_detection_data('moving_median', 'speed_7578', 'realTraffic/speed_7578.csv', 34)
-        return get_fig(detection_data, 'speed_7578', 'moving_median')
-    if (average_rd == 'On' and median_rd == 'On' and boxplot_rd == 'Off'):
-        
-        average_detection_data = get_detection_data('moving_average', 'speed_7578', 'realTraffic/speed_7578.csv', 25)
-        median_detection_data = get_detection_data('moving_median', 'speed_7578', 'realTraffic/speed_7578.csv', 34)
-        
-        average_outliers_x = average_detection_data[2]
-        average_outliers_y = average_detection_data[3]
 
-        average_outliers = pd.DataFrame({'timestamp': average_outliers_x,'data': average_outliers_y})
+    ensemble_detector_list = []
+    ensemble_detector_list.clear()
 
-        median_outliers_x = median_detection_data[2]
-        median_outliers_y = median_detection_data[3]
+    # Check which detectors user has selected
+    if (average_rd == 'On'):
+        ensemble_detector_list.append('moving_average')
+    if (median_rd == 'On'):
+        ensemble_detector_list.append('moving_median')
+    if (boxplot_rd == 'On'):
+        ensemble_detector_list.append('moving_boxplot')
 
-        median_outliers = pd.DataFrame({'timestamp': median_outliers_x, 'data': median_outliers_y})
 
-        all_outliers = []
-        all_outliers.append(average_outliers)
-        all_outliers.append(median_outliers)
+    if (len(ensemble_detector_list) == 0):
+        return NULL
 
-        ensemble_outliers = get_ensemble_result(all_outliers)
+    detection_data = []
+    detection_data.clear()
 
-        average_detection_data[2] = ensemble_outliers['timestamp']
-        average_detection_data[3] = ensemble_outliers['data']
+    # Get detection data for selected detectors
+    for ensemble_detector in ensemble_detector_list:
+        detection_data.append(get_detection_data(ensemble_detector, 'speed_7578', 'realTraffic/speed_7578.csv', get_detector_threshold(ensemble_detector)))
 
-        return get_fig(average_detection_data, 'speed_7578', 'moving median and average ensemble')
-    
-    
-    if (average_rd == 'On' and median_rd == 'On' and boxplot_rd == 'On'):
-        detection_data = get_detection_data('moving_boxplot', 'speed_7578', 'realTraffic/speed_7578.csv', get_detector_threshold('moving_boxplot'))
-        return get_fig(detection_data, 'speed_7578', 'moving_boxplot')
+    all_outlier_coordinates = []
+    all_outlier_coordinates.clear()
+
+    # Get the outliers detected from each detector
+    for data in detection_data:
+        all_outlier_coordinates.append(pd.DataFrame({'timestamp':data[2], 'data':data[3]}))
+
+    ensemble_outliers = []
+    ensemble_outliers.clear()
+    # Pass outlier data from each detector to voting system
+    ensemble_outliers = get_ensemble_result(all_outlier_coordinates)
+
+    ## Get detection data of average and modify outlier data to include ensemble voting result then plot ##
+    average_detection_data = get_detection_data('moving_average', 'speed_7578', 'realTraffic/speed_7578.csv', 25)
+
+    ## convert time stamps to date data types
+    ensemble_outlier_timestamps_dates = []
+    for outlier_x_string in ensemble_outliers['timestamp']:
+        ensemble_outlier_timestamps_dates.append(datetime.datetime.strptime(str(outlier_x_string), '%Y-%m-%d %H:%M:%S'))
+    ensemble_outliers['timestamp'] = ensemble_outlier_timestamps_dates
+
+    ensemble_collected_data = []
+    ensemble_collected_data.clear()
+
+    ## get the detection results
+    ensemble_collected_data = collect_detection_data(ensemble_outliers, 'realTraffic/speed_7578.csv', average_detection_data[0], average_detection_data[1])
+
+    # save the generated ensemble data  
+    save_generated_data('ensemble', ensemble_collected_data)
+
+    ## return the figure
+    return get_fig(ensemble_collected_data, 'speed_7578', 'moving ensemble')
 
 
 
