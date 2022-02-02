@@ -103,7 +103,7 @@ app.layout = html.Div([
         dcc.Graph(id = 'live-graph', animate = True),
         dcc.Interval(
             id = 'graph-update',
-            interval = 2400,
+            interval = 100000,
             n_intervals=0
         ),
     ],style={"border":"2px black solid"}),
@@ -237,21 +237,18 @@ def update_results_title(average_rd, median_rd, boxplot_rd):
         return NULL
 
     detection_data = []
-    detection_data.clear()
 
     # Get detection data for selected detectors
     for ensemble_detector in ensemble_detector_list:
         detection_data.append(get_detection_data(ensemble_detector, 'speed_7578', 'realTraffic/speed_7578.csv', get_detector_threshold(ensemble_detector)))
-
+        print('got detection data for ' + ensemble_detector)
     all_outlier_coordinates = []
-    all_outlier_coordinates.clear()
 
     # Get the outliers detected from each detector
     for data in detection_data:
         all_outlier_coordinates.append(pd.DataFrame({'timestamp':data[2], 'data':data[3]}))
 
     ensemble_outliers = []
-    ensemble_outliers.clear()
     # Pass outlier data from each detector to voting system
     ensemble_outliers = get_ensemble_result(all_outlier_coordinates)
 
@@ -265,7 +262,6 @@ def update_results_title(average_rd, median_rd, boxplot_rd):
     ensemble_outliers['timestamp'] = ensemble_outlier_timestamps_dates
 
     ensemble_collected_data = []
-    ensemble_collected_data.clear()
 
     ## get the detection results
     ensemble_collected_data = collect_detection_data(ensemble_outliers, 'realTraffic/speed_7578.csv', average_detection_data[0], average_detection_data[1])

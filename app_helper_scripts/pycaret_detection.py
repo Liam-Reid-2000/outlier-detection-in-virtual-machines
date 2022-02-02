@@ -77,6 +77,8 @@ def detect_anomalies(model, outlierCount):
 
 def collect_detection_data(outliers_passed, anomalies_csv_passed, points_x_passed, points_y_passed):
     true_outliers = plot_anomalies(anomalies_csv_passed)
+    outliers_x_detected = []
+    outliers_x_detected.clear()
     outliers_x_detected.append(outliers_passed['timestamp'])
     results = display_results(anomalies_csv_passed, points_x, outliers_x_detected)
     detection_data = []
