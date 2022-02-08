@@ -7,3 +7,4 @@ Histogram,histogram,0
 Moving Average,moving_average,34
 Moving Median,moving_median,25
 Moving Boxplot,moving_boxplot,2.5
+Moving Histogram,moving_histogram,7
