@@ -130,6 +130,8 @@ app.layout = html.Div([
     html.Div([
         html.H2("Ensemble of Detectors"),
         html.H3("Graph demonstrating how an ensemble of weak classifiers are strong outlier detectors"),
+        
+        # Moving Average
         html.H3('Moving Average'),
         dcc.RadioItems(
             id='ensemble-average-radio-btns',
@@ -137,6 +139,8 @@ app.layout = html.Div([
             value='Off',
             labelStyle={'display': 'inline-block', 'marginTop': '5px'}
         ),
+
+        # Moving Median
         html.H3('Moving Median'),
         dcc.RadioItems(
             id='ensemble-median-radio-btns',
@@ -144,6 +148,8 @@ app.layout = html.Div([
             value='Off',
             labelStyle={'display': 'inline-block', 'marginTop': '5px'}
         ),
+
+        # Moving Boxplot
         html.H3('Moving Boxplot'),
         dcc.RadioItems(
             id='ensemble-boxplot-radio-btns',
@@ -151,6 +157,17 @@ app.layout = html.Div([
             value='Off',
             labelStyle={'display': 'inline-block', 'marginTop': '5px'}
         ),
+
+        # Moving Histogram
+        html.H3('Moving Histogram'),
+        dcc.RadioItems(
+            id='ensemble-histogram-radio-btns',
+            options=[{'label': i, 'value': i} for i in ['On', 'Off']],
+            value='Off',
+            labelStyle={'display': 'inline-block', 'marginTop': '5px'}
+        ),
+
+        # Graph
         dcc.Graph(id = 'ensemble-graph'),
         html.Div([
             html.H2('Ensemble Detection Results'),
@@ -170,9 +187,10 @@ app.layout = html.Div([
     [Input('ensemble-average-radio-btns','value'),
     Input('ensemble-median-radio-btns','value'),
     Input('ensemble-boxplot-radio-btns','value'),
+    Input('ensemble-histogram-radio-btns','value'),
     Input('btn_refresh_ensemble', 'n_clicks')]
 )
-def update_results(a, b, c, n_clicks):
+def update_results(average_rad, median_rad, boxplot_rad, histogram_rad, n_clicks):
     try:
         return get_result_data('ensemble/ensemble_results.csv')
     except:
@@ -217,9 +235,10 @@ def plot_graph(data, detector):
     Output('ensemble-graph', 'figure'),
     [Input('ensemble-average-radio-btns','value'),
     Input('ensemble-median-radio-btns','value'),
+    Input('ensemble-histogram-radio-btns','value'),
     Input('ensemble-boxplot-radio-btns','value')]
 )
-def update_results_title(average_rd, median_rd, boxplot_rd):
+def update_results_title(average_rd, median_rd, histogram_rd, boxplot_rd):
 
     ensemble_detector_list = []
     ensemble_detector_list.clear()
@@ -231,6 +250,8 @@ def update_results_title(average_rd, median_rd, boxplot_rd):
         ensemble_detector_list.append('moving_median')
     if (boxplot_rd == 'On'):
         ensemble_detector_list.append('moving_boxplot')
+    if (histogram_rd == 'On'):
+        ensemble_detector_list.append('moving_histogram')
 
 
     if (len(ensemble_detector_list) == 0):
