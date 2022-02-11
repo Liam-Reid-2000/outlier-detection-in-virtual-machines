@@ -15,7 +15,7 @@ def detect_boxplot_outliers(threshold, boxplot_dataset_size, data_points):
     i = 0
     while (i<len(points_x) - boxplot_dataset_size):
 
-        #get 50
+        #get amount
         subset_x = []
         subset_y = []
         j = i

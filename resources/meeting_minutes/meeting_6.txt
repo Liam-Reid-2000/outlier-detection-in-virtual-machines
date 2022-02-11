@@ -1,0 +1,53 @@
+QUEEN’S UNIVERSITY OF BELFAST COMPUTER SCIENCE
+
+Minute of Project Supervision Meeting
+======================================
+
+Student Name:	Liam Reid
+
+Project Module Code:	CSC3002
+
+Project Supervisor:	Dr Son T. Mai
+
+
+Meeting Number: 6
+
+
+Date of Meeting: 09/02/22
+
+
+
+Progress since last meeting, and decisions arrived at during meeting:
+======================================
+Refactored the code
+Made it more generic, related scripts in folders
+Added continuous integration and unit test scripts
+Added boxplot outlier detection to ensemble
+Added histogram based outlier detecion to ensemble
+Implemented a new ensemble voting system
+
+
+Action Points:
+==============
+
+Split raw detection data, isolate test and train for traditional classifiers
+Real time outlier detection using tested / trained data sets
+
+
+Date of next meeting:
+====================+
+
+24/01/22
+
+
+
+
+Agreed minute should be initialled by the supervisor.
+
+Supervisor's Initials:	_____________________________________________	Date: _________________
+
+
+
+Supervisor's Comments:
+=======================
+
