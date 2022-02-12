@@ -24,7 +24,7 @@ def get_no_outliers(target_data):
     return len(data[target_data])
 
 
-def plot_data(csv_file_name):
+def load_data_coordinates(csv_file_name):
     with open(csv_file_name,'r') as csvfile:
         lines = csv.reader(csvfile, delimiter=',')
         for row in lines:
@@ -36,7 +36,7 @@ def plot_data(csv_file_name):
 
 
 
-def plot_anomalies(target_data):
+def get_outlier_area_ordinates(target_data):
     f = open('resources/combined_windows.json')
     data = json.load(f)
     arrX1 = []
@@ -77,7 +77,7 @@ def detect_anomalies(model, outlierCount):
 
 
 def collect_detection_data(outliers_passed, anomalies_csv_passed, points_x_passed, points_y_passed):
-    true_outliers = plot_anomalies(anomalies_csv_passed)
+    true_outliers = get_outlier_area_ordinates(anomalies_csv_passed)
     outliers_x_detected = []
     outliers_x_detected.clear()
     outliers_x_detected.append(outliers_passed['timestamp'])
@@ -103,7 +103,7 @@ def run_detection(model, data_csv, anomalies_csv, threshold):
 
     outliers_x_detected.clear()
     
-    plot_data(data_csv)
+    load_data_coordinates(data_csv)
     outliers_x = []
     outliers_y = []
     if (model == 'moving_average'):
