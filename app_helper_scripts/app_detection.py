@@ -76,8 +76,10 @@ def detect_anomalies(model, outlierCount):
 
 
 
-def collect_detection_data(outliers_passed, anomalies_csv_passed, points_x_passed, points_y_passed):
+def collect_detection_data(outliers_passed, anomalies_csv_passed, points_x_passed, points_y_passed, real_outlier_areas=[]):
     true_outliers = get_outlier_area_ordinates(anomalies_csv_passed)
+    if (len(real_outlier_areas)>0):
+        true_outliers = real_outlier_areas
     outliers_x_detected = []
     outliers_x_detected.clear()
     outliers_x_detected.append(outliers_passed['timestamp'])
@@ -129,26 +131,3 @@ def run_detection(model, data_csv, anomalies_csv, threshold):
     outliers = pd.DataFrame({'timestamp': outliers_x,'data': outliers_y})
     
     return collect_detection_data(outliers, anomalies_csv, points_x, points_y)
-
-
-def plot_detection_data(detection_data, title, target_data):
-    plt.plot(detection_data[0], detection_data[1], color = 'b',label = "Data",linewidth=0.5)
-    plt.scatter(detection_data[2], detection_data[3],color = 'r',label = "Outliers Detected",marker='o')
-    
-    
-    f = open('resources/combined_windows.json')
-    data = json.load(f)
-    for i in data[target_data]:
-        plt.axvspan(datetime.datetime.strptime(i[0], '%Y-%m-%d %H:%M:%S.%f'), datetime.datetime.strptime(i[1], '%Y-%m-%d %H:%M:%S.%f'), color = 'red',alpha=0.5)
-    f.close()
-
-
-    plt.xticks(rotation = 25)
-    plt.xlabel('Timestamp')
-    plt.ylabel('Data')
-    plt.title(title, fontsize = 20)
-    plt.grid()
-    plt.legend()
-
-    plt.show()
-

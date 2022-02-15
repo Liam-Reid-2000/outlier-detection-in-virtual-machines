@@ -5,7 +5,6 @@ import dash
 from dash.dependencies import Output, Input
 import plotly.express as px
 import pandas as pd
-import plotly.graph_objects as go
 import datetime
 from collections import deque
 from app_helper_scripts.csv_helper import *
@@ -14,7 +13,8 @@ from som.outlier_detection_som import detect_som_outliers, detect_som_outliers_c
 from ensemble_detectors.ensemble_voting import get_ensemble_result
 from app_helper_scripts.average_outlier_detection_stream import get_average, get_data_coordinates, get_stream_fig
 from app_helper_scripts.app_helper import *
-from app_helper_scripts.pycaret_detection import collect_detection_data
+from app_helper_scripts.app_detection import collect_detection_data
+from supervised_learning_detectors.isolation_forest import do_isolation_forest_detection
 
 app = dash.Dash(__name__)
 
@@ -279,6 +279,37 @@ def update_results(data, detector, n_clicks):
 def plot_graph(data, detector):
     detection_data = get_detection_data(detector, data, get_outlier_ref(data), get_detector_threshold(detector))
     return get_fig(detection_data, data, detector)
+
+####################################################################################
+
+### SUPERVISED LEARNING ###
+
+@app.callback(
+    Output('supervised-plots_supervised', 'figure'),
+    [Input('available_data','value'),
+    Input('available_detectors','value')]
+)
+def plot_graph(data, detector):
+    detection_data = do_isolation_forest_detection(0.75)
+    return get_fig(detection_data, "speed", "isolation forest")
+
+@app.callback(
+    Output('live-update-results_supervised', 'children'),
+    [Input('available_data','value'),
+    Input('available_detectors','value'),
+    Input('btn_refresh', 'n_clicks')]
+)
+def update_results(data, detector, n_clicks):
+    try:
+        return get_result_data('supervised_histogram_0.75/supervised_histogram_0.75_results.csv')
+    except:
+        print('Error when getting results')
+
+        
+
+### SUPERVISED LEARNING ###
+
+####################################################################################
 
 
 

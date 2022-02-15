@@ -5,7 +5,7 @@ from dash import html
 import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
-from app_helper_scripts.pycaret_detection import run_detection
+from app_helper_scripts.app_detection import run_detection
 from app_helper_scripts.csv_helper import *
 
 def get_detector_threshold(ref):
