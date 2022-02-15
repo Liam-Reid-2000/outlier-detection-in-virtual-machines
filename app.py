@@ -52,6 +52,7 @@ app.layout = html.Div([
     ### Graph to display classifier detection results ###
 
     html.Div([
+        html.H2('Unsupervised Detection'),
         html.Div([
             html.Div([
 
@@ -93,6 +94,56 @@ app.layout = html.Div([
         ],style={'width': '29%', 'float': 'right', 'display': 'inline-block'}),
 
     ],style={'padding': '10px 5px',"border":"2px black solid"}),
+
+
+
+    ### Graph to display classifier detection results using supervised training ###
+
+    html.Div([
+        html.H2('Supervised Detection'),
+        html.Div([
+            html.Div([
+
+                ### Drop down boxes with options for user ###
+
+                html.Div([
+                    dcc.Dropdown(
+                        id='available_detectors_supervised',
+                        options=[{'label': i, 'value': i} for i in detector_list],
+                        value='svm'
+                    ),
+                ],style={'width': '30%', 'display': 'inline-block'}),
+                html.Div([
+                    dcc.Dropdown(
+                        id='available_data_supervised',
+                        options=[{'label': i, 'value': i} for i in data_list],
+                        value='speed_7578'
+                    ),
+                ],style={'width': '30%', 'display': 'inline-block'}),
+            ]),
+
+            ### The Graph ### 
+            dcc.Graph(
+                id='supervised-plots_supervised'
+            ),
+        ],style={'width': '70%', 'display': 'inline-block'}),
+        
+        ### The detection results as text ###
+
+        html.Div([
+            html.H2('Detection Results'),
+            html.Button('Refresh Results', id='btn_refresh_supervised', n_clicks=0),
+            html.Br(),
+            html.Br(),
+            html.Div([
+                html.Div(id='results_title_supervised', children='...'),
+                html.Div(id='live-update-results_supervised')
+            ],style={'width': '50%', 'float': 'left', 'display': 'inline-block',"border":"2px black solid"})
+        ],style={'width': '29%', 'float': 'right', 'display': 'inline-block'}),
+
+    ],style={'padding': '10px 5px',"border":"2px black solid"}),
+
+
 
     ### A live update graph demonstrating real time outlier detection ### 
 

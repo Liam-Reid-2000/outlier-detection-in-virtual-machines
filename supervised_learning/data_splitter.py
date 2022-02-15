@@ -133,46 +133,53 @@ def get_outliers():
         outlier_points_x_as_minutes.append(time.hour * 60 + time.minute)
     return(np.r_['1,2,0', outlier_points_x_as_minutes, df['data']])
 
-rng = np.random.RandomState(42)
-X_train = get_x_train_data()
-X_test = get_x_test_data()
-X_outliers = get_outliers()
 
-# fit the model
-clf = IsolationForest(max_samples=100, random_state=rng)
-clf.fit(X_train)
-y_pred_test = clf.predict(X_test)
-y_pred_outliers = clf.predict(X_outliers)
+def train_model():
+    rng = np.random.RandomState(42)
+    X_train = get_x_train_data()
+    clf = IsolationForest(max_samples=100, random_state=rng)
+    return clf.fit(X_train)
+
+def do_detection():
+    
+    X_train = get_x_train_data()
+    X_test = get_x_test_data()
+    X_outliers = get_outliers()
+
+    isolation_forest_model = train_model()
+
+    y_pred_test = isolation_forest_model.predict(X_test)
+    y_pred_outliers = isolation_forest_model.predict(X_outliers)
 
 
-new_data_to_predict_x = []
-new_data_to_predict_y = []
+    new_data_to_predict_x = []
+    new_data_to_predict_y = []
 
-new_data_to_predict_x.append(700)
-new_data_to_predict_y.append(0)
-to_predict = np.r_['1,2,0', new_data_to_predict_x, new_data_to_predict_y]
+    new_data_to_predict_x.append(700)
+    new_data_to_predict_y.append(0)
+    to_predict = np.r_['1,2,0', new_data_to_predict_x, new_data_to_predict_y]
 
-print(clf.predict(to_predict))
+    print(isolation_forest_model.predict(to_predict))
 
-print(y_pred_outliers)
+    print(y_pred_outliers)
 
-# plot the line, the samples, and the nearest vectors to the plane
-xx, yy = np.meshgrid(np.linspace(0,1440, 50), np.linspace(0, 100, 50))
-Z = clf.decision_function(np.c_[xx.ravel(), yy.ravel()])
-Z = Z.reshape(xx.shape)
+    # plot the line, the samples, and the nearest vectors to the plane
+    xx, yy = np.meshgrid(np.linspace(0,1440, 50), np.linspace(0, 100, 50))
+    Z = isolation_forest_model.decision_function(np.c_[xx.ravel(), yy.ravel()])
+    Z = Z.reshape(xx.shape)
 
-plt.title("IsolationForest")
-plt.contourf(xx, yy, Z, cmap=plt.cm.Blues_r)
+    plt.title("IsolationForest")
+    plt.contourf(xx, yy, Z, cmap=plt.cm.Blues_r)
 
-b1 = plt.scatter(X_train[:, 0], X_train[:, 1], c="white", s=20, edgecolor="k")
-b2 = plt.scatter(X_test[:, 0], X_test[:, 1], c="green", s=20, edgecolor="k")
-c = plt.scatter(X_outliers[:, 0], X_outliers[:, 1], c="red", s=20, edgecolor="k")
-plt.axis("tight")
-plt.xlim((0, 1440))
-plt.ylim((0, 100))
-plt.legend(
-    [b1, b2, c],
-    ["training observations", "new regular observations", "new abnormal observations"],
-    loc="upper left",
-)
-plt.show()
+    b1 = plt.scatter(X_train[:, 0], X_train[:, 1], c="white", s=20, edgecolor="k")
+    b2 = plt.scatter(X_test[:, 0], X_test[:, 1], c="green", s=20, edgecolor="k")
+    c = plt.scatter(X_outliers[:, 0], X_outliers[:, 1], c="red", s=20, edgecolor="k")
+    plt.axis("tight")
+    plt.xlim((0, 1440))
+    plt.ylim((0, 100))
+    plt.legend(
+        [b1, b2, c],
+        ["training observations", "new regular observations", "new abnormal observations"],
+        loc="upper left",
+    )
+    plt.show()
