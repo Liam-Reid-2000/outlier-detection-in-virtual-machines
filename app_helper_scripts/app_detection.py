@@ -83,7 +83,7 @@ def collect_detection_data(outliers_passed, anomalies_csv_passed, points_x_passe
     outliers_x_detected = []
     outliers_x_detected.clear()
     outliers_x_detected.append(outliers_passed['timestamp'])
-    results = display_results(anomalies_csv_passed, points_x, outliers_x_detected)
+    results = display_results(anomalies_csv_passed, points_x_passed, outliers_x_detected)
     detection_data = []
     detection_data.clear()
     detection_data.append(points_x_passed)

@@ -65,9 +65,9 @@ def split_outliers(target_data, split_date):
 
     all_outliers = []
 
-    f = open(target_data)
-    data = json.load(f)#swap target data to look in other
-    for i in data['realTraffic/speed_7578.csv']:
+    f = open('resources/combined_labels.json')
+    data = json.load(f)
+    for i in data[target_data]:
         if (datetime.strptime(i, '%Y-%m-%d %H:%M:%S') < split_date):
             train_outliers.append(i)
         else:
@@ -77,7 +77,7 @@ def split_outliers(target_data, split_date):
     outlier_data.append(all_outliers)
     outlier_data.append(train_outliers)
     outlier_data.append(test_outliers)
-
+    f.close()
     return outlier_data
 
 

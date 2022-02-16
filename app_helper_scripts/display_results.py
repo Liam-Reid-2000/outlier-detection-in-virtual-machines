@@ -2,11 +2,15 @@ import datetime
 import json
 
 
+
 class display_results:
+
     def __init__(self, target_data, points_x, outliers_x):
         self.target_data = target_data
         self.outliers_x = outliers_x
         self.points_x = points_x
+    
+    
 
     def get_no_outliers(self):
         f = open('resources/combined_labels.json')
@@ -39,11 +43,20 @@ class display_results:
             return 0
 
 
-
     def get_true_negative(self):
         actual_negative_count = 0
         f = open('resources/combined_windows.json')
         data = json.load(f)
+
+        # checks if data is in date format # Changes to date format if not
+        try:
+            self.points_x[0].hour
+        except:
+            arr_as_dates = []
+            for i in self.points_x:
+                arr_as_dates.append(datetime.datetime.strptime(i, '%Y-%m-%d %H:%M:%S'))
+            self.points_x = arr_as_dates
+
         for point in self.points_x:
             is_actual_negative = True
             for i in data[self.target_data]:

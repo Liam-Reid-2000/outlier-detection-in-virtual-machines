@@ -20,7 +20,7 @@ def plot_iso_detection_data(isolation_forest_model, X_train, inliers_detected_x,
     Z = isolation_forest_model.decision_function(np.c_[xx.ravel(), yy.ravel()])
     Z = Z.reshape(xx.shape)
 
-    plt.title("IsolationForest")
+    plt.title("Isolation Forest")
     plt.contourf(xx, yy, Z, cmap=plt.cm.Blues_r)
 
     b1 = plt.scatter(X_train[:, 0], X_train[:, 1], c="white", s=20, edgecolor="k")
@@ -60,11 +60,11 @@ def split_outliers_inliers(labeled_test_data):
     return outlier_inlier_split
     
 
-def do_isolation_forest_detection(split_ratio):
+def do_isolation_forest_detection(split_ratio, dataset, outlier_ref, plot=False):
 
     # Load data and outliers
-    split_data = load_data('resources/speed_7578.csv', split_ratio)
-    outlier_data = split_outliers('resources/combined_labels.json',split_data[4][0])
+    split_data = load_data(dataset, split_ratio)
+    outlier_data = split_outliers(outlier_ref,split_data[4][0])
 
     # Remove outliers from training data (Semi - Supervised training)
     clean_training_data = remove_outliers_from_training_data(outlier_data[1], split_data[2], split_data[3])
@@ -83,32 +83,25 @@ def do_isolation_forest_detection(split_ratio):
     # Separate outliers and inliers
     outlier_inliers_split = split_outliers_inliers(labeled_test_data)
 
-    outlier_areas = get_outlier_areas(outlier_data[2],'realTraffic/speed_7578.csv')
+    outlier_areas = get_outlier_areas(outlier_data[2],outlier_ref)
 
-    detection_data = collect_detection_data(outlier_inliers_split[1], 'realTraffic/speed_7578.csv',split_data[4],split_data[5], outlier_areas)
+    detection_data = collect_detection_data(outlier_inliers_split[1], outlier_ref,split_data[4],split_data[5], outlier_areas)
 
     # save the generated data  
     save_generated_data('supervised_histogram_' + str(split_ratio), detection_data)
 
-    # Collect and return the detection data
-    #detection_data = []
-    #detection_data.append(split_data[4])
-    #detection_data.append(split_data[5])
-    #detection_data.append(outlier_inliers_split[1]['timestamp'])
-    #detection_data.append(outlier_inliers_split[1]['data'])
-    #detection_data.append(outlier_areas['first_x'])
-    #detection_data.append(outlier_areas['second_x'])
+    if (plot):
+        plot_iso_detection_data(isolation_forest_model, X_train, 
+            convert_time_data_to_minutes_of_day(outlier_inliers_split[0]['timestamp']), 
+            outlier_inliers_split[0]['data'],
+            convert_time_data_to_minutes_of_day(outlier_inliers_split[1]['timestamp']), 
+            outlier_inliers_split[1]['data'])
 
     return detection_data
 
+    
 
-    #plot_iso_detection_data(isolation_forest_model, X_train, 
-    #    convert_time_data_to_minutes_of_day(inliers_detected_x), 
-    #    inliers_detected_y,
-    #    convert_time_data_to_minutes_of_day(outliers_detected_x), 
-    #    outliers_detected_y)
-
-do_isolation_forest_detection(0.75)
+#do_isolation_forest_detection(0.75)
 
 
 

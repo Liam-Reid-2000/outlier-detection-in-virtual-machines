@@ -1,6 +1,0 @@
-name,outlier_ref
-speed_7578,realTraffic/speed_7578.csv
-nyc_taxi,realKnownCause/nyc_taxi.csv
-ec2_cpu_utilization_fe7f93,realAWSCloudwatch/ec2_cpu_utilization_fe7f93.csv
-machine_temperature_system_failure,realKnownCause/machine_temperature_system_failure.csv
-Twitter_volume_UPS,realTweets/Twitter_volume_UPS.csv

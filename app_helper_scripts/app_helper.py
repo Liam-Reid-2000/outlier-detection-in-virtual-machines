@@ -1,6 +1,7 @@
 import pandas as pd
 import csv
 import os
+import json
 from dash import html
 import plotly.express as px
 import pandas as pd
@@ -9,23 +10,22 @@ from app_helper_scripts.app_detection import run_detection
 from app_helper_scripts.csv_helper import *
 
 def get_detector_threshold(ref):
-    available_detector_df = pd.read_csv('resources/detectors.csv')
-    data_list = available_detector_df['value']
-    i = 0
-    while (i < len(data_list)):
-        if (data_list[i] == ref):
-            return available_detector_df['threshold'][i]
-        i += 1
-
-
+    f = open('resources/config.json',)
+    data = json.load(f)
+    for i in data['available_detectors']:
+        if (i[0] ==ref):
+            f.close()
+            return i[1]
+    f.close()
+   
 def get_outlier_ref(ref):
-    available_data_df = pd.read_csv('resources/data.csv')
-    data_list = available_data_df['name']
-    i = 0
-    while (i < len(data_list)):
-        if (data_list[i] == ref):
-            return available_data_df['outlier_ref'][i]
-        i += 1
+    f = open('resources/config.json',)
+    data = json.load(f)
+    for i in data['available_datasets']:
+        if (i[0] ==ref):
+            f.close()
+            return i[1]
+    f.close()
 
 def get_result_data(path):
     try:

@@ -1,4 +1,5 @@
 from asyncio.windows_events import NULL
+from os import truncate
 from dash import dcc
 from dash import html
 import dash
@@ -8,6 +9,7 @@ import pandas as pd
 import datetime
 from collections import deque
 from app_helper_scripts.csv_helper import *
+import json
 
 from som.outlier_detection_som import detect_som_outliers, detect_som_outliers_circle
 from ensemble_detectors.ensemble_voting import get_ensemble_result
@@ -39,12 +41,16 @@ Yavg.append(1)
 Value = 0
 
 
-
-available_detectors_df = pd.read_csv('resources/detectors.csv')
-detector_list = available_detectors_df['value']
-
-available_data_df = pd.read_csv('resources/data.csv')
-data_list = available_data_df['name']
+def get_config(requested_config):
+    f = open('resources/config.json',)
+    data = json.load(f) 
+    requested_config_list = []
+    for i in data[requested_config]:
+        requested_config_list.append(i)
+    # Closing file
+    f.close()
+    return requested_config_list
+ 
 
 app.layout = html.Div([
     html.H1('Outlier Detection'),
@@ -61,14 +67,14 @@ app.layout = html.Div([
                 html.Div([
                     dcc.Dropdown(
                         id='available_detectors',
-                        options=[{'label': i, 'value': i} for i in detector_list],
+                        options=[{'label': i[0], 'value': i[0]} for i in get_config('available_detectors')],
                         value='svm'
                     ),
                 ],style={'width': '30%', 'display': 'inline-block'}),
                 html.Div([
                     dcc.Dropdown(
                         id='available_data',
-                        options=[{'label': i, 'value': i} for i in data_list],
+                        options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets')],
                         value='speed_7578'
                     ),
                 ],style={'width': '30%', 'display': 'inline-block'}),
@@ -109,14 +115,14 @@ app.layout = html.Div([
                 html.Div([
                     dcc.Dropdown(
                         id='available_detectors_supervised',
-                        options=[{'label': i, 'value': i} for i in detector_list],
+                        options=[{'label': i[0], 'value': i[0]} for i in get_config('available_supervised_detectors')],
                         value='svm'
                     ),
                 ],style={'width': '30%', 'display': 'inline-block'}),
                 html.Div([
                     dcc.Dropdown(
                         id='available_data_supervised',
-                        options=[{'label': i, 'value': i} for i in data_list],
+                        options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets')],
                         value='speed_7578'
                     ),
                 ],style={'width': '30%', 'display': 'inline-block'}),
@@ -133,6 +139,7 @@ app.layout = html.Div([
         html.Div([
             html.H2('Detection Results'),
             html.Button('Refresh Results', id='btn_refresh_supervised', n_clicks=0),
+            html.Button('Show Learning', id='btn_show_supervised', n_clicks=0),
             html.Br(),
             html.Br(),
             html.Div([
@@ -140,7 +147,10 @@ app.layout = html.Div([
                 html.Div(id='live-update-results_supervised')
             ],style={'width': '50%', 'float': 'left', 'display': 'inline-block',"border":"2px black solid"})
         ],style={'width': '29%', 'float': 'right', 'display': 'inline-block'}),
-
+        ### The Graph ### 
+            dcc.Graph(
+                id='supervised_plots_supervised_learning'
+            ),
     ],style={'padding': '10px 5px',"border":"2px black solid"}),
 
 
@@ -286,24 +296,31 @@ def plot_graph(data, detector):
 
 @app.callback(
     Output('supervised-plots_supervised', 'figure'),
-    [Input('available_data','value'),
-    Input('available_detectors','value')]
+    [Input('available_data_supervised','value'),
+    Input('available_detectors_supervised','value')]
 )
 def plot_graph(data, detector):
-    detection_data = do_isolation_forest_detection(0.75)
+    detection_data = do_isolation_forest_detection(0.75, 'resources/speed_7578.csv', 'realTraffic/speed_7578.csv', False)
     return get_fig(detection_data, "speed", "isolation forest")
 
 @app.callback(
     Output('live-update-results_supervised', 'children'),
-    [Input('available_data','value'),
-    Input('available_detectors','value'),
-    Input('btn_refresh', 'n_clicks')]
+    [Input('available_data_supervised','value'),
+    Input('available_detectors_supervised','value'),
+    Input('btn_refresh_supervised', 'n_clicks')]
 )
 def update_results(data, detector, n_clicks):
     try:
         return get_result_data('supervised_histogram_0.75/supervised_histogram_0.75_results.csv')
     except:
         print('Error when getting results')
+
+@app.callback(
+    Output('supervised_plots_supervised_learning','figure'),
+    [Input('btn_show_supervised', 'n_clicks')]
+)
+def update_results(n_clicks):
+    detection_data = do_isolation_forest_detection(0.75, 'resources/speed_7578.csv', 'realTraffic/speed_7578.csv', truncate)
 
         
 
