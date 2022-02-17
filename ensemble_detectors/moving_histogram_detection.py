@@ -29,7 +29,7 @@ def detect_histogram_outliers(threshold, data_points):
     i = 0
     while i < len(heights):
         outlier_range = []
-        if (heights[i] < threshold):
+        if (heights[i] < int(threshold)):
             outlier_range.append(x_left_corners[i])
             outlier_range.append(x_left_corners[i] + bin_widths[i])
             outlier_ranges.append(outlier_range)

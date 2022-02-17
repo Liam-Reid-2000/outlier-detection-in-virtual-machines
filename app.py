@@ -20,27 +20,6 @@ from supervised_learning_detectors.isolation_forest import do_isolation_forest_d
 
 app = dash.Dash(__name__)
 
-
-dc = get_data_coordinates('resources/speed_7578.csv')
-  
-X = deque(maxlen = 30)
-X.append(1)
-
-Xavg = deque(maxlen = 30)
-Xavg.append(1)
-
-points_x = dc['points_x']
-points_y = dc['points_y']
-  
-Y = deque(maxlen = 30)
-Y.append(1)
-
-Yavg = deque(maxlen = 30)
-Yavg.append(1)
-
-Value = 0
-
-
 def get_config(requested_config):
     f = open('resources/config.json',)
     data = json.load(f) 
@@ -116,7 +95,7 @@ app.layout = html.Div([
                     dcc.Dropdown(
                         id='available_detectors_supervised',
                         options=[{'label': i[0], 'value': i[0]} for i in get_config('available_supervised_detectors')],
-                        value='svm'
+                        value='iforest'
                     ),
                 ],style={'width': '20%', 'display': 'inline-block'}),
                 html.Div([
@@ -165,9 +144,15 @@ app.layout = html.Div([
     ### A live update graph demonstrating real time outlier detection ### 
 
     html.Div([
+        html.Div([
+            dcc.Dropdown(
+                id='available_data_real_time_detection',
+                options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets')],
+                value='speed_7578'
+            ),
+        ],style={'width': '20%', 'display': 'inline-block'}),
         html.H2("Live Update Graph"),
         html.H3("Graph demonstrating real-time outlier detection using moving average based outlier detection"),
-        html.Div(id='live-update-text'),
         dcc.Graph(id = 'live-graph', animate = True),
         dcc.Interval(
             id = 'graph-update',
@@ -405,17 +390,6 @@ def update_results_title(average_rd, median_rd, histogram_rd, boxplot_rd):
 
 
 
-
-@app.callback(Output('live-update-text', 'children'),
-              Input('graph-update', 'n_intervals'))
-def update_metrics(n):
-    style = {'padding': '5px', 'fontSize': '16px'}
-    return [
-        html.Span('Value: ' + str(points_y[X[-1]+1]), style=style)
-    ]
-
-
-
 @app.callback(
     Output('som-graph', 'figure'),
     [ Input('btn_refresh', 'n_clicks') ]
@@ -448,14 +422,30 @@ def update_graph_scatter(n):
 
     return fig
 
-
-
+#######################################################################################
   
+X = deque(maxlen = 30)
+X.append(1)
+Xavg = deque(maxlen = 30)
+Xavg.append(1)
+  
+Y = deque(maxlen = 30)
+Y.append(1)
+Yavg = deque(maxlen = 30)
+Yavg.append(1)
+
 @app.callback(
     Output('live-graph', 'figure'),
-    [ Input('graph-update', 'n_intervals') ]
+    [ Input('graph-update', 'n_intervals'),
+    Input('available_data_real_time_detection','value') ]
 )
-def update_graph_scatter(n):
+def update_graph_scatter(n,data):
+
+    dc = get_data_coordinates('resources/'+data+'.csv')
+    points_x = dc['points_x']
+    points_y = dc['points_y']
+
+
     X.append(X[-1]+1)
     Y.append(points_y[X[-1]+1])
     points_y[X[-1]+1]
@@ -475,7 +465,7 @@ def update_graph_scatter(n):
         Xavg.append(X[-1])
         Yavg.append(average)
 
-    return get_stream_fig(data_points, has_average, Xavg, Yavg, X)
+    return get_stream_fig(data_points, has_average, Xavg, Yavg, X, Y)
 
 if __name__ == '__main__':
     app.run_server()

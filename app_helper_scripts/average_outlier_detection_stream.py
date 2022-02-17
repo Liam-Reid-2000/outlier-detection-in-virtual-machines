@@ -46,7 +46,7 @@ def get_average(arr):
         count += 1
     return total/count
 
-def get_stream_fig(data_points, has_average, Xavg, Yavg, X):
+def get_stream_fig(data_points, has_average, Xavg, Yavg, X, Y):
     # Plot and return the graph
     fig = px.line(data_points, x='points_x', y='points_y')
     if (has_average):
@@ -75,5 +75,5 @@ def get_stream_fig(data_points, has_average, Xavg, Yavg, X):
             )
 
     fig.update_xaxes(range=[min(X),max(X)])
-    fig.update_yaxes(range=[0,100])   
+    fig.update_yaxes(range=[min(Y),max(Y)])   
     return fig

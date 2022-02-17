@@ -39,7 +39,7 @@ def detect_median_outliers(threshold, median_points, data_points):
 
     i = 0
     while i < len(median_points_x):
-        if ((points_y[i] < median_points_y[i]-threshold) or (points_y[i] > median_points_y[i]+threshold)):
+        if ((points_y[i] < median_points_y[i]-int(threshold)) or (points_y[i] > median_points_y[i]+int(threshold))):
             detected_ouliters_x.append(points_x[i])
             detected_ouliters_y.append(points_y[i])
         i += 1
