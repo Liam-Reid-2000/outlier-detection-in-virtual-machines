@@ -1,111 +1,47 @@
-import matplotlib.pyplot as plt
-from moving_median_detection import *
-from moving_average_detection import *
-from app_helper_scripts.plot import *
-from app_helper_scripts.display_results import display_results
+from asyncio.windows_events import NULL
+import pandas as pd
+import datetime
+from app_helper_scripts.app_detection import collect_detection_data
 
+from app_helper_scripts.app_helper import get_detection_data, get_detector_threshold, get_fig, save_generated_data
 from ensemble_detectors.ensemble_voting import get_ensemble_result
 
+def get_ensemble_fig(ensemble_detector_list):
 
+    if (len(ensemble_detector_list) == 0):
+        return NULL
 
-def get_ideal_threshold(anomalies_csv, points_x, outlier_x, _data_coordinates, data_coordinates, x_name):
-    i = 40
-    best_score = 0
-    ideal_threshold = 0
-    while (i < 120):
-        average_outliers = detect_median_outliers(i, _data_coordinates, data_coordinates)
-        average_oulier_x = average_outliers[x_name]
-        score = display_results(anomalies_csv, points_x, average_oulier_x)
-        if (score > best_score):
-            best_score = score
-            ideal_threshold = i
-        i += 1
-    return ideal_threshold
+    detection_data = []
 
+    for ensemble_detector in ensemble_detector_list:
+        detection_data.append(get_detection_data(ensemble_detector, 'speed_7578', 'realTraffic/speed_7578.csv', get_detector_threshold(ensemble_detector)))
+        print('got detection data for ' + ensemble_detector)
+    all_outlier_coordinates = []
 
+    # Get the outliers detected from each detector
+    for data in detection_data:
+        all_outlier_coordinates.append(pd.DataFrame({'timestamp':data[2], 'data':data[3]}))
 
+    ensemble_outliers = []
+    # Pass outlier data from each detector to voting system
+    ensemble_outliers = get_ensemble_result(all_outlier_coordinates)
 
-def run_detection(data_csv, anomalies_csv, title):
-    
-    data_coordinates = get_data_coordinates(data_csv)
-    points_x = data_coordinates['points_x']
-    points_y = data_coordinates['points_y']
-    plt.plot(points_x, points_y, color = 'b',label = "data",linewidth=0.5)
-    
-    plot_anomalies(anomalies_csv)
-    
-    
-    ########## MEDIAN ##########
+    ## Get detection data of average and modify outlier data to include ensemble voting result then plot ##
+    average_detection_data = get_detection_data('moving_average', 'speed_7578', 'realTraffic/speed_7578.csv', 25)
 
-    median_data_coordinates = get_moving_median_coordinates(10, data_coordinates)
-    median_points_x = median_data_coordinates['points_median_x']
-    median_points_y = median_data_coordinates['points_median_y']
-    plt.plot(median_points_x, median_points_y, color = 'g',label = "Median",linewidth=1)
+    ## convert time stamps to date data types
+    ensemble_outlier_timestamps_dates = []
+    for outlier_x_string in ensemble_outliers['timestamp']:
+        ensemble_outlier_timestamps_dates.append(datetime.datetime.strptime(str(outlier_x_string), '%Y-%m-%d %H:%M:%S'))
+    ensemble_outliers['timestamp'] = ensemble_outlier_timestamps_dates
 
-    median_outliers = detect_median_outliers(34, median_data_coordinates, data_coordinates)
-    median_oulier_x = median_outliers['timestamp']
-    median_oulier_y = median_outliers['data']
-    plt.scatter(median_oulier_x, median_oulier_y,color = 'g',label = "Median Detected",marker='o')
+    ensemble_collected_data = []
 
-    #print('Ideal threshold = ' + str(get_ideal_threshold(anomalies_csv, points_x, median_oulier_x, median_data_coordinates, data_coordinates, 'median_outlier_x')))
+    ## get the detection results
+    ensemble_collected_data = collect_detection_data(ensemble_outliers, 'realTraffic/speed_7578.csv', average_detection_data[0], average_detection_data[1])
 
-    ########## MEDIAN ##########
+    # save the generated ensemble data  
+    save_generated_data('ensemble', ensemble_collected_data)
 
-
-    ########## AVERAGE ##########
-
-    average_data_coordinates = get_moving_average_coordinates(10, data_coordinates)
-    average_points_x = average_data_coordinates['points_average_x']
-    average_points_y = average_data_coordinates['points_average_y']
-    plt.plot(average_points_x, average_points_y, color = 'r',label = "Average",linewidth=1)
-
-    average_outliers = detect_average_outliers(25, average_data_coordinates, data_coordinates)
-    average_oulier_x = average_outliers['timestamp']
-    average_oulier_y = average_outliers['data']
-    plt.scatter(average_oulier_x, average_oulier_y,color = 'r',label = "Average Outliers",marker='o')
-
-    #print('Ideal threshold = ' + str(get_ideal_threshold(anomalies_csv, points_x, average_oulier_x, average_data_coordinates, data_coordinates, 'average_outlier_x')))
-
-    ########## AVERAGE ##########
-
-
-    ####### ensemble
-
-    ensemble_coordinates = get_ensemble_result(median_outliers, average_outliers)
-
-    ensemble_x = ensemble_coordinates['ensemble_outlier_x']
-    ensemble_y = ensemble_coordinates['ensemble_outlier_y']
-
-    plt.scatter(ensemble_x, ensemble_y,color = 'b',label = "Ensemble Outliers",marker='o')
-
-    ######
-
-
-    plt.xticks(rotation = 25)
-    plt.xlabel('Timestamp')
-    plt.ylabel('Data')
-    plt.title(title, fontsize = 20)
-    plt.grid()
-    plt.legend()
-
-    display_results(anomalies_csv, points_x, average_oulier_x)
-
-    return plt
-
-
-
-
-
-
-
-def main():
-    plt = run_detection('resources/speed_7578.csv', 'realTraffic/speed_7578.csv', 'Speed Data against Time (Using average based outlier detection with optimised threshold)')
-    #run_detection('nyc_taxi.csv', 'realKnownCause/nyc_taxi.csv', 'NYC Taxi Data against Time (Using average based outlier detection with optimised threshold)')
-    #run_detection('Twitter_volume_UPS.csv', 'realTweets/Twitter_volume_UPS.csv', 'Twitter Data against Time (Using average based outlier detection with optimised threshold)')
-    #run_detection('machine_temperature_system_failure.csv', 'realKnownCause/machine_temperature_system_failure.csv', 'Machine Temperature Data against Time (Using average based outlier detection with optimised threshold)')
-    #run_detection('ec2_cpu_utilization_fe7f93.csv', 'realAWSCloudwatch/ec2_cpu_utilization_fe7f93.csv', 'AWS Cloud Watch Data against Time (Using average based outlier detection with optimised threshold)')
-    plt.show()
-
-
-if __name__=="__main__":
-    main()
+    ## return the figure
+    return get_fig(ensemble_collected_data, 'speed_7578', 'moving ensemble')
