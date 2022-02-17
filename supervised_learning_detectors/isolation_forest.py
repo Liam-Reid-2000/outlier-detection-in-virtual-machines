@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import IsolationForest
+import plotly.express as px
+import plotly.graph_objects as go
 from app_helper_scripts.app_detection import collect_detection_data
 from app_helper_scripts.app_helper import save_generated_data
 from supervised_learning_detectors.data_splitter import *
@@ -10,13 +12,33 @@ from datetime import *
 
 def train_model(X_train):
     rng = np.random.RandomState(42)
-    clf = IsolationForest(max_samples=100, random_state=rng)
+    clf = IsolationForest(max_samples=20, random_state=rng)
     return clf.fit(X_train)
+
+
+def get_max(arr1, arr2):
+    max_arr_1 = np.max(arr1)
+    max_arr_2 = np.max(arr2)
+    return np.maximum(max_arr_1, max_arr_2)
+
+def get_min(arr1, arr2):
+    min_arr_1 = np.min(arr1)
+    min_arr_2 = np.min(arr2)
+    return np.minimum(min_arr_1, min_arr_2)
+
 
 
 def plot_iso_detection_data(isolation_forest_model, X_train, inliers_detected_x, inliers_detected_y, outliers_detected_x, outliers_detected_y):
     # plot the line, the samples, and the nearest vectors to the plane
-    xx, yy = np.meshgrid(np.linspace(0,1440, 50), np.linspace(0, 100, 50))
+
+    #calc graph bounds
+    min_x = get_min(inliers_detected_x,outliers_detected_x)
+    max_x = get_max(inliers_detected_x,outliers_detected_x)
+    min_y = get_min(inliers_detected_y,outliers_detected_y)
+    max_y = get_max(inliers_detected_y,outliers_detected_y)
+
+
+    xx, yy = np.meshgrid(np.linspace(min_x,max_x, 50), np.linspace(min_y, max_y, 50))
     Z = isolation_forest_model.decision_function(np.c_[xx.ravel(), yy.ravel()])
     Z = Z.reshape(xx.shape)
 
@@ -27,14 +49,30 @@ def plot_iso_detection_data(isolation_forest_model, X_train, inliers_detected_x,
     b2 = plt.scatter(inliers_detected_x, inliers_detected_y, c="green", s=20, edgecolor="k")
     c = plt.scatter(outliers_detected_x, outliers_detected_y, c="red", s=20, edgecolor="k")
     plt.axis("tight")
-    plt.xlim((0, 1440))
-    plt.ylim((0, 100))
+    plt.xlim(min_x, max_x)
+    plt.ylim(min_y, max_y)
     plt.legend(
         [b1, b2, c],
         ["training observations", "new regular observations", "new abnormal observations"],
         loc="upper left",
     )
-    plt.show()
+
+    train_data_df = pd.DataFrame({'minutes': X_train[:, 0],'data': X_train[:, 1]})
+    inliers_data_df = pd.DataFrame({'minutes': inliers_detected_x,'data':inliers_detected_y})
+    outliers_data_df = pd.DataFrame({'minutes': outliers_detected_x,'data':outliers_detected_y})
+
+    fig = px.scatter(train_data_df, x='minutes', y='data',title= 'Data against Time (Using supervised isolation forest based outlier detection)')
+    
+  
+    fig.add_trace(go.Scatter(x=inliers_data_df['minutes'], y=inliers_data_df['data'], mode='markers',name='Inliers Detected', line=dict(color='green')))
+    fig.add_trace(go.Scatter(x=outliers_data_df['minutes'], y=outliers_data_df['data'], mode='markers',name='Outliers Detected', line=dict(color='red')))
+
+    #fig.show()
+
+    #plt.show()
+
+    return fig
+    
 
 
 def split_outliers_inliers(labeled_test_data):
@@ -91,7 +129,7 @@ def do_isolation_forest_detection(split_ratio, dataset, outlier_ref, plot=False)
     save_generated_data('supervised_histogram_' + str(split_ratio), detection_data)
 
     if (plot):
-        plot_iso_detection_data(isolation_forest_model, X_train, 
+        return plot_iso_detection_data(isolation_forest_model, X_train, 
             convert_time_data_to_minutes_of_day(outlier_inliers_split[0]['timestamp']), 
             outlier_inliers_split[0]['data'],
             convert_time_data_to_minutes_of_day(outlier_inliers_split[1]['timestamp']), 

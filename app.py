@@ -118,14 +118,21 @@ app.layout = html.Div([
                         options=[{'label': i[0], 'value': i[0]} for i in get_config('available_supervised_detectors')],
                         value='svm'
                     ),
-                ],style={'width': '30%', 'display': 'inline-block'}),
+                ],style={'width': '20%', 'display': 'inline-block'}),
                 html.Div([
                     dcc.Dropdown(
                         id='available_data_supervised',
                         options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets')],
                         value='speed_7578'
                     ),
-                ],style={'width': '30%', 'display': 'inline-block'}),
+                ],style={'width': '20%', 'display': 'inline-block'}),
+                html.Div([
+                    dcc.Textarea(
+                        id='supervised_test_train_split_ratio',
+                        value='0.75',
+                        style={'width': '100%', 'height': '100%'},
+                    ),
+                ],style={'width': '20%', 'display': 'inline-block'}),
             ]),
 
             ### The Graph ### 
@@ -297,30 +304,34 @@ def plot_graph(data, detector):
 @app.callback(
     Output('supervised-plots_supervised', 'figure'),
     [Input('available_data_supervised','value'),
-    Input('available_detectors_supervised','value')]
+    Input('available_detectors_supervised','value'),
+    Input('supervised_test_train_split_ratio', 'value')]
 )
-def plot_graph(data, detector):
-    detection_data = do_isolation_forest_detection(0.75, 'resources/speed_7578.csv', 'realTraffic/speed_7578.csv', False)
+def plot_graph(data, detector,ratio):
+    detection_data = do_isolation_forest_detection(float(ratio), 'resources/' + data + '.csv', get_outlier_ref(data), False)
     return get_fig(detection_data, "speed", "isolation forest")
 
 @app.callback(
     Output('live-update-results_supervised', 'children'),
     [Input('available_data_supervised','value'),
     Input('available_detectors_supervised','value'),
-    Input('btn_refresh_supervised', 'n_clicks')]
+    Input('btn_refresh_supervised', 'n_clicks'),
+    Input('supervised_test_train_split_ratio', 'value')]
 )
-def update_results(data, detector, n_clicks):
+def update_results(data, detector, n_clicks, ratio):
     try:
-        return get_result_data('supervised_histogram_0.75/supervised_histogram_0.75_results.csv')
+        return get_result_data('supervised_histogram_'+ratio+'/supervised_histogram_'+ratio+'_results.csv')
     except:
         print('Error when getting results')
 
 @app.callback(
     Output('supervised_plots_supervised_learning','figure'),
-    [Input('btn_show_supervised', 'n_clicks')]
+    [Input('available_data_supervised','value'),
+    Input('btn_show_supervised', 'n_clicks'),
+    Input('supervised_test_train_split_ratio', 'value')]
 )
-def update_results(n_clicks):
-    detection_data = do_isolation_forest_detection(0.75, 'resources/speed_7578.csv', 'realTraffic/speed_7578.csv', truncate)
+def update_results(data, n_clicks, ratio):
+    return do_isolation_forest_detection(float(ratio), 'resources/' + data + '.csv', get_outlier_ref(data), True)
 
         
 
