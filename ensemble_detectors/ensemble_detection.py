@@ -1,9 +1,9 @@
 from asyncio.windows_events import NULL
 import pandas as pd
 import datetime
-from app_helper_scripts.app_detection import collect_detection_data
+from app_helper_scripts.app_detection import collect_detection_data_known_outliers
 
-from app_helper_scripts.app_helper import get_detection_data_known_outliers, get_detector_threshold, get_fig, save_generated_data
+from app_helper_scripts.app_helper import get_detection_data_known_outliers, get_detector_threshold, get_fig_known_outliers, save_generated_data
 from ensemble_detectors.ensemble_voting import get_ensemble_result
 
 def get_ensemble_fig(ensemble_detector_list):
@@ -38,10 +38,10 @@ def get_ensemble_fig(ensemble_detector_list):
     ensemble_collected_data = []
 
     ## get the detection results
-    ensemble_collected_data = collect_detection_data(ensemble_outliers, 'realTraffic/speed_7578.csv', average_detection_data[0], average_detection_data[1])
+    ensemble_collected_data = collect_detection_data_known_outliers(ensemble_outliers, 'realTraffic/speed_7578.csv', average_detection_data[0], average_detection_data[1])
 
     # save the generated ensemble data  
     save_generated_data('ensemble', ensemble_collected_data)
 
     ## return the figure
-    return get_fig(ensemble_collected_data, 'speed_7578', 'moving ensemble')
+    return get_fig_known_outliers(ensemble_collected_data, 'speed_7578', 'moving ensemble')

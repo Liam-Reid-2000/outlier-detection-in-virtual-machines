@@ -321,7 +321,7 @@ def update_results(data, detector, n_clicks):
 )
 def plot_graph(data, detector):
     detection_data = get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector))
-    return get_fig(detection_data, data, detector)
+    return get_fig_known_outliers(detection_data, data, detector)
 
 
 ################################
@@ -341,9 +341,9 @@ def plot_graph(detector, data_subset, dataset):
     timestamp = data['year_month']
     data = data[data_subset]
     health_data = pd.DataFrame({'timestamp':timestamp,'data':data})
-    fig = px.line(health_data, x='timestamp', y='data',title= dataset + ': ' + data_subset + ' per month (Using '+detector+'-based outlier detection)')
-    #detection_data = run_detection(detector, 0, 0, 0, health_data)
-    return fig #get_fig(detection_data, dataset, detector)
+    #fig = px.line(health_data, x='timestamp', y='data',title= dataset + ': ' + data_subset + ' per month (Using '+detector+'-based outlier detection)')
+    detection_data = get_detection_data(detector, dataset + '_' + data_subset, health_data)
+    return get_fig(detection_data, dataset + '_' + data_subset, detector)
 
 
 # HEALTH DATA
@@ -362,7 +362,7 @@ def plot_graph(detector, data_subset, dataset):
 )
 def plot_graph(data, detector,ratio):
     detection_data = do_isolation_forest_detection(float(ratio), 'resources/' + data + '.csv', get_outlier_ref(data), False)
-    return get_fig(detection_data, "speed", "isolation forest")
+    return get_fig_known_outliers(detection_data, "speed", "isolation forest")
 
 @app.callback(
     Output('live-update-results_supervised', 'children'),

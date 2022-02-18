@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.ensemble import IsolationForest
 import plotly.express as px
 import plotly.graph_objects as go
-from app_helper_scripts.app_detection import collect_detection_data
+from app_helper_scripts.app_detection import collect_detection_data_known_outliers
 from app_helper_scripts.app_helper import save_generated_data
 from supervised_learning_detectors.data_splitter import *
 from datetime import *
@@ -133,7 +133,7 @@ def do_isolation_forest_detection(split_ratio, dataset, outlier_ref, plot=False)
 
     outlier_areas = get_outlier_areas(outlier_data[2],outlier_ref)
 
-    detection_data = collect_detection_data(outlier_inliers_split[1], outlier_ref,split_data[4],split_data[5], outlier_areas)
+    detection_data = collect_detection_data_known_outliers(outlier_inliers_split[1], outlier_ref,split_data[4],split_data[5], outlier_areas)
 
     # save the generated data  
     save_generated_data('supervised_histogram_' + str(split_ratio), detection_data)

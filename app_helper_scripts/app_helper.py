@@ -6,7 +6,7 @@ from dash import html
 import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
-from app_helper_scripts.app_detection import run_detection
+from app_helper_scripts.app_detection import run_detection_known_outliers, run_detection
 from app_helper_scripts.csv_helper import *
 
 def get_detector_threshold(ref):
@@ -67,6 +67,34 @@ def save_generated_data(requested_data, detection_data):
 
 
 
+def get_detection_data(model, data_to_run, data_coordinates, threshold=0):
+    requested_data = model + '_' + data_to_run
+
+    detection_data = []
+
+    if (os.path.isdir('generated_data/' + requested_data)):
+
+        file = open ('generated_data/'+requested_data+'/'+requested_data+'_plots.csv')
+        csvreader = csv.reader(file)
+        for row in csvreader:
+            detection_data.append(row)
+
+        file = open ('generated_data/'+requested_data+'/'+requested_data+'_detected_outliers.csv')
+        csvreader = csv.reader(file)
+        for row in csvreader:
+            detection_data.append(row)
+
+        file = open ('generated_data/'+requested_data+'/'+requested_data+'_true_outliers.csv')
+        csvreader = csv.reader(file)
+        for row in csvreader:
+            detection_data.append(row)
+    else:
+        detection_data = run_detection(model, data_coordinates, threshold)
+        #save_generated_data(requested_data, detection_data)
+
+    return detection_data
+
+
 def get_detection_data_known_outliers(model, data_to_run, target_data, threshold):
     requested_data = model + '_' + data_to_run
 
@@ -89,7 +117,7 @@ def get_detection_data_known_outliers(model, data_to_run, target_data, threshold
         for row in csvreader:
             detection_data.append(row)
     else:
-        detection_data = run_detection(model, 'resources/'+data_to_run+'.csv', target_data, threshold)
+        detection_data = run_detection_known_outliers(model, 'resources/'+data_to_run+'.csv', target_data, threshold)
         save_generated_data(requested_data, detection_data)
 
     return detection_data
@@ -97,7 +125,7 @@ def get_detection_data_known_outliers(model, data_to_run, target_data, threshold
 
 
 
-def get_fig(detection_data, data_to_run, model):
+def get_fig_known_outliers(detection_data, data_to_run, model):
 
     pycaret_plots = pd.DataFrame({'timestamp': detection_data[0],'data': detection_data[1]})
     fig = px.line(pycaret_plots, x='timestamp', y='data',title= data_to_run + ' Data against Time (Using '+model+'-based outlier detection)')
@@ -107,6 +135,19 @@ def get_fig(detection_data, data_to_run, model):
     while (i < len(true_outlier_areas['timestamp1'])):
         fig.add_vrect(x0=true_outlier_areas['timestamp1'][i],x1=true_outlier_areas['timestamp2'][i],fillcolor='red',opacity=0.25,line_width=0)
         i += 1
+
+    detected_outliers = pd.DataFrame({'timestamp': detection_data[2],'data': detection_data[3]})
+    fig.add_trace(go.Scatter(x=detected_outliers['timestamp'], y=detected_outliers['data'], mode='markers',name='Outliers Detected', line=dict(color='red')))
+
+    fig.update_layout(autotypenumbers='convert types', xaxis_title='Timestamp', yaxis_title='Data')
+
+    return fig
+
+
+def get_fig(detection_data, data_to_run, model):
+
+    pycaret_plots = pd.DataFrame({'timestamp': detection_data[0],'data': detection_data[1]})
+    fig = px.line(pycaret_plots, x='timestamp', y='data',title= data_to_run + ' Data against Time (Using '+model+'-based outlier detection)')
 
     detected_outliers = pd.DataFrame({'timestamp': detection_data[2],'data': detection_data[3]})
     fig.add_trace(go.Scatter(x=detected_outliers['timestamp'], y=detected_outliers['data'], mode='markers',name='Outliers Detected', line=dict(color='red')))
