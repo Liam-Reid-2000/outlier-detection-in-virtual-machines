@@ -77,36 +77,29 @@ def detect_anomalies(model, data_coordinates):
     return outliers
     
 
-def collect_detection_data_known_outliers(outliers_passed, anomalies_csv_passed, points_x_passed, points_y_passed, real_outlier_areas=[]):
+def collect_detection_data_known_outliers(outliers_df, anomalies_csv_passed, points_x_passed, points_y_passed, real_outlier_areas=[]):
     true_outliers = get_outlier_area_ordinates(anomalies_csv_passed)
     if (len(real_outlier_areas)>0):
         true_outliers = real_outlier_areas
     outliers_x_detected = []
-    outliers_x_detected.clear()
-    outliers_x_detected.append(outliers_passed['timestamp'])
-    detection_data = []
-    detection_data.clear()
-    detection_data.append(points_x_passed)
-    detection_data.append(points_y_passed)
-    detection_data.append(outliers_passed['timestamp'])
-    detection_data.append(outliers_passed['data'])
+    outliers_x_detected.append(outliers_df['timestamp'])
+    detection_data = collect_detection_data(outliers_df, points_x_passed, points_y_passed)
     detection_data.append(true_outliers['first_x'])
     detection_data.append(true_outliers['second_x'])
-    if (anomalies_csv_passed != 0):
-        results = display_results(anomalies_csv_passed, points_x_passed, outliers_x_detected)
-        detection_data.append(results.display_results())
+    results = display_results(anomalies_csv_passed, points_x_passed, outliers_x_detected)
+    detection_data.append(results.display_results())
 
     return detection_data
 
 
-def collect_detection_data(outliers_passed, points_x_passed, points_y_passed):
+def collect_detection_data(outliers_df, points_x, points_y):
     outliers_x_detected = []
-    outliers_x_detected.append(outliers_passed['timestamp'])
+    outliers_x_detected.append(outliers_df['timestamp'])
     detection_data = []
-    detection_data.append(points_x_passed)
-    detection_data.append(points_y_passed)
-    detection_data.append(outliers_passed['timestamp'])
-    detection_data.append(outliers_passed['data'])
+    detection_data.append(points_x)
+    detection_data.append(points_y)
+    detection_data.append(outliers_df['timestamp'])
+    detection_data.append(outliers_df['data'])
 
     return detection_data
 
@@ -143,35 +136,10 @@ def run_detection(model, data_coordinates, threshold):
     return collect_detection_data(outliers, points_x, points_y)
 
 
-def run_detection_known_outliers(model, data_csv, anomalies_csv, threshold, data_coordinates=[]):
-    
-    if (len(data_coordinates)==0):
-        data_coordinates = load_data_coordinates(data_csv)
-    points_x = data_coordinates['timestamp']
-    points_y = data_coordinates['data']
+def run_detection_known_outliers(model, data_csv, anomalies_csv, threshold):
 
-    outliers_x = []
-    outliers_y = []
-    if (model == 'moving_average'):
-        outliers_ = detect_average_outliers(threshold, get_moving_average_coordinates(10, pd.DataFrame({'points_x': points_x,'points_y': points_y})), pd.DataFrame({'points_x': points_x,'points_y': points_y}))
-        outliers_x = outliers_['timestamp']
-        outliers_y = outliers_['data']
-    elif (model == 'moving_median'):
-        outliers_ = detect_median_outliers(threshold, get_moving_median_coordinates(10, pd.DataFrame({'points_x': points_x,'points_y': points_y})), pd.DataFrame({'points_x': points_x,'points_y': points_y}))
-        outliers_x = outliers_['timestamp']
-        outliers_y = outliers_['data']
-    elif (model == 'moving_boxplot'):
-        outliers_ = detect_boxplot_outliers(threshold, 50, pd.DataFrame({'points_x': points_x,'points_y': points_y}))
-        outliers_x = outliers_['timestamp']
-        outliers_y = outliers_['data']
-    elif (model == 'moving_histogram'):
-        outliers_ = detect_histogram_outliers(threshold, pd.DataFrame({'points_x': points_x,'points_y': points_y}))
-        outliers_x = outliers_['timestamp']
-        outliers_y = outliers_['data']
-    else:
-        outliers_ = detect_anomalies(model, data_coordinates)
-        outliers_x = outliers_['timestamp']
-        outliers_y = outliers_['data']
-    outliers = pd.DataFrame({'timestamp': outliers_x,'data': outliers_y})
+    data_coordinates = load_data_coordinates(data_csv)
+    detection_data = run_detection(model, data_coordinates, threshold)
+    outliers_df = pd.DataFrame({'timestamp': detection_data[2],'data': detection_data[3]})
 
-    return collect_detection_data_known_outliers(outliers, anomalies_csv, points_x, points_y)
+    return collect_detection_data_known_outliers(outliers_df, anomalies_csv, data_coordinates['timestamp'], data_coordinates['data'])

@@ -68,31 +68,7 @@ def save_generated_data(requested_data, detection_data):
 
 
 def get_detection_data(model, data_to_run, data_coordinates, threshold=0):
-    requested_data = model + '_' + data_to_run
-
-    detection_data = []
-
-    if (os.path.isdir('generated_data/' + requested_data)):
-
-        file = open ('generated_data/'+requested_data+'/'+requested_data+'_plots.csv')
-        csvreader = csv.reader(file)
-        for row in csvreader:
-            detection_data.append(row)
-
-        file = open ('generated_data/'+requested_data+'/'+requested_data+'_detected_outliers.csv')
-        csvreader = csv.reader(file)
-        for row in csvreader:
-            detection_data.append(row)
-
-        file = open ('generated_data/'+requested_data+'/'+requested_data+'_true_outliers.csv')
-        csvreader = csv.reader(file)
-        for row in csvreader:
-            detection_data.append(row)
-    else:
-        detection_data = run_detection(model, data_coordinates, threshold)
-        #save_generated_data(requested_data, detection_data)
-
-    return detection_data
+    return run_detection(model, data_coordinates, threshold)
 
 
 def get_detection_data_known_outliers(model, data_to_run, target_data, threshold):
@@ -126,28 +102,20 @@ def get_detection_data_known_outliers(model, data_to_run, target_data, threshold
 
 
 def get_fig_known_outliers(detection_data, data_to_run, model):
+    return get_fig(detection_data, data_to_run, model, True)
+
+
+def get_fig(detection_data, data_to_run, model, plot_actual_outliers=False):
 
     pycaret_plots = pd.DataFrame({'timestamp': detection_data[0],'data': detection_data[1]})
     fig = px.line(pycaret_plots, x='timestamp', y='data',title= data_to_run + ' Data against Time (Using '+model+'-based outlier detection)')
 
-    true_outlier_areas = pd.DataFrame({'timestamp1': detection_data[4],'timestamp2': detection_data[5]})
-    i = 0
-    while (i < len(true_outlier_areas['timestamp1'])):
-        fig.add_vrect(x0=true_outlier_areas['timestamp1'][i],x1=true_outlier_areas['timestamp2'][i],fillcolor='red',opacity=0.25,line_width=0)
-        i += 1
-
-    detected_outliers = pd.DataFrame({'timestamp': detection_data[2],'data': detection_data[3]})
-    fig.add_trace(go.Scatter(x=detected_outliers['timestamp'], y=detected_outliers['data'], mode='markers',name='Outliers Detected', line=dict(color='red')))
-
-    fig.update_layout(autotypenumbers='convert types', xaxis_title='Timestamp', yaxis_title='Data')
-
-    return fig
-
-
-def get_fig(detection_data, data_to_run, model):
-
-    pycaret_plots = pd.DataFrame({'timestamp': detection_data[0],'data': detection_data[1]})
-    fig = px.line(pycaret_plots, x='timestamp', y='data',title= data_to_run + ' Data against Time (Using '+model+'-based outlier detection)')
+    if (plot_actual_outliers):
+        true_outlier_areas = pd.DataFrame({'timestamp1': detection_data[4],'timestamp2': detection_data[5]})
+        i = 0
+        while (i < len(true_outlier_areas['timestamp1'])):
+            fig.add_vrect(x0=true_outlier_areas['timestamp1'][i],x1=true_outlier_areas['timestamp2'][i],fillcolor='red',opacity=0.25,line_width=0)
+            i += 1
 
     detected_outliers = pd.DataFrame({'timestamp': detection_data[2],'data': detection_data[3]})
     fig.add_trace(go.Scatter(x=detected_outliers['timestamp'], y=detected_outliers['data'], mode='markers',name='Outliers Detected', line=dict(color='red')))
