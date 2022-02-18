@@ -77,6 +77,13 @@ def get_detection_data_known_outliers(model, data_to_run, target_data, threshold
     detection_data = []
 
     if (os.path.isdir('generated_data/' + requested_data)):
+        #
+    
+        #
+
+        #
+
+        # Remove this repeated code
 
         file = open ('generated_data/'+requested_data+'/'+requested_data+'_plots.csv')
         csvreader = csv.reader(file)
