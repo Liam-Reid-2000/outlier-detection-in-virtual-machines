@@ -320,7 +320,7 @@ def update_results(data, detector, n_clicks):
     Input('available_detectors','value')]
 )
 def plot_graph(data, detector):
-    detection_data = get_detection_data(detector, data, get_outlier_ref(data), get_detector_threshold(detector))
+    detection_data = get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector))
     return get_fig(detection_data, data, detector)
 
 
@@ -342,7 +342,8 @@ def plot_graph(detector, data_subset, dataset):
     data = data[data_subset]
     health_data = pd.DataFrame({'timestamp':timestamp,'data':data})
     fig = px.line(health_data, x='timestamp', y='data',title= dataset + ': ' + data_subset + ' per month (Using '+detector+'-based outlier detection)')
-    return fig
+    #detection_data = run_detection(detector, 0, 0, 0, health_data)
+    return fig #get_fig(detection_data, dataset, detector)
 
 
 # HEALTH DATA

@@ -3,7 +3,7 @@ import pandas as pd
 import datetime
 from app_helper_scripts.app_detection import collect_detection_data
 
-from app_helper_scripts.app_helper import get_detection_data, get_detector_threshold, get_fig, save_generated_data
+from app_helper_scripts.app_helper import get_detection_data_known_outliers, get_detector_threshold, get_fig, save_generated_data
 from ensemble_detectors.ensemble_voting import get_ensemble_result
 
 def get_ensemble_fig(ensemble_detector_list):
@@ -14,7 +14,7 @@ def get_ensemble_fig(ensemble_detector_list):
     detection_data = []
 
     for ensemble_detector in ensemble_detector_list:
-        detection_data.append(get_detection_data(ensemble_detector, 'speed_7578', 'realTraffic/speed_7578.csv', get_detector_threshold(ensemble_detector)))
+        detection_data.append(get_detection_data_known_outliers(ensemble_detector, 'speed_7578', 'realTraffic/speed_7578.csv', get_detector_threshold(ensemble_detector)))
         print('got detection data for ' + ensemble_detector)
     all_outlier_coordinates = []
 
@@ -27,7 +27,7 @@ def get_ensemble_fig(ensemble_detector_list):
     ensemble_outliers = get_ensemble_result(all_outlier_coordinates)
 
     ## Get detection data of average and modify outlier data to include ensemble voting result then plot ##
-    average_detection_data = get_detection_data('moving_average', 'speed_7578', 'realTraffic/speed_7578.csv', 25)
+    average_detection_data = get_detection_data_known_outliers('moving_average', 'speed_7578', 'realTraffic/speed_7578.csv', 25)
 
     ## convert time stamps to date data types
     ensemble_outlier_timestamps_dates = []

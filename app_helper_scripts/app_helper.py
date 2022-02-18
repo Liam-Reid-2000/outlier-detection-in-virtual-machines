@@ -66,7 +66,8 @@ def save_generated_data(requested_data, detection_data):
     write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_results.csv', detection_data[6],'w')
 
 
-def get_detection_data(model, data_to_run, target_data, threshold):
+
+def get_detection_data_known_outliers(model, data_to_run, target_data, threshold):
     requested_data = model + '_' + data_to_run
 
     detection_data = []
