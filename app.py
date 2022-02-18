@@ -1,21 +1,17 @@
-from asyncio.windows_events import NULL
 from dash import dcc
 from dash import html
 import dash
 from dash.dependencies import Output, Input
 import plotly.express as px
 import pandas as pd
-import datetime
 from collections import deque
 from app_helper_scripts.csv_helper import *
 import json
 from ensemble_detectors.ensemble_detection import get_ensemble_fig
 
 from som.outlier_detection_som import detect_som_outliers, detect_som_outliers_circle
-from ensemble_detectors.ensemble_voting import get_ensemble_result
 from app_helper_scripts.average_outlier_detection_stream import get_average, get_data_coordinates, get_stream_fig
 from app_helper_scripts.app_helper import *
-from app_helper_scripts.app_detection import collect_detection_data
 from supervised_learning_detectors.isolation_forest import do_isolation_forest_detection
 
 app = dash.Dash(__name__)
@@ -33,7 +29,52 @@ def get_config(requested_config):
 
 app.layout = html.Div([
     html.H1('Outlier Detection'),
+
+
+    ##################### HEALTH DATA TESTING SPACE ##########################
+
+    html.Div([
+        html.H2('Health Data Experimental Space'),
+            html.Div([
+                html.Div([
+
+                    ### Drop down boxes with options for user ###
+
+                    html.Div([
+                        dcc.Dropdown(
+                            id='available_detectors_health_data',
+                            options=[{'label': i[0], 'value': i[0]} for i in get_config('available_detectors')],
+                            value='moving_average'
+                        ),
+                    ],style={'width': '20%', 'display': 'inline-block'}),
+                    html.Div([
+                        dcc.Dropdown(
+                            id='available_data_health_data',
+                            options=[{'label': i, 'value': i} for i in get_config('available_datasets_health_data')[0]],
+                            value='AnGiang.xlsx'
+                        ),
+                    ],style={'width': '20%', 'display': 'inline-block'}),
+                    html.Div([
+                        dcc.Dropdown(
+                            id='available_data_health_data_subsets',
+                            options=[{'label': i, 'value': i} for i in get_config('available_datasets_health_data_subsets')[0]],
+                            value='Average_temperature'
+                        ),
+                    ],style={'width': '20%', 'display': 'inline-block'}),
+                ]),
+
+                ### The Graph ### 
+                dcc.Graph(
+                    id='plots_health_data'
+                ),
+            ],style={'width': '70%', 'display': 'inline-block'}),
+
+        ],style={'padding': '10px 5px',"border":"2px black solid"}),
     
+
+
+
+
     ### Graph to display classifier detection results ###
 
     html.Div([
@@ -282,6 +323,32 @@ def plot_graph(data, detector):
     detection_data = get_detection_data(detector, data, get_outlier_ref(data), get_detector_threshold(detector))
     return get_fig(detection_data, data, detector)
 
+
+################################
+
+# HEALTH DATA
+
+
+@app.callback(
+    Output('plots_health_data', 'figure'),
+    [Input('available_detectors_health_data','value'),
+    Input('available_data_health_data_subsets','value'),
+    Input('available_data_health_data','value')]
+)
+def plot_graph(detector, data_subset, dataset):
+    file = 'resources/health_data/' + dataset
+    data = pd.read_excel(file)
+    timestamp = data['year_month']
+    data = data[data_subset]
+    health_data = pd.DataFrame({'timestamp':timestamp,'data':data})
+    fig = px.line(health_data, x='timestamp', y='data',title= dataset + ': ' + data_subset + ' per month (Using '+detector+'-based outlier detection)')
+    return fig
+
+
+# HEALTH DATA
+
+################################
+
 ####################################################################################
 
 ### SUPERVISED LEARNING ###
@@ -349,7 +416,7 @@ def update_results_title(average_rd, median_rd, histogram_rd, boxplot_rd):
         ensemble_detector_list.append('moving_histogram')
 
     ## return the figure
-    return get_ensemble_fig(ensemble_detector_list)#(ensemble_collected_data, 'speed_7578', 'moving ensemble')
+    return get_ensemble_fig(ensemble_detector_list)
 
 
 

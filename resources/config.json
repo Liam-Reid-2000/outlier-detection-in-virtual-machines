@@ -64,5 +64,28 @@
             "iforest",
             "0.5"
         ]
+    ],
+    "available_datasets_health_data": [
+        [
+            "AnGiang.xlsx",
+            "BacLieu.xlsx"
+        ]
+    ],
+    "available_datasets_health_data_subsets": [
+        [
+            "Total_Evaporation",
+            "Total_Rainfall",
+            "Max_Daily_Rainfall",
+            "n_raining_days",
+            "Average_temperature",
+            "Max_Average_Temperature",
+            "Min_Average_Temperature",
+            "Max_Asolute_Temperature",
+            "Min_Asolute_Temperature",
+            "Average_Humidity",
+            "Min_Humudity",
+            "n_hours_sunshine",
+            "Dengue_fever_rates"
+        ]
     ]
 }

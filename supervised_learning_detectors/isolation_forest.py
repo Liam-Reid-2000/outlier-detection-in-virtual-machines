@@ -16,6 +16,16 @@ def train_model(X_train):
     return clf.fit(X_train)
 
 
+def make_prediction(model, x, y):
+    new_data_to_predict_x = []
+    new_data_to_predict_y = []
+    new_data_to_predict_x.append(x)
+    new_data_to_predict_y.append(y)
+    to_predict = np.r_['1,2,0', new_data_to_predict_x, new_data_to_predict_y]
+    print(model.predict(to_predict))
+
+
+
 def get_max(arr1, arr2):
     max_arr_1 = np.max(arr1)
     max_arr_2 = np.max(arr2)
@@ -135,21 +145,16 @@ def do_isolation_forest_detection(split_ratio, dataset, outlier_ref, plot=False)
             convert_time_data_to_minutes_of_day(outlier_inliers_split[1]['timestamp']), 
             outlier_inliers_split[1]['data'])
 
+    #make_prediction(isolation_forest_model, 700, 70)
+    #make_prediction(isolation_forest_model, 700, 0)
+    #make_prediction(isolation_forest_model, 700, 50)
+    #make_prediction(isolation_forest_model, 700, 110)
+
     return detection_data
 
     
 
 #do_isolation_forest_detection(0.75)
-
-
-
-
-#new_data_to_predict_x = []
-    #new_data_to_predict_y = []
-    #new_data_to_predict_x.append(700)
-    #new_data_to_predict_y.append(0)
-    #to_predict = np.r_['1,2,0', new_data_to_predict_x, new_data_to_predict_y]
-    #print(isolation_forest_model.predict(to_predict))
 
 
 
