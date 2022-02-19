@@ -1,7 +1,7 @@
 import unittest
 
-from moving_median_detection import *
-from moving_average_detection import *
+from ensemble_detectors.moving_median_detection import get_median
+from ensemble_detectors.moving_average_detection import get_average
 
 class outlier_detection_test(unittest.TestCase):
 

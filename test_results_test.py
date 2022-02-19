@@ -2,7 +2,7 @@ import unittest
 import csv
 import datetime
 
-from display_results import display_results
+from app_helper_scripts.display_results import display_results
 
 class outlier_detection_test(unittest.TestCase):
 
