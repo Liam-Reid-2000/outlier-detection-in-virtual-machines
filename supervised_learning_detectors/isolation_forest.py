@@ -42,30 +42,30 @@ def plot_iso_detection_data(isolation_forest_model, X_train, inliers_detected_x,
     # plot the line, the samples, and the nearest vectors to the plane
 
     #calc graph bounds
-    min_x = get_min(inliers_detected_x,outliers_detected_x)
-    max_x = get_max(inliers_detected_x,outliers_detected_x)
-    min_y = get_min(inliers_detected_y,outliers_detected_y)
-    max_y = get_max(inliers_detected_y,outliers_detected_y)
+    #min_x = get_min(inliers_detected_x,outliers_detected_x)
+    #max_x = get_max(inliers_detected_x,outliers_detected_x)
+    #min_y = get_min(inliers_detected_y,outliers_detected_y)
+    #max_y = get_max(inliers_detected_y,outliers_detected_y)
 
 
-    xx, yy = np.meshgrid(np.linspace(min_x,max_x, 50), np.linspace(min_y, max_y, 50))
-    Z = isolation_forest_model.decision_function(np.c_[xx.ravel(), yy.ravel()])
-    Z = Z.reshape(xx.shape)
+    #xx, yy = np.meshgrid(np.linspace(min_x,max_x, 50), np.linspace(min_y, max_y, 50))
+    #Z = isolation_forest_model.decision_function(np.c_[xx.ravel(), yy.ravel()])
+    #Z = Z.reshape(xx.shape)
 
-    plt.title("Isolation Forest")
-    plt.contourf(xx, yy, Z, cmap=plt.cm.Blues_r)
+    #plt.title("Isolation Forest")
+    #plt.contourf(xx, yy, Z, cmap=plt.cm.Blues_r)
 
-    b1 = plt.scatter(X_train[:, 0], X_train[:, 1], c="white", s=20, edgecolor="k")
-    b2 = plt.scatter(inliers_detected_x, inliers_detected_y, c="green", s=20, edgecolor="k")
-    c = plt.scatter(outliers_detected_x, outliers_detected_y, c="red", s=20, edgecolor="k")
-    plt.axis("tight")
-    plt.xlim(min_x, max_x)
-    plt.ylim(min_y, max_y)
-    plt.legend(
-        [b1, b2, c],
-        ["training observations", "new regular observations", "new abnormal observations"],
-        loc="upper left",
-    )
+    #b1 = plt.scatter(X_train[:, 0], X_train[:, 1], c="white", s=20, edgecolor="k")
+    #b2 = plt.scatter(inliers_detected_x, inliers_detected_y, c="green", s=20, edgecolor="k")
+    #c = plt.scatter(outliers_detected_x, outliers_detected_y, c="red", s=20, edgecolor="k")
+    #plt.axis("tight")
+    #plt.xlim(min_x, max_x)
+    #plt.ylim(min_y, max_y)
+    #plt.legend(
+    #    [b1, b2, c],
+    #    ["training observations", "new regular observations", "new abnormal observations"],
+    #    loc="upper left",
+    #)
 
     train_data_df = pd.DataFrame({'minutes': X_train[:, 0],'data': X_train[:, 1]})
     inliers_data_df = pd.DataFrame({'minutes': inliers_detected_x,'data':inliers_detected_y})

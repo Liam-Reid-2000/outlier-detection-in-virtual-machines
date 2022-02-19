@@ -112,6 +112,10 @@ def get_fig_known_outliers(detection_data, data_to_run, model):
     return get_fig(detection_data, data_to_run, model, True)
 
 
+def get_fig_with_training_points():
+    print('')
+
+
 def get_fig(detection_data, data_to_run, model, plot_actual_outliers=False):
 
     pycaret_plots = pd.DataFrame({'timestamp': detection_data[0],'data': detection_data[1]})
