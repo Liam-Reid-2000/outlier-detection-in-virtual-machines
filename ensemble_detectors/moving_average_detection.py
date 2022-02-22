@@ -22,14 +22,16 @@ def get_moving_average_coordinates(average_interval, data_points):
     average_point_x = []
 
     i = 0
-    while (i < (len(points_y)-average_interval)):
-        previous_five_y = []
+    while (i < (len(points_y))):
+        previous_points = []
         j = 0
         while (j < average_interval):
-            previous_five_y.append(points_y[i+j])
+            if (i-j>0):
+                previous_points.append(points_y[i-j])
             j += 1
-        average_point_y.append(get_average(previous_five_y))
-        average_point_x.append(points_x[i])
+        if len(previous_points)>0:
+            average_point_y.append(get_average(previous_points))
+            average_point_x.append(points_x[i])
         i = i + 1
     
 
@@ -46,51 +48,40 @@ def detect_average_outliers(threshold, average_points, data_points):
     points_x = data_points['points_x']
     points_y = data_points['points_y']
 
-    bound = (find_threshold(points_y))
+    bound_mult = 1.5
+    bound = (find_threshold(points_y)*bound_mult)
 
     i = 0
     while i < len(average_points_x):
-        #if ((points_y[i] < (average_points_y[i]-int(threshold))) or (points_y[i] > (average_points_y[i]+int(threshold)))):
         if ((points_y[i] < (average_points_y[i]-int(bound))) or (points_y[i] > (average_points_y[i]+int(bound)))):
-            print('---------------------------------------------')
-            print('This comparison')
-            print('point x = ' + str(points_x[i]))
-            print('point_y = ' + str(points_y[i]))
-            print('std = ' + str(bound))
-            print('average point y = ' + str(average_points_y[i]))
-            print('average point x = ' + str(average_points_x[i]))
-            print('upper bound = ' + str(average_points_y[i] + bound))
-            print('lower bound = ' + str(average_points_y[i] - bound))
-
-
-            print('This comparison')
-            print('---------------------------------------------')
             detected_ouliters_x.append(points_x[i])
             detected_ouliters_y.append(points_y[i])
         i += 1
+
     
     ##########################################################################################
     ##########################################################################################
-    plt.plot(points_x,points_y)
-    plt.xlabel('X-axis')
-    plt.ylabel('Y-axis')
-    plt.title("A simple line graph")
-    plt.plot(average_points_x, average_points_y)
+    ### SHOW THE THRESHOLDS AND OUTLIERS FALLING OUTSIDE ###
+    #plt.plot(points_x,points_y)
+    #plt.xlabel('X-axis')
+    #plt.ylabel('Y-axis')
+    #plt.title("A simple line graph")
+    #plt.plot(average_points_x, average_points_y)
 
-    bound = (find_threshold(points_y))
+    #bound = (find_threshold(points_y))
 
-    new_point_y = []
-    for i in average_points_y:
-        new_point_y.append(i + bound)
-    plt.plot(average_points_x, new_point_y)
+    #new_point_y = []
+    #for i in average_points_y:
+    #    new_point_y.append(i + bound)
+    #plt.plot(average_points_x, new_point_y)
     
     
-    new_point_y = []
-    for i in average_points_y:
-        new_point_y.append(i - bound)
-    plt.plot(average_points_x, new_point_y)
+    #new_point_y = []
+    #for i in average_points_y:
+    #    new_point_y.append(i - bound)
+    #plt.plot(average_points_x, new_point_y)
     
-    plt.scatter(detected_ouliters_x, detected_ouliters_y, color='red')
+    #plt.scatter(detected_ouliters_x, detected_ouliters_y, color='red')
 
     #plt.show()
     ##########################################################################################

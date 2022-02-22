@@ -6,7 +6,7 @@ from dash import html
 import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
-from app_helper_scripts.app_detection import run_detection_known_outliers, run_detection
+from app_helper_scripts.app_detection import run_detection_known_outliers, run_detection, run_detection_months
 from app_helper_scripts.csv_helper import *
 
 def get_detector_threshold(ref):
@@ -70,6 +70,8 @@ def save_generated_data(requested_data, detection_data):
 def get_detection_data(model, data_to_run, data_coordinates, threshold=0):
     return run_detection(model, data_coordinates, threshold)
 
+def get_detection_data_months(model, data_to_run, data_coordinates, threshold=0):
+    return run_detection_months(model, data_coordinates, threshold)
 
 def get_detection_data_known_outliers(model, data_to_run, target_data, threshold):
     requested_data = model + '_' + data_to_run

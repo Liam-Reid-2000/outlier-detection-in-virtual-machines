@@ -1,6 +1,4 @@
-import matplotlib.pyplot as plt
 from datetime import datetime
-from pycaret.anomaly import *
 import pandas as pd
 import csv
 import json
@@ -9,8 +7,7 @@ from ensemble_detectors.moving_median_detection import *
 from ensemble_detectors.moving_boxplot import *
 from ensemble_detectors.moving_histogram_detection import *
 from app_helper_scripts.display_results import display_results
-
-outliers_x_detected = []
+from unsupervised_detection.pycaret_detection import detect_outliers_with_pycaret
 
 
 def get_no_outliers(target_data):
@@ -28,7 +25,7 @@ def load_data_coordinates(csv_file_name):
         for row in lines:
             try:
                 points_y.append(float(row[1]))
-                points_x.append(datetime.datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S'))
+                points_x.append(datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S'))
             except ValueError:
                 print("error")
         return pd.DataFrame({'timestamp':points_x,'data':points_y})
@@ -41,40 +38,10 @@ def get_outlier_area_ordinates(target_data):
     arrX1 = []
     arrX2 = []
     for i in data[target_data]:
-        arrX1.append(datetime.datetime.strptime(i[0], '%Y-%m-%d %H:%M:%S.%f'))
-        arrX2.append(datetime.datetime.strptime(i[1], '%Y-%m-%d %H:%M:%S.%f'))
+        arrX1.append(datetime.strptime(i[0], '%Y-%m-%d %H:%M:%S.%f'))
+        arrX2.append(datetime.strptime(i[1], '%Y-%m-%d %H:%M:%S.%f'))
     f.close()
     return pd.DataFrame({'first_x': arrX1, 'second_x': arrX2})
-
-
-def detect_anomalies(model, data_coordinates):
-    points_x = data_coordinates['timestamp']
-    points_y = data_coordinates['data']
-
-    data = pd.DataFrame({'timestamp': points_x,
-                    'data': points_y})
-    data.set_index('timestamp', drop=True, inplace=True)
-    data['day'] = [i.day for i in data.index]
-    data['day_name'] = [i.day_name() for i in data.index]
-    data['day_of_year'] = [i.dayofyear for i in data.index]
-    data['week_of_year'] = [i.weekofyear for i in data.index]
-    data['hour'] = [i.hour for i in data.index] # only use this for speed data, commetn rest
-    data['is_weekday'] = [i.isoweekday() for i in data.index]
-    data.head()
-
-    s = setup(data, session_id = 123, silent = True)
-    myModel = create_model(model, fraction = 0.05)#, fraction = outlierCount/len(points_x))
-
-    myModel_results = assign_model(myModel)
-    myModel_results.head()
-    myModel_results[myModel_results['Anomaly'] == 1].head()
-    outlier_dates = myModel_results[myModel_results['Anomaly'] == 1].index
-    y_values = [myModel_results.loc[i]['data'] for i in outlier_dates]
-
-    outliers = pd.DataFrame({'timestamp': outlier_dates,
-                    'data': y_values})
-
-    return outliers
     
 
 def collect_detection_data_known_outliers(outliers_df, anomalies_csv_passed, points_x_passed, points_y_passed, real_outlier_areas=[]):
@@ -104,7 +71,7 @@ def collect_detection_data(outliers_df, points_x, points_y):
     return detection_data
 
 
-def run_detection(model, data_coordinates, threshold):
+def run_detection(model, data_coordinates, threshold, interval=10):
     
     points_x = data_coordinates['timestamp']
     points_y = data_coordinates['data']
@@ -112,15 +79,15 @@ def run_detection(model, data_coordinates, threshold):
     outliers_x = []
     outliers_y = []
     if (model == 'moving_average'):
-        outliers_ = detect_average_outliers(threshold, get_moving_average_coordinates(10, pd.DataFrame({'points_x': points_x,'points_y': points_y})), pd.DataFrame({'points_x': points_x,'points_y': points_y}))
+        outliers_ = detect_average_outliers(threshold, get_moving_average_coordinates(interval, pd.DataFrame({'points_x': points_x,'points_y': points_y})), pd.DataFrame({'points_x': points_x,'points_y': points_y}))
         outliers_x = outliers_['timestamp']
         outliers_y = outliers_['data']
     elif (model == 'moving_median'):
-        outliers_ = detect_median_outliers(threshold, get_moving_median_coordinates(10, pd.DataFrame({'points_x': points_x,'points_y': points_y})), pd.DataFrame({'points_x': points_x,'points_y': points_y}))
+        outliers_ = detect_median_outliers(threshold, get_moving_median_coordinates(interval, pd.DataFrame({'points_x': points_x,'points_y': points_y})), pd.DataFrame({'points_x': points_x,'points_y': points_y}))
         outliers_x = outliers_['timestamp']
         outliers_y = outliers_['data']
     elif (model == 'moving_boxplot'):
-        outliers_ = detect_boxplot_outliers(threshold, 50, pd.DataFrame({'points_x': points_x,'points_y': points_y}))
+        outliers_ = detect_boxplot_outliers(threshold, interval, pd.DataFrame({'points_x': points_x,'points_y': points_y}))
         outliers_x = outliers_['timestamp']
         outliers_y = outliers_['data']
     elif (model == 'moving_histogram'):
@@ -128,12 +95,62 @@ def run_detection(model, data_coordinates, threshold):
         outliers_x = outliers_['timestamp']
         outliers_y = outliers_['data']
     else:
-        outliers_ = detect_anomalies(model, data_coordinates)
+        outliers_ = detect_outliers_with_pycaret(model, data_coordinates)
         outliers_x = outliers_['timestamp']
         outliers_y = outliers_['data']
     outliers = pd.DataFrame({'timestamp': outliers_x,'data': outliers_y})
 
     return collect_detection_data(outliers, points_x, points_y)
+
+
+
+def split_data_to_months(timestamps, data):
+    data_split_to_months_x = []
+    data_split_to_months_y = []
+    i = 0
+    while i < 12:
+        arr = []
+        data_split_to_months_x.append(arr)
+        arrtoo = []
+        data_split_to_months_y.append(arrtoo)
+        i += 1
+
+    i = 0
+    while i < len(timestamps):
+        data_split_to_months_x[timestamps[i].month-1].append(timestamps[i])
+        data_split_to_months_y[timestamps[i].month-1].append(data[i])
+        i += 1
+
+
+    # list of data frames
+    separated_months_as_dataframes = []
+    i = 0
+    while i < len(data_split_to_months_x):
+        df = pd.DataFrame({'timestamp':data_split_to_months_x[i], 'data':data_split_to_months_y[i]})
+        separated_months_as_dataframes.append(df)
+        i += 1
+    return separated_months_as_dataframes
+
+
+
+def run_detection_months(model, data_coordinates, threshold, interval=5):
+    
+    points_x = data_coordinates['timestamp']
+    points_y = data_coordinates['data']
+    
+    separated_months_as_dataframes = split_data_to_months(points_x, points_y)
+    all_outliers_x = []
+    all_outliers_y = []
+
+    for i in separated_months_as_dataframes:
+        detection_data = run_detection(model, i, threshold, interval)
+        for j in detection_data[2]:
+            all_outliers_x.append(j)
+        for j in detection_data[3]:
+            all_outliers_y.append(j)
+
+    all_outliers_df = pd.DataFrame({'timestamp':all_outliers_x,'data':all_outliers_y})
+    return collect_detection_data(all_outliers_df, points_x, points_y)
 
 
 def run_detection_known_outliers(model, data_csv, anomalies_csv, threshold):

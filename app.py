@@ -341,8 +341,7 @@ def plot_graph(detector, data_subset, dataset):
     timestamp = data['year_month']
     data = data[data_subset]
     health_data = pd.DataFrame({'timestamp':timestamp,'data':data})
-    #fig = px.line(health_data, x='timestamp', y='data',title= dataset + ': ' + data_subset + ' per month (Using '+detector+'-based outlier detection)')
-    detection_data = get_detection_data(detector, dataset + '_' + data_subset, health_data)
+    detection_data = get_detection_data_months(detector, dataset + '_' + data_subset, health_data)
     return get_fig(detection_data, dataset + '_' + data_subset, detector)
 
 
