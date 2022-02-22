@@ -465,12 +465,15 @@ Y.append(1)
 Yavg = deque(maxlen = 30)
 Yavg.append(1)
 
+Current_Data = ''
+
 @app.callback(
     Output('live-graph', 'figure'),
     [ Input('graph-update', 'n_intervals'),
     Input('available_data_real_time_detection','value') ]
 )
 def update_graph_scatter(n,data):
+
 
     dc = get_data_coordinates('resources/'+data+'.csv')
     points_x = dc['points_x']

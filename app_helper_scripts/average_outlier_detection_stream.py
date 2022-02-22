@@ -34,7 +34,7 @@ def get_data_coordinates(csv_file_name):
                 points_y.append(float(row[1]))
                 points_x.append(datetime.datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S'))
             except ValueError:
-                print("error")
+                o=1#print("error")
     return pd.DataFrame({'points_x': points_x,'points_y': points_y})
 
 
