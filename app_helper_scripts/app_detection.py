@@ -7,7 +7,7 @@ from ensemble_detectors.moving_median_detection import *
 from ensemble_detectors.moving_boxplot import *
 from ensemble_detectors.moving_histogram_detection import *
 from app_helper_scripts.display_results import display_results
-from unsupervised_detection.pycaret_detection import detect_outliers_with_pycaret
+from unsupervised_detectors.pycaret_detection import detect_outliers_with_pycaret
 
 
 def get_no_outliers(target_data):
@@ -78,6 +78,7 @@ def run_detection(model, data_coordinates, threshold, interval=10):
 
     outliers_x = []
     outliers_y = []
+    #use switch case here
     if (model == 'moving_average'):
         outliers_ = detect_average_outliers(threshold, get_moving_average_coordinates(interval, pd.DataFrame({'points_x': points_x,'points_y': points_y})), pd.DataFrame({'points_x': points_x,'points_y': points_y}))
         outliers_x = outliers_['timestamp']
@@ -153,10 +154,10 @@ def run_detection_months(model, data_coordinates, threshold, interval=5):
     return collect_detection_data(all_outliers_df, points_x, points_y)
 
 
-def run_detection_known_outliers(model, data_csv, anomalies_csv, threshold):
+def run_detection_known_outliers(model, data_csv, outliers_csv, threshold):
 
     data_coordinates = load_data_coordinates(data_csv)
     detection_data = run_detection(model, data_coordinates, threshold)
     outliers_df = pd.DataFrame({'timestamp': detection_data[2],'data': detection_data[3]})
 
-    return collect_detection_data_known_outliers(outliers_df, anomalies_csv, data_coordinates['timestamp'], data_coordinates['data'])
+    return collect_detection_data_known_outliers(outliers_df, outliers_csv, data_coordinates['timestamp'], data_coordinates['data'])

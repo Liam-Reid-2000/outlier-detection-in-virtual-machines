@@ -57,6 +57,10 @@
         [
             "moving_histogram",
             "7"
+        ],
+        [
+            "full_ensemble",
+            "4"
         ]
     ],
     "available_supervised_detectors": [

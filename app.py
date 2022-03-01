@@ -7,7 +7,7 @@ import pandas as pd
 from collections import deque
 from app_helper_scripts.csv_helper import *
 import json
-from ensemble_detectors.ensemble_detection import get_ensemble_fig
+from ensemble_detectors.ensemble_detection import detect__outliers_full_ensemble, get_ensemble_detection_data
 
 from som.outlier_detection_som import detect_som_outliers, detect_som_outliers_circle
 from app_helper_scripts.average_outlier_detection_stream import get_average, get_data_coordinates, get_stream_fig
@@ -224,6 +224,18 @@ app.layout = html.Div([
     html.Div([
         html.H2("Ensemble of Detectors"),
         html.H3("Graph demonstrating how an ensemble of weak classifiers are strong outlier detectors"),
+
+        html.Div([
+
+            ### Drop down boxes with options for user ###
+            html.Div([
+                dcc.Dropdown(
+                    id='available_data_ensemble',
+                    options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets')],
+                    value='speed_7578'
+                ),
+            ],style={'width': '20%', 'display': 'inline-block'}),
+        ]),
         
         # Moving Average
         html.H3('Moving Average'),
@@ -320,7 +332,10 @@ def update_results(data, detector, n_clicks):
     Input('available_detectors','value')]
 )
 def plot_graph(data, detector):
-    detection_data = get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector))
+    if (detector == 'full_ensemble'):
+        detection_data = detect__outliers_full_ensemble(data, get_outlier_ref(data))
+    else:
+        detection_data = get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector))
     return get_fig_known_outliers(detection_data, data, detector)
 
 
@@ -398,12 +413,12 @@ def update_results(data, n_clicks, ratio):
     [Input('ensemble-average-radio-btns','value'),
     Input('ensemble-median-radio-btns','value'),
     Input('ensemble-histogram-radio-btns','value'),
-    Input('ensemble-boxplot-radio-btns','value')]
+    Input('ensemble-boxplot-radio-btns','value'),
+    Input('available_data_ensemble','value')]
 )
-def update_results_title(average_rd, median_rd, histogram_rd, boxplot_rd):
+def update_results_title(average_rd, median_rd, histogram_rd, boxplot_rd, data):
 
     ensemble_detector_list = []
-    ensemble_detector_list.clear()
 
     # Check which detectors user has selected
     if (average_rd == 'On'):
@@ -415,8 +430,10 @@ def update_results_title(average_rd, median_rd, histogram_rd, boxplot_rd):
     if (histogram_rd == 'On'):
         ensemble_detector_list.append('moving_histogram')
 
+    detection_data = get_ensemble_detection_data(ensemble_detector_list, data, get_outlier_ref(data))
+
     ## return the figure
-    return get_ensemble_fig(ensemble_detector_list)
+    return get_fig_known_outliers(detection_data, data, 'moving ensemble')
 
 
 
