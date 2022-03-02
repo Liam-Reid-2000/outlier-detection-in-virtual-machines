@@ -2,6 +2,7 @@ from datetime import datetime
 import pandas as pd
 import csv
 import json
+from ensemble_detectors.ensemble_voting import get_ensemble_result
 from ensemble_detectors.moving_average_detection import *
 from ensemble_detectors.moving_median_detection import *
 from ensemble_detectors.moving_boxplot import *
@@ -76,25 +77,36 @@ def run_detection(model, data_coordinates, threshold, interval=10):
     points_x = data_coordinates['timestamp']
     points_y = data_coordinates['data']
 
+    data_coordinates_renamed = pd.DataFrame({'points_x': points_x,'points_y': points_y})
+
     outliers_x = []
     outliers_y = []
     #use switch case here
     if (model == 'moving_average'):
-        outliers_ = detect_average_outliers(threshold, get_moving_average_coordinates(interval, pd.DataFrame({'points_x': points_x,'points_y': points_y})), pd.DataFrame({'points_x': points_x,'points_y': points_y}))
+        outliers_ = detect_average_outliers(threshold, get_moving_average_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed)
         outliers_x = outliers_['timestamp']
         outliers_y = outliers_['data']
     elif (model == 'moving_median'):
-        outliers_ = detect_median_outliers(threshold, get_moving_median_coordinates(interval, pd.DataFrame({'points_x': points_x,'points_y': points_y})), pd.DataFrame({'points_x': points_x,'points_y': points_y}))
+        outliers_ = detect_median_outliers(threshold, get_moving_median_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed)
         outliers_x = outliers_['timestamp']
         outliers_y = outliers_['data']
     elif (model == 'moving_boxplot'):
-        outliers_ = detect_boxplot_outliers(threshold, interval, pd.DataFrame({'points_x': points_x,'points_y': points_y}))
+        outliers_ = detect_boxplot_outliers(threshold, interval, data_coordinates_renamed)
         outliers_x = outliers_['timestamp']
         outliers_y = outliers_['data']
     elif (model == 'moving_histogram'):
-        outliers_ = detect_histogram_outliers(threshold, pd.DataFrame({'points_x': points_x,'points_y': points_y}))
+        outliers_ = detect_histogram_outliers(threshold,interval, data_coordinates_renamed)
         outliers_x = outliers_['timestamp']
         outliers_y = outliers_['data']
+    elif (model == 'full_ensemble'):
+        ensemble_outliers = []
+        ensemble_outliers.append(detect_average_outliers(threshold, get_moving_average_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
+        ensemble_outliers.append(detect_median_outliers(threshold, get_moving_median_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
+        ensemble_outliers.append(detect_boxplot_outliers(threshold, interval, data_coordinates_renamed))
+        ensemble_outliers.append(detect_histogram_outliers(threshold,interval, data_coordinates_renamed))
+        outliers_after_voting = get_ensemble_result(ensemble_outliers)
+        outliers_x = outliers_after_voting['timestamp']
+        outliers_y = outliers_after_voting['data']
     else:
         outliers_ = detect_outliers_with_pycaret(model, data_coordinates)
         outliers_x = outliers_['timestamp']

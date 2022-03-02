@@ -197,7 +197,7 @@ app.layout = html.Div([
         dcc.Graph(id = 'live-graph', animate = True),
         dcc.Interval(
             id = 'graph-update',
-            interval = 2000,
+            interval = 300000,
             n_intervals=0
         ),
     ],style={"border":"2px black solid"}),
@@ -332,10 +332,11 @@ def update_results(data, detector, n_clicks):
     Input('available_detectors','value')]
 )
 def plot_graph(data, detector):
-    if (detector == 'full_ensemble'):
-        detection_data = detect__outliers_full_ensemble(data, get_outlier_ref(data))
-    else:
-        detection_data = get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector))
+    #if (detector == 'full_ensemble'):
+    #    detection_data = detect__outliers_full_ensemble(data, get_outlier_ref(data))
+    #else:
+    #    detection_data = get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector))
+    detection_data = get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector))
     return get_fig_known_outliers(detection_data, data, detector)
 
 

@@ -11,7 +11,6 @@ def detect_boxplot_outliers(threshold, boxplot_dataset_size, data_points):
     points_x = data_points['points_x']
     points_y = data_points['points_y']
 
-    outlier_count = 0
     i = 0
     while (i<len(points_x) - boxplot_dataset_size):
 
@@ -43,7 +42,6 @@ def detect_boxplot_outliers(threshold, boxplot_dataset_size, data_points):
         #is next data item an outlier?
         data_point = points_y[i + boxplot_dataset_size]
         if ((data_point < lower_bound) or (data_point > upper_bound)):
-            outlier_count +=1
             outliers_x.append(points_x[i + boxplot_dataset_size])
             outliers_y.append(points_y[i + boxplot_dataset_size])
         i = i + 1
