@@ -70,7 +70,7 @@ def save_generated_data(requested_data, detection_data):
 def get_detection_data(model, data_to_run, data_coordinates, threshold=0):
     return run_detection(model, data_coordinates, threshold)
 
-def get_detection_data_months(model, data_to_run, data_coordinates, threshold=0):
+def get_detection_data_months(model, data_to_run, data_coordinates, threshold=2):
     return run_detection_months(model, data_coordinates, threshold)
 
 def get_detection_data_known_outliers(model, data_to_run, target_data, threshold):

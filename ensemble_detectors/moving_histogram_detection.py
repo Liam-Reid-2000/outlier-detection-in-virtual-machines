@@ -11,18 +11,17 @@ def detect_histogram_outliers(threshold,interval,data_points):
     points_x = data_points['points_x']
     points_y = data_points['points_y']
 
-    interval = int(len(points_y)/8)
-    threshold = 1
+    sample_rate = int(len(points_y)/interval)
 
     i = 0
-    while (i<len(points_y) - interval):
+    while (i<len(points_y) - sample_rate):
         subset_x = []
         subset_y = []
         j = i
-        while (j < i + interval):
+        while (j < i + sample_rate):
             subset_x.append(points_x[j])
             subset_y.append(points_y[j])
-            j+=1
+            j += 1
 
         plt.hist(subset_y)
         ax = plt.gca()
@@ -55,9 +54,7 @@ def detect_histogram_outliers(threshold,interval,data_points):
                     outliers_x.append(points_x[j])
                     outliers_y.append(points_y[j])
             j += 1
-        print('iteration = ' + str(i))
-        i += interval
+        i += sample_rate
 
         #plt.show()
-    print('loop terminated')
     return pd.DataFrame({'timestamp': outliers_x,'data': outliers_y})
