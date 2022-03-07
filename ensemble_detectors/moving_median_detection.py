@@ -18,15 +18,18 @@ def get_moving_median_coordinates(median_interval, data_points):
     median_point_x = []
 
     i = 0
-    while (i < (len(points_y)-median_interval)):
-        previous_five_y = []
+    while (i < (len(points_y))):
+        previous_points = []
         j = 0
         while (j < median_interval):
-            previous_five_y.append(points_y[i+j])
+            if (i-j>0):
+                previous_points.append(points_y[i-j])
             j += 1
-        median_point_y.append(get_median(previous_five_y))
-        median_point_x.append(points_x[i])
+        if len(previous_points)>0:
+            median_point_y.append(get_median(previous_points))
+            median_point_x.append(points_x[i])
         i = i + 1
+
     return pd.DataFrame({'points_median_x': median_point_x,'points_median_y': median_point_y})
 
 

@@ -51,6 +51,9 @@ def detect_histogram_outliers(threshold,interval,data_points):
         while (j < len(points_x)):
             for range in outlier_ranges:
                 if ((points_y[j] > range[0]) and (points_y[j] <= range[1])):
+
+                    ## Check if has range before or after with height > threshold
+                    
                     outliers_x.append(points_x[j])
                     outliers_y.append(points_y[j])
             j += 1

@@ -57,34 +57,5 @@ def detect_average_outliers(threshold, average_points, data_points):
             detected_ouliters_x.append(points_x[i])
             detected_ouliters_y.append(points_y[i])
         i += 1
-
-    
-    ##########################################################################################
-    ##########################################################################################
-    ### SHOW THE THRESHOLDS AND OUTLIERS FALLING OUTSIDE ###
-    #plt.plot(points_x,points_y)
-    #plt.xlabel('X-axis')
-    #plt.ylabel('Y-axis')
-    #plt.title("A simple line graph")
-    #plt.plot(average_points_x, average_points_y)
-
-    #bound = (find_threshold(points_y))
-
-    #new_point_y = []
-    #for i in average_points_y:
-    #    new_point_y.append(i + bound)
-    #plt.plot(average_points_x, new_point_y)
-    
-    
-    #new_point_y = []
-    #for i in average_points_y:
-    #    new_point_y.append(i - bound)
-    #plt.plot(average_points_x, new_point_y)
-    
-    #plt.scatter(detected_ouliters_x, detected_ouliters_y, color='red')
-
-    #plt.show()
-    ##########################################################################################
-    ##########################################################################################
-
+        
     return pd.DataFrame({'timestamp': detected_ouliters_x,'data': detected_ouliters_y})

@@ -12,6 +12,13 @@ def detect_boxplot_outliers(threshold, boxplot_dataset_size, data_points):
     points_y = data_points['points_y']
 
     i = 0
+
+    if (i >= len(points_x) - boxplot_dataset_size):
+        boxplot_dataset_size = int(len(points_x)/3)
+
+    print('threshold ' + str(threshold))
+    print('interval ' + str(boxplot_dataset_size))
+
     while (i<len(points_x) - boxplot_dataset_size):
 
         #get amount
