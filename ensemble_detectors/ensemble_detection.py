@@ -5,19 +5,6 @@ from app_helper_scripts.app_detection import collect_detection_data_known_outlie
 from app_helper_scripts.app_helper import get_detection_data_known_outliers, get_detector_threshold, save_generated_data
 from ensemble_detectors.ensemble_voting import get_ensemble_result
 
-
-def detect__outliers_full_ensemble(dataset, known_outliers_csv):
-    ensemble_detector_list = []
-    ensemble_detector_list.append('moving_average')
-    ensemble_detector_list.append('moving_median')
-    ensemble_detector_list.append('moving_boxplot')
-    ensemble_detector_list.append('moving_histogram')
-    detection_data = get_ensemble_detection_data(ensemble_detector_list, dataset, known_outliers_csv)
-    save_generated_data('full_ensemble' + '_' + dataset, detection_data)
-    return detection_data
-
-
-
 def get_ensemble_detection_data(ensemble_detector_list, dataset, known_outliers_csv):
 
     if (len(ensemble_detector_list) == 0):
@@ -36,7 +23,7 @@ def get_ensemble_detection_data(ensemble_detector_list, dataset, known_outliers_
 
     ensemble_outliers = []
     # Pass outlier data from each detector to voting system
-    ensemble_outliers = get_ensemble_result(all_outlier_coordinates)
+    ensemble_outliers = get_ensemble_result(all_outlier_coordinates, len(ensemble_detector_list))
 
     ## Get detection data of average and modify outlier data to include ensemble voting result then plot ##
     average_detection_data = get_detection_data_known_outliers('moving_average', dataset, known_outliers_csv, 25)

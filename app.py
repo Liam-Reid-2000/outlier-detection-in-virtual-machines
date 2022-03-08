@@ -7,7 +7,7 @@ import pandas as pd
 from collections import deque
 from app_helper_scripts.csv_helper import *
 import json
-from ensemble_detectors.ensemble_detection import detect__outliers_full_ensemble, get_ensemble_detection_data
+from ensemble_detectors.ensemble_detection import get_ensemble_detection_data
 
 from som.outlier_detection_som import detect_som_outliers, detect_som_outliers_circle
 from app_helper_scripts.average_outlier_detection_stream import get_average, get_data_coordinates, get_stream_fig

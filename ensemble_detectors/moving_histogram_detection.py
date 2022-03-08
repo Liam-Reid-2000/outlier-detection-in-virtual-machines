@@ -3,6 +3,77 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
+def create_subset(index_of_start_of_subset, subset_size, points_x, points_y):
+    subset_x = []
+    subset_y = []
+    i = index_of_start_of_subset
+    while (i < index_of_start_of_subset + subset_size):
+        subset_x.append(points_x[i])
+        subset_y.append(points_y[i])
+        i += 1
+    return pd.DataFrame({'timestamp':subset_x,'data':subset_y})
+
+
+def get_histogram(subset_y):
+    plt.hist(subset_y)
+    ax = plt.gca()
+    return ax.patches
+
+
+def get_outlier_ranges(heights, x_left_corners, bin_widths, threshold):
+    outlier_ranges = []
+    i = 0
+    while i < len(heights):
+        outlier = False
+        if (heights[i] < int(threshold)):
+            outlier = True
+            if ((outlier) and (i >= 1)):
+                if (heights[i-1] >= int(threshold)):
+                    outlier = False
+            if ((outlier) and (i < len(heights)-1)):
+                if (heights[i+1] >= int(threshold)):
+                    outlier = False
+            if ((outlier) and (i >= 2)):
+                if (heights[i-2] >= int(threshold)):
+                    outlier = False
+            if ((outlier) and (i < len(heights)-2)):
+                if (heights[i+2] >= int(threshold)):
+                    outlier = False
+            if outlier:
+                outlier_range = []
+                outlier_range.append(x_left_corners[i])
+                outlier_range.append(x_left_corners[i] + bin_widths[i])
+                outlier_ranges.append(outlier_range)
+        i += 1
+    return outlier_ranges
+
+
+def get_histogram_outliers(subset_y, threshold, points_x, points_y):
+   
+    histogram_data = get_histogram(subset_y)
+    heights = []
+    x_left_corners = []
+    bin_widths = [] 
+
+    for bin in histogram_data:
+        heights.append(bin.get_height())
+        x_left_corners.append(bin.get_xy()[0])
+        bin_widths.append(bin.get_width())
+
+    outlier_ranges = get_outlier_ranges(heights, x_left_corners, bin_widths, threshold)
+
+    outliers_x = []
+    outliers_y = []
+    i = 0
+    while (i < len(points_x)):
+        for range in outlier_ranges:
+            if ((points_y[i] > range[0]) and (points_y[i] <= range[1])):
+                outliers_x.append(points_x[i])
+                outliers_y.append(points_y[i])
+        i += 1
+    return pd.DataFrame({'timestamp': outliers_x,'data': outliers_y})
+
+
 def detect_histogram_outliers(threshold,interval,data_points):                                                                                                                                                                                                                                                                                                                                                                                                     
 
     outliers_x = []
@@ -11,53 +82,18 @@ def detect_histogram_outliers(threshold,interval,data_points):
     points_x = data_points['points_x']
     points_y = data_points['points_y']
 
-    sample_rate = int(len(points_y)/interval)
+    subset_size = int(len(points_y)/interval)
+    if (interval == 1):
+        return get_histogram_outliers(points_y, threshold, points_x, points_y)
 
     i = 0
-    while (i<len(points_y) - sample_rate):
-        subset_x = []
-        subset_y = []
-        j = i
-        while (j < i + sample_rate):
-            subset_x.append(points_x[j])
-            subset_y.append(points_y[j])
-            j += 1
-
-        plt.hist(subset_y)
-        ax = plt.gca()
-        p = ax.patches
-
-        heights = []
-        x_left_corners = []
-        bin_widths = [] 
-
-        for bin in p:
-            heights.append(bin.get_height())
-            x_left_corners.append(bin.get_xy()[0])
-            bin_widths.append(bin.get_width())
-
-        outlier_ranges = []
-
-        j = 0
-        while j < len(heights):
-            outlier_range = []
-            if (heights[j] < int(threshold)):
-                outlier_range.append(x_left_corners[j])
-                outlier_range.append(x_left_corners[j] + bin_widths[j])
-                outlier_ranges.append(outlier_range)
-            j += 1
-
-        j = 0
-        while (j < len(points_x)):
-            for range in outlier_ranges:
-                if ((points_y[j] > range[0]) and (points_y[j] <= range[1])):
-
-                    ## Check if has range before or after with height > threshold
-                    
-                    outliers_x.append(points_x[j])
-                    outliers_y.append(points_y[j])
-            j += 1
-        i += sample_rate
-
-        #plt.show()
+    while (i < len(points_y) - subset_size):
+        subset = create_subset(i, subset_size, points_x, points_y)
+        outliers = get_histogram_outliers(subset['data'], threshold, points_x, points_y)
+        for outlier_x in outliers['timestamp']:
+            outliers_x.append(outlier_x)
+        for outlier_y in outliers['data']:
+            outliers_y.append(outlier_y)
+        i += subset_size
+       
     return pd.DataFrame({'timestamp': outliers_x,'data': outliers_y})
