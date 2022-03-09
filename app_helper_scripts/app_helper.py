@@ -120,19 +120,18 @@ def get_fig_with_training_points():
 
 def get_fig(detection_data, data_to_run, model, plot_actual_outliers=False):
 
-    pycaret_plots = pd.DataFrame({'timestamp': detection_data[0],'data': detection_data[1]})
-    fig = px.line(pycaret_plots, x='timestamp', y='data',title= data_to_run + ' Data against Time (Using '+model+'-based outlier detection)')
-
-    if (plot_actual_outliers):
-        true_outlier_areas = pd.DataFrame({'timestamp1': detection_data[4],'timestamp2': detection_data[5]})
-        i = 0
-        while (i < len(true_outlier_areas['timestamp1'])):
-            fig.add_vrect(x0=true_outlier_areas['timestamp1'][i],x1=true_outlier_areas['timestamp2'][i],fillcolor='red',opacity=0.25,line_width=0)
-            i += 1
-
-    detected_outliers = pd.DataFrame({'timestamp': detection_data[2],'data': detection_data[3]})
-    fig.add_trace(go.Scatter(x=detected_outliers['timestamp'], y=detected_outliers['data'], mode='markers',name='Outliers Detected', line=dict(color='red')))
-
-    fig.update_layout(autotypenumbers='convert types', xaxis_title='Timestamp', yaxis_title='Data')
-
-    return fig
+    try:
+        pycaret_plots = pd.DataFrame({'timestamp': detection_data[0],'data': detection_data[1]})
+        fig = px.line(pycaret_plots, x='timestamp', y='data',title= data_to_run + ' Data against Time (Using '+model+'-based outlier detection)')
+        if (plot_actual_outliers):
+            true_outlier_areas = pd.DataFrame({'timestamp1': detection_data[4],'timestamp2': detection_data[5]})
+            i = 0
+            while (i < len(true_outlier_areas['timestamp1'])):
+                fig.add_vrect(x0=true_outlier_areas['timestamp1'][i],x1=true_outlier_areas['timestamp2'][i],fillcolor='red',opacity=0.25,line_width=0)
+                i += 1
+        detected_outliers = pd.DataFrame({'timestamp': detection_data[2],'data': detection_data[3]})
+        fig.add_trace(go.Scatter(x=detected_outliers['timestamp'], y=detected_outliers['data'], mode='markers',name='Outliers Detected', line=dict(color='red')))
+        fig.update_layout(autotypenumbers='convert types', xaxis_title='Timestamp', yaxis_title='Data')
+        return fig
+    except:
+        print('Error getting figure')

@@ -448,11 +448,12 @@ def update_graph_scatter(n):
     outliers_y = som_detection_data[1]
     inliers_x = som_detection_data[2]
     inliers_y = som_detection_data[3]
-
-    fig = px.scatter(x=inliers_x,y=inliers_y,title='SOM Outlier Detection for Clustered Data')
-    fig.add_scatter(x=outliers_x,y=outliers_y,mode='markers',name='Outliers')
-
-    return fig
+    try:
+        fig = px.scatter(x=inliers_x,y=inliers_y,title='SOM Outlier Detection for Clustered Data')
+        fig.add_scatter(x=outliers_x,y=outliers_y,mode='markers',name='Outliers')
+        return fig
+    except:
+        print('Error creating SOM fig')
 
 @app.callback(
     Output('som-graph-2', 'figure'),
@@ -515,8 +516,10 @@ def update_graph_scatter(n,data):
         average = get_average(arr)
         Xavg.append(X[-1])
         Yavg.append(average)
-
-    return get_stream_fig(data_points, has_average, Xavg, Yavg, X, Y)
+    try:
+        return get_stream_fig(data_points, has_average, Xavg, Yavg, X, Y)
+    except:
+        print('Problem with stream graph')
 
 if __name__ == '__main__':
     app.run_server()
