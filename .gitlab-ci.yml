@@ -8,5 +8,5 @@ before_script:
 unit_test:
   stage: test
   script:
-  - python test_results_test.py
-  - python test_ensemble_test.py
+  - python test/test_results_test.py
+  - python test/test_ensemble_test.py
