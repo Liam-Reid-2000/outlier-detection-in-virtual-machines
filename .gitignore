@@ -5,3 +5,4 @@ supervised_learning_detectors/__pycache__/
 som/__pycache__/
 app_helper_scripts/__pycache__/
 unsupervised_detectors/__pycache__/
+test/__pycache__/
