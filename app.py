@@ -70,6 +70,41 @@ app.layout = html.Div([
             ],style={'width': '70%', 'display': 'inline-block'}),
 
         ],style={'padding': '10px 5px',"border":"2px black solid"}),
+
+
+
+    ##################### CLOUD RESOURCE DATA TESTING SPACE ##########################
+
+    html.Div([
+        html.H2('Cloud Resource Experimental Space'),
+            html.Div([
+                html.Div([
+
+                    ### Drop down boxes with options for user ###
+
+                    html.Div([
+                        dcc.Dropdown(
+                            id='available_detectors_cloud_resource_data',
+                            options=[{'label': i[0], 'value': i[0]} for i in get_config('available_detectors')],
+                            value='moving_average'
+                        ),
+                    ],style={'width': '20%', 'display': 'inline-block'}),
+                    html.Div([
+                        dcc.Dropdown(
+                            id='available_data_cloud_resource_data',
+                            options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets_cloud_resource_data')],
+                            value='ec2_cpu_utilization_fe7f93'
+                        ),
+                    ],style={'width': '20%', 'display': 'inline-block'}),
+                ]),
+
+                ### The Graph ### 
+                dcc.Graph(
+                    id='graph_cloud_resource_data'
+                ),
+            ],style={'width': '70%', 'display': 'inline-block'}),
+
+        ],style={'padding': '10px 5px',"border":"2px black solid"}),
     
 
 
@@ -362,6 +397,25 @@ def plot_graph(detector, data_subset, dataset):
 
 
 # HEALTH DATA
+
+################################
+
+################################
+
+# CLOUD RESOURCE DATA
+
+
+@app.callback(
+    Output('graph_cloud_resource_data', 'figure'),
+    [Input('available_detectors_cloud_resource_data','value'),
+    Input('available_data_cloud_resource_data','value')]
+)
+def plot_graph(detector, data):
+    detection_data = get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector)) 
+    return get_fig_known_outliers(detection_data, data, detector)
+
+
+# CLOUD RESOURCE DATA
 
 ################################
 

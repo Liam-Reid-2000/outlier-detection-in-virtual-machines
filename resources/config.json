@@ -91,5 +91,47 @@
             "n_hours_sunshine",
             "Dengue_fever_rates"
         ]
+    ],
+    "available_datasets_cloud_resource_data": [
+        [
+            "ec2_cpu_utilization_5f5533",
+            "realAWSCloudwatch/ec2_cpu_utilization_5f5533.csv"
+        ],
+        [
+            "ec2_cpu_utilization_24ae8d",
+            "realAWSCloudwatch/ec2_cpu_utilization_24ae8d.csv"
+        ],
+        [
+            "ec2_cpu_utilization_53ea38",
+            "realAWSCloudwatch/ec2_cpu_utilization_53ea38.csv"
+        ],
+        [
+            "ec2_cpu_utilization_77c1ca",
+            "realAWSCloudwatch/ec2_cpu_utilization_77c1ca.csv"
+        ],
+        [
+            "ec2_cpu_utilization_825cc2",
+            "realAWSCloudwatch/ec2_cpu_utilization_825cc2.csv"
+        ],
+        [
+            "ec2_cpu_utilization_ac20cd",
+            "realAWSCloudwatch/ec2_cpu_utilization_ac20cd.csv"
+        ],
+        [
+            "ec2_cpu_utilization_c6585a",
+            "realAWSCloudwatch/ec2_cpu_utilization_c6585a.csv"
+        ],
+        [
+            "ec2_cpu_utilization_fe7f93",
+            "realAWSCloudwatch/ec2_cpu_utilization_fe7f93.csv"
+        ],
+        [
+            "rds_cpu_utilization_cc0c53",
+            "realAWSCloudwatch/rds_cpu_utilization_cc0c53.csv"
+        ],
+        [
+            "rds_cpu_utilization_e47b3b",
+            "realAWSCloudwatch/rds_cpu_utilization_e47b3b.csv"
+        ]
     ]
 }

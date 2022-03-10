@@ -38,10 +38,12 @@ def get_outlier_area_ordinates(target_data):
     data = json.load(f)
     arrX1 = []
     arrX2 = []
-    for i in data[target_data]:
-        arrX1.append(datetime.strptime(i[0], '%Y-%m-%d %H:%M:%S.%f'))
-        arrX2.append(datetime.strptime(i[1], '%Y-%m-%d %H:%M:%S.%f'))
-    f.close()
+    known_outliers = data[target_data]
+    if (len(known_outliers) > 0):
+        for i in known_outliers:
+            arrX1.append(datetime.strptime(i[0], '%Y-%m-%d %H:%M:%S.%f'))
+            arrX2.append(datetime.strptime(i[1], '%Y-%m-%d %H:%M:%S.%f'))
+        f.close()
     return pd.DataFrame({'first_x': arrX1, 'second_x': arrX2})
     
 

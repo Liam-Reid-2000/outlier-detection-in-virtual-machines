@@ -2,6 +2,7 @@ import pandas as pd
 import csv
 import os
 import json
+from os.path import exists
 from dash import html
 import plotly.express as px
 import pandas as pd
@@ -22,6 +23,10 @@ def get_outlier_ref(ref):
     f = open('resources/config.json',)
     data = json.load(f)
     for i in data['available_datasets']:
+        if (i[0] ==ref):
+            f.close()
+            return i[1]
+    for i in data['available_datasets_cloud_resource_data']:
         if (i[0] ==ref):
             f.close()
             return i[1]
@@ -102,7 +107,10 @@ def get_detection_data_known_outliers(model, data_to_run, target_data, threshold
         for row in csvreader:
             detection_data.append(row)
     else:
-        detection_data = run_detection_known_outliers(model, 'resources/'+data_to_run+'.csv', target_data, threshold)
+        path_to_data = 'resources/'+data_to_run+'.csv'
+        if (exists(path_to_data == False)):
+            path_to_data = 'resources/cloud_resource_data/'+data_to_run+'.csv'
+        detection_data = run_detection_known_outliers(model, path_to_data, target_data, threshold)
         save_generated_data(requested_data, detection_data)
 
     return detection_data
@@ -134,4 +142,4 @@ def get_fig(detection_data, data_to_run, model, plot_actual_outliers=False):
         fig.update_layout(autotypenumbers='convert types', xaxis_title='Timestamp', yaxis_title='Data')
         return fig
     except:
-        print('Error getting figure')
+        print('Error getting figure for ' + model + ' on ' + data_to_run + 'data')
