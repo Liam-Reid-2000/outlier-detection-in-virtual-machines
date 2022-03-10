@@ -88,14 +88,14 @@ app.layout = html.Div([
                             options=[{'label': i[0], 'value': i[0]} for i in get_config('available_detectors')],
                             value='moving_average'
                         ),
-                    ],style={'width': '20%', 'display': 'inline-block'}),
+                    ],style={'width': '30%', 'display': 'inline-block'}),
                     html.Div([
                         dcc.Dropdown(
                             id='available_data_cloud_resource_data',
                             options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets_cloud_resource_data')],
                             value='ec2_cpu_utilization_fe7f93'
                         ),
-                    ],style={'width': '20%', 'display': 'inline-block'}),
+                    ],style={'width': '30%', 'display': 'inline-block'}),
                 ]),
 
                 ### The Graph ### 
@@ -104,13 +104,26 @@ app.layout = html.Div([
                 ),
             ],style={'width': '70%', 'display': 'inline-block'}),
 
+            ### The detection results as text ###
+
+            html.Div([
+                html.H2('Detection Results'),
+                html.Button('Refresh Results', id='btn_refresh_cloud', n_clicks=0),
+                html.Br(),
+                html.Br(),
+                html.Div([
+                    html.Div(id='results_title_cloud_resource', children='...'),
+                    html.Div(id='live_update_results_cloud_resource')
+                ],style={'width': '50%', 'float': 'left', 'display': 'inline-block',"border":"2px black solid"})
+            ],style={'width': '29%', 'float': 'right', 'display': 'inline-block'}),
+
         ],style={'padding': '10px 5px',"border":"2px black solid"}),
     
 
 
 
 
-    ### Graph to display classifier detection results ###
+    ### Graph to display classifier detection results for unsupervised methods ###
 
     html.Div([
         html.H2('Unsupervised Detection'),
@@ -413,6 +426,28 @@ def plot_graph(detector, data_subset, dataset):
 def plot_graph(detector, data):
     detection_data = get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector)) 
     return get_fig_known_outliers(detection_data, data, detector)
+
+
+@app.callback(
+    Output('results_title_cloud_resource', 'children'),
+    [Input('available_data_cloud_resource_data','value'),
+    Input('available_detectors_cloud_resource_data','value')]
+)
+def update_results_title(data, detector):
+    return html.H3(detector.upper() + ' on \'' + data + '\' data')
+
+
+@app.callback(
+    Output('live_update_results_cloud_resource', 'children'),
+    [Input('available_data_cloud_resource_data','value'),
+    Input('available_detectors_cloud_resource_data','value'),
+    Input('btn_refresh_cloud', 'n_clicks')]
+)
+def update_results(data, detector, n_clicks):
+    try:
+        return get_result_data(detector + '_' + data + '/' + detector + '_' + data + '_results.csv')
+    except:
+        print('Error when getting results')
 
 
 # CLOUD RESOURCE DATA
