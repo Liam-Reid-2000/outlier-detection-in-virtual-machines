@@ -2,11 +2,9 @@ image: "python:3.8"
 
 before_script:
   - python --version
-  - pip install pandas
-  - pip install matplotlib
+  - pip install -r requirements.txt
 
 unit_test:
   stage: test
   script:
-  - python -m unittest test.test_results_test
-  - python -m unittest test.test_ensemble_test
+  - python -m unittest discover test
