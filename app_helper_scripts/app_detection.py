@@ -148,6 +148,34 @@ def split_data_to_months(timestamps, data):
     return separated_months_as_dataframes
 
 
+def split_data_to_hours(timestamps, data):
+    data_split_to_hours_x = []
+    data_split_to_hours_y = []
+    i = 0
+    while i < 24:
+        arr = []
+        data_split_to_hours_x.append(arr)
+        arrtoo = []
+        data_split_to_hours_y.append(arrtoo)
+        i += 1
+
+    i = 0
+    while i < len(timestamps):
+        data_split_to_hours_x[timestamps[i].hour-1].append(timestamps[i])
+        data_split_to_hours_y[timestamps[i].hour-1].append(data[i])
+        i += 1
+
+
+    # list of data frames
+    separated_hours_as_dataframes = []
+    i = 0
+    while i < len(data_split_to_hours_x):
+        df = pd.DataFrame({'timestamp':data_split_to_hours_x[i], 'data':data_split_to_hours_y[i]})
+        separated_hours_as_dataframes.append(df)
+        i += 1
+    return separated_hours_as_dataframes
+
+
 
 def run_detection_months(model, data_coordinates, threshold, interval=7):
     
@@ -167,6 +195,31 @@ def run_detection_months(model, data_coordinates, threshold, interval=7):
 
     all_outliers_df = pd.DataFrame({'timestamp':all_outliers_x,'data':all_outliers_y})
     return collect_detection_data(all_outliers_df, points_x, points_y)
+
+
+def run_detection_hours_known_outliers(model, data_csv, outliers_csv, threshold):
+    # need to set this another way
+    interval  = 7
+    #
+
+    data_coordinates = load_data_coordinates(data_csv)
+
+    points_x = data_coordinates['timestamp']
+    points_y = data_coordinates['data']
+    
+    separated_months_as_dataframes = split_data_to_hours(points_x, points_y)
+    all_outliers_x = []
+    all_outliers_y = []
+
+    for i in separated_months_as_dataframes:
+        detection_data = run_detection(model, i, threshold, interval)
+        for j in detection_data[2]:
+            all_outliers_x.append(j)
+        for j in detection_data[3]:
+            all_outliers_y.append(j)
+
+    all_outliers_df = pd.DataFrame({'timestamp':all_outliers_x,'data':all_outliers_y})
+    return collect_detection_data_known_outliers(all_outliers_df, outliers_csv, points_x, points_y)
 
 
 def run_detection_known_outliers(model, data_csv, outliers_csv, threshold):

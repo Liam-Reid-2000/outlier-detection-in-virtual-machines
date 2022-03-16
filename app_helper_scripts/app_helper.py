@@ -7,7 +7,7 @@ from dash import html
 import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
-from app_helper_scripts.app_detection import run_detection_known_outliers, run_detection, run_detection_months
+from app_helper_scripts.app_detection import run_detection_hours_known_outliers, run_detection_known_outliers, run_detection, run_detection_months
 from app_helper_scripts.csv_helper import *
 
 def get_detector_threshold(ref):
@@ -78,7 +78,10 @@ def get_detection_data(model, data_to_run, data_coordinates, threshold=0):
 def get_detection_data_months(model, data_to_run, data_coordinates, threshold=2):
     return run_detection_months(model, data_coordinates, threshold)
 
-def get_detection_data_known_outliers(model, data_to_run, target_data, threshold):
+def get_detection_data_hours_known_outliers(model, data_to_run, outliers_csv, threshold=2):
+    return get_detection_data_known_outliers(model, data_to_run, outliers_csv, threshold, True)
+
+def get_detection_data_known_outliers(model, data_to_run, target_data, threshold, split_hours=False):
     requested_data = model + '_' + data_to_run
 
     detection_data = []
@@ -108,8 +111,10 @@ def get_detection_data_known_outliers(model, data_to_run, target_data, threshold
             detection_data.append(row)
     else:
         path_to_data = 'resources/'+data_to_run+'.csv'
-        if (exists(path_to_data == False)):
+        if (exists(path_to_data) == False):
             path_to_data = 'resources/cloud_resource_data/'+data_to_run+'.csv'
+        if (split_hours):
+            detection_data = run_detection_hours_known_outliers(model, path_to_data, target_data, threshold)
         detection_data = run_detection_known_outliers(model, path_to_data, target_data, threshold)
         save_generated_data(requested_data, detection_data)
 

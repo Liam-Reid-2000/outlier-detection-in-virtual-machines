@@ -427,8 +427,9 @@ def plot_graph(detector, data_subset, dataset):
     Input('available_data_cloud_resource_data','value')]
 )
 def plot_graph(detector, data):
-    detection_data = get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector)) 
-    return get_fig_known_outliers(detection_data, data, detector)
+    detection_data = get_detection_data_hours_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector)) 
+    fig = get_fig_known_outliers(detection_data, data, detector)
+    return fig
 
 
 @app.callback(
