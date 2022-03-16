@@ -383,10 +383,6 @@ def update_results(data, detector, n_clicks):
     Input('available_detectors','value')]
 )
 def plot_graph(data, detector):
-    #if (detector == 'full_ensemble'):
-    #    detection_data = detect__outliers_full_ensemble(data, get_outlier_ref(data))
-    #else:
-    #    detection_data = get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector))
     detection_data = get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector))
     return get_fig_known_outliers(detection_data, data, detector)
 
@@ -508,9 +504,10 @@ def update_results(data, n_clicks, ratio):
     Input('ensemble-median-radio-btns','value'),
     Input('ensemble-histogram-radio-btns','value'),
     Input('ensemble-boxplot-radio-btns','value'),
-    Input('available_data_ensemble','value')]
+    Input('available_data_ensemble','value'),
+    Input('btn_refresh_ensemble', 'n_clicks')]
 )
-def update_results_title(average_rd, median_rd, histogram_rd, boxplot_rd, data):
+def update_results_title(average_rd, median_rd, histogram_rd, boxplot_rd, data, n_clicks):
 
     ensemble_detector_list = []
 
@@ -527,7 +524,9 @@ def update_results_title(average_rd, median_rd, histogram_rd, boxplot_rd, data):
     detection_data = get_ensemble_detection_data(ensemble_detector_list, data, get_outlier_ref(data))
 
     ## return the figure
-    return get_fig_known_outliers(detection_data, data, 'moving ensemble')
+    fig = get_fig_known_outliers(detection_data, data, 'moving ensemble')
+    fig.show
+    return fig
 
 
 
