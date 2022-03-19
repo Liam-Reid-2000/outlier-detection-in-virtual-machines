@@ -248,7 +248,7 @@ app.layout = html.Div([
         dcc.Graph(id = 'live-graph', animate = True),
         dcc.Interval(
             id = 'graph-update',
-            interval = 300000,
+            interval = 200000,
             n_intervals=0
         ),
     ],style={"border":"2px black solid"}),
@@ -525,7 +525,7 @@ def update_results_title(average_rd, median_rd, histogram_rd, boxplot_rd, data, 
 
     ## return the figure
     fig = get_fig_known_outliers(detection_data, data, 'moving ensemble')
-    fig.show
+    fig.show # This is showing error becuase it should be show() but works anyway
     return fig
 
 
