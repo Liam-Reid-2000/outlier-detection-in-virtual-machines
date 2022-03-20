@@ -54,3 +54,51 @@ def detect_median_outliers(threshold, median_points, data_points):
             detected_ouliters_y.append(points_y[i])
         i += 1
     return pd.DataFrame({'timestamp': detected_ouliters_x,'data': detected_ouliters_y})
+
+
+
+def is_data_outside_bounds(data_y, average_point, bound):
+    if ((data_y < average_point-bound) or (data_y > average_point+bound)):
+        return True
+    return False
+
+
+def calculate_confidence_outlier(data_y, average_point, bound):
+    distance_to_threshold = 0
+    if (data_y > average_point+bound):
+        distance_to_threshold = abs(data_y - (average_point+bound))
+    else:
+        distance_to_threshold = abs(data_y - (average_point-bound))
+    confidence = distance_to_threshold/bound
+    if confidence > 1:
+        return 1
+    return confidence
+
+
+def detect_median_outliers_labelled_prediction(threshold, median_points, data_points):
+
+    predictions_x = []
+    predictions_y = []
+    confidence = []
+
+    median_points_x = median_points['points_median_x']
+    median_points_y = median_points['points_median_y']
+
+    points_x = data_points['points_x']
+    points_y = data_points['points_y']
+
+    bound = (find_threshold(points_y))
+
+    i = 0
+    while i < len(median_points_x):
+        predictions_x.append(points_x[i])
+        predictions_y.append(points_y[i])
+        if (is_data_outside_bounds(points_y[i], median_points_y[i], int(bound))):
+            confidence.append(-1 * calculate_confidence_outlier(points_y[i], median_points_y[i], bound))
+        elif (points_y[i] > median_points_y[i]):
+            confidence.append(((median_points_y[i]+int(bound)) - points_y[i])/bound)
+        else:
+            confidence.append((points_y[i] - (median_points_y[i]-int(bound)))/bound)
+        i += 1
+        
+    return pd.DataFrame({'timestamp': predictions_x,'data': predictions_y,'confidnece':confidence})

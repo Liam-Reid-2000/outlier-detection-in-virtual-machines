@@ -73,10 +73,8 @@ def calculate_confidence_outlier(data_y, average_point, bound):
     distance_to_threshold = 0
     if (data_y > average_point+bound):
         distance_to_threshold = abs(data_y - (average_point+bound))
-        print('should be positive' + str(distance_to_threshold))
     else:
         distance_to_threshold = abs(data_y - (average_point-bound))
-        print('should be positive' + str(distance_to_threshold))
     confidence = distance_to_threshold/bound
     if confidence > 1:
         return 1
