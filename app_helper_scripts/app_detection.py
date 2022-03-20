@@ -104,6 +104,7 @@ def run_detection(model, data_coordinates, threshold, interval=10):
     elif (model == 'full_ensemble'):
         ensemble_outliers = []
         ensemble_outliers.append(detect_average_outliers(threshold, get_moving_average_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
+        print(detect_average_outliers_labelled_prediction(threshold, get_moving_average_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
         ensemble_outliers.append(detect_median_outliers(threshold, get_moving_median_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
         ensemble_outliers.append(detect_boxplot_outliers(threshold, interval, data_coordinates_renamed))
         ensemble_outliers.append(detect_histogram_outliers(1,2, data_coordinates_renamed))

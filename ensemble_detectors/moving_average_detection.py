@@ -60,3 +60,66 @@ def detect_average_outliers(threshold, average_points, data_points):
         i += 1
         
     return pd.DataFrame({'timestamp': detected_ouliters_x,'data': detected_ouliters_y})
+
+
+
+
+
+
+def detect_average_outliers_labelled_prediction(threshold, average_points, data_points):
+
+    predictions_x = []
+    predictions_y = []
+    confidence = []
+
+    average_points_x = average_points['points_average_x']
+    average_points_y = average_points['points_average_y']
+
+    points_x = data_points['points_x']
+    points_y = data_points['points_y']
+
+    bound_mult = 1.5
+    bound = (find_threshold(points_y)*bound_mult)
+
+    ### GENERIFY THIS ###
+
+    i = 0
+    while i < len(average_points_x):
+        if (points_y[i] < (average_points_y[i]-int(bound))):
+            
+            predictions_x.append(points_x[i])
+            predictions_y.append(points_y[i])
+            
+            distance_outside_threshold = (average_points_y[i]-int(bound)) - points_y[i]
+            
+            distance_outside_threshold_ratio = distance_outside_threshold/bound
+            
+            if (distance_outside_threshold_ratio > 1):
+                distance_outside_threshold_ratio = 1
+            
+            confidence.append(-1 * distance_outside_threshold_ratio)
+
+
+        
+        if (points_y[i] > (average_points_y[i]+int(bound))):
+            predictions_x.append(points_x[i])
+            predictions_y.append(points_y[i])
+            distance_outside_threshold = points_y[i] - (average_points_y[i]+int(bound))
+            distance_outside_threshold_ratio = distance_outside_threshold/bound
+            if (distance_outside_threshold_ratio > 1):
+                distance_outside_threshold_ratio = 1
+            confidence.append(-1 * distance_outside_threshold_ratio)
+        if ((points_y[i] <= (average_points_y[i]+int(bound))) and (points_y[i] >= (average_points_y[i]-int(bound)))):
+            if (points_y[i] <= (average_points_y[i])):
+                predictions_x.append(points_x[i])
+                predictions_y.append(points_y[i])
+                distance_inside_threshold = points_y[i] - (average_points_y[i]-int(bound))
+                confidence.append(distance_inside_threshold)
+            else:
+                predictions_x.append(points_x[i])
+                predictions_y.append(points_y[i])
+                distance_inside_threshold = (average_points_y[i]+int(bound)) - points_y[i]
+                confidence.append(distance_inside_threshold)
+        i += 1
+        
+    return pd.DataFrame({'timestamp': predictions_x,'data': predictions_y,'confidnece':confidence})
