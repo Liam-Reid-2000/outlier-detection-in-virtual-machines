@@ -47,8 +47,8 @@ def get_outlier_ranges(heights, x_left_corners, bin_widths, threshold):
     return outlier_ranges
 
 
-def get_histogram_outliers(subset_y, threshold, points_x, points_y):
-   
+def detect_histogram_outliers_for_subset(subset_y, threshold, points_x, points_y):
+
     histogram_data = get_histogram(subset_y)
     heights = []
     x_left_corners = []
@@ -83,12 +83,12 @@ def detect_histogram_outliers(threshold,interval,data_points):
 
     subset_size = int(len(points_y)/interval)
     if (interval == 1):
-        return get_histogram_outliers(points_y, threshold, points_x, points_y)
+        return detect_histogram_outliers_for_subset(points_y, threshold, points_x, points_y)
 
     i = 0
     while (i < len(points_y) - subset_size):
         subset = create_subset(i, subset_size, points_x, points_y)
-        outliers = get_histogram_outliers(subset['data'], threshold, points_x, points_y)
+        outliers = detect_histogram_outliers_for_subset(subset['data'], threshold, points_x, points_y)
         for outlier_x in outliers['timestamp']:
             outliers_x.append(outlier_x)
         for outlier_y in outliers['data']:

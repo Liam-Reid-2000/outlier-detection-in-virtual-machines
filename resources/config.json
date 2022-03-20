@@ -56,11 +56,11 @@
         ],
         [
             "moving_histogram",
-            "2"
+            "1"
         ],
         [
             "full_ensemble",
-            "4"
+            "1"
         ]
     ],
     "available_supervised_detectors": [

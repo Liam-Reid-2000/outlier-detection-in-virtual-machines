@@ -34,6 +34,7 @@ def get_moving_median_coordinates(median_interval, data_points):
 
 
 def detect_median_outliers(threshold, median_points, data_points):
+
     detected_ouliters_x = []
     detected_ouliters_y = []
 

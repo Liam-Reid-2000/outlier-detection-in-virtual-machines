@@ -39,8 +39,8 @@ def detect_boxplot_outliers(threshold, boxplot_dataset_size, data_points):
         iqr = q3 - q1
 
         #calculate class boundaries
-        lower_bound = q1 - iqr*float(threshold)
-        upper_bound = q3 + iqr*float(threshold)
+        lower_bound = q1 - iqr*1.5*float(threshold)
+        upper_bound = q3 + iqr*1.5*float(threshold)
 
 
         #is next data item an outlier?

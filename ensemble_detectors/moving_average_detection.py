@@ -39,6 +39,7 @@ def get_moving_average_coordinates(average_interval, data_points):
 
 
 def detect_average_outliers(threshold, average_points, data_points):
+
     detected_ouliters_x = []
     detected_ouliters_y = []
 
