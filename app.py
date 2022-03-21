@@ -8,7 +8,7 @@ from collections import deque
 from app_helper_scripts.csv_helper import *
 import json
 from ensemble_detectors.ensemble_detection import get_ensemble_detection_data
-import logging
+#import logging
 
 from som.outlier_detection_som import detect_som_outliers, detect_som_outliers_circle
 from app_helper_scripts.average_outlier_detection_stream import get_average, get_data_coordinates, get_stream_fig
@@ -17,7 +17,7 @@ from supervised_learning_detectors.isolation_forest import do_isolation_forest_d
 
 app = dash.Dash(__name__)
 
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 
 def get_config(requested_config):
     f = open('resources/config.json',)
@@ -351,7 +351,8 @@ def update_results(average_rad, median_rad, boxplot_rad, histogram_rad, n_clicks
     try:
         return get_result_data('ensemble/ensemble_results.csv')
     except:
-        logging.error('Error when getting results')
+        print('Error when getting results')
+        #logging.error('Error when getting results')
         
 
 @app.callback(
@@ -373,7 +374,8 @@ def update_results(data, detector, n_clicks):
     try:
         return get_result_data(detector + '_' + data + '/' + detector + '_' + data + '_results.csv')
     except:
-        logging.error('Error when getting results')
+        print('Error when getting results')
+        #logging.error('Error when getting results')
         
 
 
@@ -447,7 +449,8 @@ def update_results(data, detector, n_clicks):
     try:
         return get_result_data(detector + '_' + data + '/' + detector + '_' + data + '_results.csv')
     except:
-        logging.error('Error when getting results')
+        print('Error when getting results')
+        #logging.error('Error when getting results')
 
 
 # CLOUD RESOURCE DATA
@@ -479,7 +482,8 @@ def update_results(data, detector, n_clicks, ratio):
     try:
         return get_result_data('supervised_histogram_'+ratio+'/supervised_histogram_'+ratio+'_results.csv')
     except:
-        logging.error('Error when getting results')
+        print('Error when getting results')
+        #logging.error('Error when getting results')
 
 @app.callback(
     Output('supervised_plots_supervised_learning','figure'),
@@ -545,7 +549,8 @@ def update_graph_scatter(n):
         fig.add_scatter(x=outliers_x,y=outliers_y,mode='markers',name='Outliers')
         return fig
     except:
-        logging.error('Error creating SOM fig')
+        print('Error when getting results')
+        #logging.error('Error creating SOM fig')
 
 @app.callback(
     Output('som-graph-2', 'figure'),
@@ -611,7 +616,8 @@ def update_graph_scatter(n,data):
     try:
         return get_stream_fig(data_points, has_average, Xavg, Yavg, X, Y)
     except:
-        logging.error('Problem with stream graph')
+        print('Error with stream graph')
+        #logging.error('Problem with stream graph')
 
 if __name__ == '__main__':
     app.run_server()

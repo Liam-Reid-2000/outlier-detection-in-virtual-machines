@@ -109,4 +109,4 @@ def detect_average_outliers_labelled_prediction(threshold, average_points, data_
             confidence.append((points_y[i] - (average_points_y[i]-int(bound)))/bound)
         i += 1
         
-    return pd.DataFrame({'timestamp': predictions_x,'data': predictions_y,'confidnece':confidence})
+    return pd.DataFrame({'timestamp': predictions_x,'data': predictions_y,'confidence':confidence})

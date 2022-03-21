@@ -101,4 +101,4 @@ def detect_median_outliers_labelled_prediction(threshold, median_points, data_po
             confidence.append((points_y[i] - (median_points_y[i]-int(bound)))/bound)
         i += 1
         
-    return pd.DataFrame({'timestamp': predictions_x,'data': predictions_y,'confidnece':confidence})
+    return pd.DataFrame({'timestamp': predictions_x,'data': predictions_y,'confidence':confidence})

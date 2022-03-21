@@ -96,3 +96,41 @@ def detect_histogram_outliers(threshold,interval,data_points):
         i += subset_size
        
     return pd.DataFrame({'timestamp': outliers_x,'data': outliers_y})
+
+
+def is_outlier(point_x, outliers_x):
+    for outlier in outliers_x:
+        if point_x == outlier:
+            return True
+    return False
+
+
+def detect_histogram_outliers_predictions_confidence(threshold,interval,data_points):                                                                                                                                                                                                                                                                                                                                                                                                     
+
+    confidence = []
+    outliers_x = []
+
+    points_x = data_points['points_x']
+    points_y = data_points['points_y']
+
+    subset_size = int(len(points_y)/interval)
+    if (interval == 1):
+        return detect_histogram_outliers_for_subset(points_y, threshold, points_x, points_y)
+
+    i = 0
+    while (i < len(points_y) - subset_size):
+        subset = create_subset(i, subset_size, points_x, points_y)
+        outliers = detect_histogram_outliers_for_subset(subset['data'], threshold, points_x, points_y)
+        for outlier_x in outliers['timestamp']:
+            outliers_x.append(outlier_x)
+        i += subset_size
+
+    i = 0
+    while (i < len(points_y)):
+        if is_outlier(points_x[i], outliers_x):
+            confidence.append(-0.5)
+        else:
+            confidence.append(0.5)
+        i += 1
+       
+    return pd.DataFrame({'timestamp': points_x,'data': points_y,'confidence':confidence})

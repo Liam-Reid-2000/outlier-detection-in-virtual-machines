@@ -2,7 +2,7 @@ from datetime import datetime
 import pandas as pd
 import csv
 import json
-from ensemble_detectors.ensemble_voting import get_ensemble_result
+from ensemble_detectors.ensemble_voting import get_ensemble_result, get_ensemble_result_confidence
 from ensemble_detectors.moving_average_detection import *
 from ensemble_detectors.moving_median_detection import *
 from ensemble_detectors.moving_boxplot import *
@@ -98,16 +98,28 @@ def run_detection(model, data_coordinates, threshold, interval=10):
         outliers_x = outliers_['timestamp']
         outliers_y = outliers_['data']
     elif (model == 'moving_histogram'):
-        #outliers_ = detect_histogram_outliers(threshold,2, data_coordinates_renamed)
+        outliers_ = detect_histogram_outliers(threshold,2, data_coordinates_renamed)
         outliers_x = outliers_['timestamp']
         outliers_y = outliers_['data']
     elif (model == 'full_ensemble'):
-        ensemble_outliers = []
-        ensemble_outliers.append(detect_average_outliers(threshold, get_moving_average_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
-        ensemble_outliers.append(detect_median_outliers(threshold, get_moving_median_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
-        ensemble_outliers.append(detect_boxplot_outliers(threshold, interval, data_coordinates_renamed))
-        ensemble_outliers.append(detect_histogram_outliers(1,2, data_coordinates_renamed))
-        outliers_after_voting = get_ensemble_result(ensemble_outliers, 4)
+        #ensemble_outliers = []
+        #ensemble_outliers.append(detect_average_outliers(threshold, get_moving_average_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
+        #ensemble_outliers.append(detect_median_outliers(threshold, get_moving_median_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
+        #ensemble_outliers.append(detect_boxplot_outliers(threshold, interval, data_coordinates_renamed))
+        #ensemble_outliers.append(detect_histogram_outliers(1,2, data_coordinates_renamed))
+        #outliers_after_voting = get_ensemble_result(ensemble_outliers, 4)
+        #outliers_x = outliers_after_voting['timestamp']
+        #outliers_y = outliers_after_voting['data']
+
+
+        ensemble_outliers_confidence = []
+        ensemble_outliers_confidence.append(detect_average_outliers_labelled_prediction(threshold, get_moving_average_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
+        ensemble_outliers_confidence.append(detect_median_outliers_labelled_prediction(threshold, get_moving_median_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
+        ensemble_outliers_confidence.append(detect_boxplot_outliers_predictions_confidence(threshold, interval, data_coordinates_renamed))
+        ensemble_outliers_confidence.append(detect_histogram_outliers_predictions_confidence(1,2, data_coordinates_renamed))
+        outliers_after_voting = get_ensemble_result_confidence(ensemble_outliers_confidence)
+
+        #print(outliers_after_voting)
         outliers_x = outliers_after_voting['timestamp']
         outliers_y = outliers_after_voting['data']
     else:
