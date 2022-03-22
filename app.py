@@ -407,7 +407,7 @@ def plot_graph(detector, data_subset, dataset):
     data = data[data_subset]
     health_data = pd.DataFrame({'timestamp':timestamp,'data':data})
     detection_data = get_detection_data_months(detector, dataset + '_' + data_subset, health_data)
-    return get_fig(detection_data, dataset + '_' + data_subset, detector)
+    return get_fig(detection_data, dataset.replace('.xlsx','') + '_' + data_subset, detector)
 
 
 # HEALTH DATA

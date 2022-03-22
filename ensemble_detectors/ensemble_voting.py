@@ -60,7 +60,7 @@ def get_ensemble_result_confidence(detector_results):
 
     i = 0
     while (i < len(final_confidence)):
-        if (final_confidence[i] < -0.5):
+        if (final_confidence[i] < 0):
             predicted_actual_outliers_x.append(all_points_x[i])
             predicted_actual_outliers_y.append(all_points_y[i])
         i += 1

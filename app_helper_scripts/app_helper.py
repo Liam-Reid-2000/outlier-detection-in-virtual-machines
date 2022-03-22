@@ -144,7 +144,7 @@ def get_fig(detection_data, data_to_run, model, plot_actual_outliers=False):
                 i += 1
         detected_outliers = pd.DataFrame({'timestamp': detection_data[2],'data': detection_data[3]})
         fig.add_trace(go.Scatter(x=detected_outliers['timestamp'], y=detected_outliers['data'], mode='markers',name='Outliers Detected', line=dict(color='red')))
-        fig.update_layout(autotypenumbers='convert types', xaxis_title='Timestamp', yaxis_title='Data')
+        fig.update_layout(autotypenumbers='convert types', xaxis_title='timestamp', yaxis_title=data_to_run)
 
         return fig
     except:
