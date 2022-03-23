@@ -8,6 +8,7 @@ from collections import deque
 from app_helper_scripts.csv_helper import *
 import json
 from ensemble_detectors.ensemble_detection import get_ensemble_detection_data
+import time
 #import logging
 
 from som.outlier_detection_som import detect_som_outliers, detect_som_outliers_circle
@@ -34,10 +35,10 @@ app.layout = html.Div([
     html.H1('Outlier Detection'),
 
 
-    ##################### HEALTH DATA TESTING SPACE ##########################
+    ##################### Dengue Fever Data DATA TESTING SPACE ##########################
 
     html.Div([
-        html.H2('Health Data Experimental Space'),
+        html.H2('Dengue Fever Data Experimental Space'),
             html.Div([
                 html.Div([
 
@@ -47,7 +48,7 @@ app.layout = html.Div([
                         dcc.Dropdown(
                             id='available_detectors_health_data',
                             options=[{'label': i[0], 'value': i[0]} for i in get_config('available_detectors')],
-                            value='moving_average'
+                            value='full_ensemble'
                         ),
                     ],style={'width': '20%', 'display': 'inline-block'}),
                     html.Div([
@@ -406,7 +407,10 @@ def plot_graph(detector, data_subset, dataset):
     timestamp = data['year_month']
     data = data[data_subset]
     health_data = pd.DataFrame({'timestamp':timestamp,'data':data})
+    tic = time.perf_counter()
     detection_data = get_detection_data_months(detector, dataset + '_' + data_subset, health_data)
+    toc = time.perf_counter()
+    print(f"Did the detection in {toc - tic:0.4f} seconds")
     return get_fig(detection_data, dataset.replace('.xlsx','') + '_' + data_subset, detector)
 
 

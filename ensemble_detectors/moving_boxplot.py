@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
 
 def detect_boxplot_outliers(threshold, boxplot_dataset_size, data_points):                                                                                                                                                                                                                                                                                                                                                                                                     
