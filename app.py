@@ -97,7 +97,7 @@ app.layout = html.Div([
                         dcc.Dropdown(
                             id='available_data_cloud_resource_data',
                             options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets_cloud_resource_data')],
-                            value='ec2_cpu_utilization_fe7f93'
+                            value='ec2_cpu_utilization_5f5533'
                         ),
                     ],style={'width': '30%', 'display': 'inline-block'}),
                 ]),

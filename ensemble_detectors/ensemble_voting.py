@@ -50,9 +50,10 @@ def get_ensemble_result_confidence(detector_results):
         current_conf = 0
         for detector_result in detector_results:
             df = detector_result.loc[detector_result['timestamp'] == all_points_x[i]]
-            if(len(df['confidence']) != 0):
-                 current_conf += (df['confidence'].iloc[0])
-        #print('combined confidence for ' + str(i) + 'th x_point = ' + str(current_conf))
+            try:
+                current_conf += (df['confidence'].iloc[0])
+            except:
+                print("No confidence to add")
         final_confidence.append(current_conf)
         i += 1
 

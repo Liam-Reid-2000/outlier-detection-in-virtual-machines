@@ -122,10 +122,6 @@
             "realAWSCloudwatch/ec2_cpu_utilization_c6585a.csv"
         ],
         [
-            "ec2_cpu_utilization_fe7f93",
-            "realAWSCloudwatch/ec2_cpu_utilization_fe7f93.csv"
-        ],
-        [
             "rds_cpu_utilization_cc0c53",
             "realAWSCloudwatch/rds_cpu_utilization_cc0c53.csv"
         ],

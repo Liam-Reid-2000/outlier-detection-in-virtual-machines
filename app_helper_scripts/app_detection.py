@@ -98,7 +98,7 @@ def run_detection(model, data_coordinates, threshold, interval=10):
         outliers_x = outliers_['timestamp']
         outliers_y = outliers_['data']
     elif (model == 'moving_histogram'):
-        outliers_ = detect_histogram_outliers(threshold,2, data_coordinates_renamed)
+        outliers_ = detect_histogram_outliers(threshold,1, data_coordinates_renamed)
         outliers_x = outliers_['timestamp']
         outliers_y = outliers_['data']
     elif (model == 'full_ensemble'):
@@ -116,7 +116,7 @@ def run_detection(model, data_coordinates, threshold, interval=10):
         ensemble_outliers_confidence.append(detect_average_outliers_labelled_prediction(threshold, get_moving_average_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
         ensemble_outliers_confidence.append(detect_median_outliers_labelled_prediction(threshold, get_moving_median_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
         ensemble_outliers_confidence.append(detect_boxplot_outliers_predictions_confidence(threshold, interval, data_coordinates_renamed))
-        ensemble_outliers_confidence.append(detect_histogram_outliers_predictions_confidence(1,2, data_coordinates_renamed))
+        ensemble_outliers_confidence.append(detect_histogram_outliers_predictions_confidence(1,1, data_coordinates_renamed))
         outliers_after_voting = get_ensemble_result_confidence(ensemble_outliers_confidence)
 
         #print(outliers_after_voting)
@@ -211,7 +211,7 @@ def run_detection_months(model, data_coordinates, threshold, interval=7):
 
 def run_detection_hours_known_outliers(model, data_csv, outliers_csv, threshold):
     # need to set this another way
-    interval  = 7
+    interval = 10
     #
 
     data_coordinates = load_data_coordinates(data_csv)

@@ -115,7 +115,8 @@ def get_detection_data_known_outliers(model, data_to_run, target_data, threshold
             path_to_data = 'resources/cloud_resource_data/'+data_to_run+'.csv'
         if (split_hours):
             detection_data = run_detection_hours_known_outliers(model, path_to_data, target_data, threshold)
-        detection_data = run_detection_known_outliers(model, path_to_data, target_data, threshold)
+        else:
+            detection_data = run_detection_known_outliers(model, path_to_data, target_data, threshold)
         save_generated_data(requested_data, detection_data)
 
     return detection_data

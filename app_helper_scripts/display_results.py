@@ -22,19 +22,36 @@ class display_results:
 
 
     def get_true_positive(self):
-        true_positive_count = 0
         outlier_windows_file = open('resources/combined_windows.json')
         outlier_windows = json.load(outlier_windows_file)
+        
+        outlier_labels_file = open('resources/combined_labels.json')
+        outlier_labels = json.load(outlier_labels_file)
+
+        true_positive_count = 0
+
         for i in outlier_windows[self.target_data]:
             minBound = datetime.datetime.strptime(i[0], '%Y-%m-%d %H:%M:%S.%f')
             maxBound = datetime.datetime.strptime(i[1], '%Y-%m-%d %H:%M:%S.%f')
-            found_outlier_in_range = False
+
+            no_outliers_in_this_boundary = 0
+            true_positive_count_for_this_boundary = 0
+
+            for outlier in outlier_labels[self.target_data]:
+                outlier_date = datetime.datetime.strptime(outlier, '%Y-%m-%d %H:%M:%S')
+                if (outlier_date>=minBound and outlier_date<=maxBound):
+                    no_outliers_in_this_boundary += 1
+
+
             for outlier in self.outliers_x[0]:
                 if (outlier>=minBound and outlier<=maxBound):
                     self.data_in_outlier_windows += 1
-                    if (found_outlier_in_range == False):
-                        true_positive_count += 1
-                        found_outlier_in_range = True
+                    if (true_positive_count_for_this_boundary < no_outliers_in_this_boundary):
+                        true_positive_count_for_this_boundary += 1
+            
+            true_positive_count += true_positive_count_for_this_boundary
+
+        outlier_labels_file.close()
         outlier_windows_file.close()
         return true_positive_count
 
