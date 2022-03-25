@@ -37,12 +37,15 @@ def detect_boxplot_outliers(threshold, boxplot_dataset_size, data_points):
         q3, q1 = np.percentile(dataArr, [75 ,25])
         iqr = q3 - q1
 
+        #print('iqr = ' + str(iqr))
+        #print('threshold = ' + str(iqr*float(threshold)))
+
         #calculate class boundaries
-        if (q1 - iqr*1.5*float(threshold) < 0):
+        if (q1 - iqr*float(threshold) < 0):
             lower_bound = 0
         else:
-            lower_bound = q1 - iqr*1.5*float(threshold)
-        upper_bound = q3 + iqr*1.5*float(threshold)
+            lower_bound = q1 - iqr*float(threshold)
+        upper_bound = q3 + iqr*float(threshold)
 
 
         #is next data item an outlier?
@@ -63,6 +66,7 @@ def detect_boxplot_outliers_predictions_confidence(threshold, boxplot_dataset_si
     predictions_x = []
     predictions_y = []
     confidence = []
+
 
     points_x = data_points['points_x']
     points_y = data_points['points_y']
@@ -95,11 +99,11 @@ def detect_boxplot_outliers_predictions_confidence(threshold, boxplot_dataset_si
         iqr = q3 - q1
 
         #calculate class boundaries
-        if (q1 - iqr*1.5*float(threshold) < 0):
+        if (q1 - iqr*float(threshold) < 0):
             lower_bound = 0
         else:
-            lower_bound = q1 - iqr*1.5*float(threshold)
-        upper_bound = q3 + iqr*1.5*float(threshold)
+            lower_bound = q1 - iqr*float(threshold)
+        upper_bound = q3 + iqr*float(threshold)
 
 
         # confidence of next prediction

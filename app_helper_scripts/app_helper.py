@@ -78,10 +78,10 @@ def get_detection_data(model, data_to_run, data_coordinates, threshold=0):
 def get_detection_data_months(model, data_to_run, data_coordinates, threshold=2):
     return run_detection_months(model, data_coordinates, threshold)
 
-def get_detection_data_hours_known_outliers(model, data_to_run, outliers_csv, threshold=2):
-    return get_detection_data_known_outliers(model, data_to_run, outliers_csv, threshold, True)
+def get_detection_data_hours_known_outliers(model, data_to_run, outliers_csv, threshold=2, interval=10):
+    return get_detection_data_known_outliers(model, data_to_run, outliers_csv, threshold, interval, True)
 
-def get_detection_data_known_outliers(model, data_to_run, target_data, threshold, split_hours=False):
+def get_detection_data_known_outliers(model, data_to_run, target_data, threshold, interval=10, split_hours=False):
     requested_data = model + '_' + data_to_run
 
     detection_data = []
@@ -114,7 +114,7 @@ def get_detection_data_known_outliers(model, data_to_run, target_data, threshold
         if (exists(path_to_data) == False):
             path_to_data = 'resources/cloud_resource_data/'+data_to_run+'.csv'
         if (split_hours):
-            detection_data = run_detection_hours_known_outliers(model, path_to_data, target_data, threshold)
+            detection_data = run_detection_hours_known_outliers(model, path_to_data, target_data, threshold, interval)
         else:
             detection_data = run_detection_known_outliers(model, path_to_data, target_data, threshold)
         save_generated_data(requested_data, detection_data)

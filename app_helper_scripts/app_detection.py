@@ -43,8 +43,18 @@ def get_outlier_area_ordinates(target_data):
         for i in known_outliers:
             arrX1.append(datetime.strptime(i[0], '%Y-%m-%d %H:%M:%S.%f'))
             arrX2.append(datetime.strptime(i[1], '%Y-%m-%d %H:%M:%S.%f'))
-        f.close()
+    f.close()
     return pd.DataFrame({'first_x': arrX1, 'second_x': arrX2})
+
+
+def get_true_outliers(target_data):
+    true_outliers_file = open('resources/combined_windows.json')
+    true_outliers = json.load(true_outlier_data_file)
+    outliers = []
+    for outlier in true_outliers[target_data]:
+        outliers.append(outlier)
+    true_outliers_file.close()
+    return outliers
     
 
 def collect_detection_data_known_outliers(outliers_df, anomalies_csv_passed, points_x_passed, points_y_passed, real_outlier_areas=[]):
@@ -93,8 +103,7 @@ def run_detection(model, data_coordinates, threshold, interval=10):
         outliers_x = outliers_['timestamp']
         outliers_y = outliers_['data']
     elif (model == 'moving_boxplot'):
-        #outliers_ = detect_boxplot_outliers(threshold, interval, data_coordinates_renamed)
-        outliers_ = detect_boxplot_outliers(threshold, 20, data_coordinates_renamed)
+        outliers_ = detect_boxplot_outliers(threshold, interval, data_coordinates_renamed)
         outliers_x = outliers_['timestamp']
         outliers_y = outliers_['data']
     elif (model == 'moving_histogram'):
@@ -106,7 +115,7 @@ def run_detection(model, data_coordinates, threshold, interval=10):
         #ensemble_outliers.append(detect_average_outliers(threshold, get_moving_average_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
         #ensemble_outliers.append(detect_median_outliers(threshold, get_moving_median_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
         #ensemble_outliers.append(detect_boxplot_outliers(threshold, interval, data_coordinates_renamed))
-        #ensemble_outliers.append(detect_histogram_outliers(1,2, data_coordinates_renamed))
+        #ensemble_outliers.append(detect_histogram_outliers(1,1, data_coordinates_renamed))
         #outliers_after_voting = get_ensemble_result(ensemble_outliers, 4)
         #outliers_x = outliers_after_voting['timestamp']
         #outliers_y = outliers_after_voting['data']
@@ -209,10 +218,7 @@ def run_detection_months(model, data_coordinates, threshold, interval=7):
     return collect_detection_data(all_outliers_df, points_x, points_y)
 
 
-def run_detection_hours_known_outliers(model, data_csv, outliers_csv, threshold):
-    # need to set this another way
-    interval = 10
-    #
+def run_detection_hours_known_outliers(model, data_csv, outliers_csv, threshold, interval):
 
     data_coordinates = load_data_coordinates(data_csv)
 

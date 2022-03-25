@@ -44,7 +44,7 @@ def detect_median_outliers(threshold, median_points, data_points):
     points_x = data_points['points_x']
     points_y = data_points['points_y']
 
-    bound_mult = 2.5
+    bound_mult = 3
     bound = (find_threshold(points_y)*bound_mult)
 
     i = 0
@@ -88,7 +88,7 @@ def detect_median_outliers_labelled_prediction(threshold, median_points, data_po
     points_x = data_points['points_x']
     points_y = data_points['points_y']
 
-    bound_mult = 2.5
+    bound_mult = 3
     bound = (find_threshold(points_y)*bound_mult)
 
     i = 0

@@ -22,37 +22,44 @@ class display_results:
 
 
     def get_true_positive(self):
-        outlier_windows_file = open('resources/combined_windows.json')
-        outlier_windows = json.load(outlier_windows_file)
+        #outlier_windows_file = open('resources/combined_windows.json')
+        #outlier_windows = json.load(outlier_windows_file)
         
         outlier_labels_file = open('resources/combined_labels.json')
         outlier_labels = json.load(outlier_labels_file)
 
         true_positive_count = 0
 
-        for i in outlier_windows[self.target_data]:
-            minBound = datetime.datetime.strptime(i[0], '%Y-%m-%d %H:%M:%S.%f')
-            maxBound = datetime.datetime.strptime(i[1], '%Y-%m-%d %H:%M:%S.%f')
+        for outlier in self.outliers_x[0]:
+            print(outlier)
+            for outlier2 in outlier_labels[self.target_data]:
+                print('actual_outlier ' + str(outlier2))
+            if (outlier in outlier_labels[self.target_data]):
+                true_positive_count += 1
 
-            no_outliers_in_this_boundary = 0
-            true_positive_count_for_this_boundary = 0
+        #for i in outlier_windows[self.target_data]:
+            #minBound = datetime.datetime.strptime(i[0], '%Y-%m-%d %H:%M:%S.%f')
+            #maxBound = datetime.datetime.strptime(i[1], '%Y-%m-%d %H:%M:%S.%f')
 
-            for outlier in outlier_labels[self.target_data]:
-                outlier_date = datetime.datetime.strptime(outlier, '%Y-%m-%d %H:%M:%S')
-                if (outlier_date>=minBound and outlier_date<=maxBound):
-                    no_outliers_in_this_boundary += 1
+            #no_outliers_in_this_boundary = 0
+            #true_positive_count_for_this_boundary = 0
+
+            #for outlier in outlier_labels[self.target_data]:
+            #    outlier_date = datetime.datetime.strptime(outlier, '%Y-%m-%d %H:%M:%S')
+            #    if (outlier_date>=minBound and outlier_date<=maxBound):
+            #        no_outliers_in_this_boundary += 1
 
 
-            for outlier in self.outliers_x[0]:
-                if (outlier>=minBound and outlier<=maxBound):
-                    self.data_in_outlier_windows += 1
-                    if (true_positive_count_for_this_boundary < no_outliers_in_this_boundary):
-                        true_positive_count_for_this_boundary += 1
             
-            true_positive_count += true_positive_count_for_this_boundary
+                #if (outlier>=minBound and outlier<=maxBound):
+                #    self.data_in_outlier_windows += 1
+                #    if (true_positive_count_for_this_boundary < no_outliers_in_this_boundary):
+                #        true_positive_count_for_this_boundary += 1
+            
+            #true_positive_count += true_positive_count_for_this_boundary
 
         outlier_labels_file.close()
-        outlier_windows_file.close()
+        #outlier_windows_file.close()
         return true_positive_count
 
 
@@ -126,7 +133,7 @@ class display_results:
 
         ## Accuracy
         try:
-            accuracy = (tn+self.data_in_outlier_windows)/n
+            accuracy = (tn+tp)/n
         except:
             accuracy = 0
 
@@ -138,7 +145,7 @@ class display_results:
 
         ## Precision
         try:
-            precision = self.data_in_outlier_windows/(self.data_in_outlier_windows+fp)
+            precision = tp/(tp+fp)
         except:
             precision = 0
 
@@ -154,23 +161,23 @@ class display_results:
         results.append(precision)
         results.append(f1)
         
-        print('\n\nDETECTION RESULTS \n')
-        print('True Postives: ' + str(tp))
-        print('False Postives: ' + str(fp))
-        print('False Negatives: ' + str(fn))
-        print('True Negatives: ' + str(tn))
+        #print('\n\nDETECTION RESULTS \n')
+        #print('True Postives: ' + str(tp))
+        #print('False Postives: ' + str(fp))
+        #print('False Negatives: ' + str(fn))
+        #print('True Negatives: ' + str(tn))
         
-        print('\n')
-        print('Accuracy: ' + str(accuracy))
-        print('Recall: ' + str(recall))
-        print('Precision: ' + str(precision))
-        print('f1 score: ' + str(f1))
+        #print('\n')
+        #print('Accuracy: ' + str(accuracy))
+        #print('Recall: ' + str(recall))
+        #print('Precision: ' + str(precision))
+        #print('f1 score: ' + str(f1))
 
-        print('\n\nDETECTION RESULTS AS PERCENTAGES \n')
+        #print('\n\nDETECTION RESULTS AS PERCENTAGES \n')
         
-        print('Accuracy: ' + str(round(accuracy*100,1))+'%')
-        print('Recall: ' + str(round(recall*100,1))+'%')
-        print('Precision: ' + str(round(precision*100,1))+'%')
-        print('f1 score: ' + str(round(f1*100,1))+'%')
+        #print('Accuracy: ' + str(round(accuracy*100,1))+'%')
+        #print('Recall: ' + str(round(recall*100,1))+'%')
+        #print('Precision: ' + str(round(precision*100,1))+'%')
+        #print('f1 score: ' + str(round(f1*100,1))+'%')
 
         return results
