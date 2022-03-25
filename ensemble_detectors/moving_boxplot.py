@@ -38,7 +38,10 @@ def detect_boxplot_outliers(threshold, boxplot_dataset_size, data_points):
         iqr = q3 - q1
 
         #calculate class boundaries
-        lower_bound = q1 - iqr*1.5*float(threshold)
+        if (q1 - iqr*1.5*float(threshold) < 0):
+            lower_bound = 0
+        else:
+            lower_bound = q1 - iqr*1.5*float(threshold)
         upper_bound = q3 + iqr*1.5*float(threshold)
 
 
@@ -92,7 +95,10 @@ def detect_boxplot_outliers_predictions_confidence(threshold, boxplot_dataset_si
         iqr = q3 - q1
 
         #calculate class boundaries
-        lower_bound = q1 - iqr*1.5*float(threshold)
+        if (q1 - iqr*1.5*float(threshold) < 0):
+            lower_bound = 0
+        else:
+            lower_bound = q1 - iqr*1.5*float(threshold)
         upper_bound = q3 + iqr*1.5*float(threshold)
 
 

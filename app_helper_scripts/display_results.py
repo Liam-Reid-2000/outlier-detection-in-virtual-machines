@@ -9,6 +9,7 @@ class display_results:
         self.target_data = target_data
         self.outliers_x = outliers_x
         self.points_x = points_x
+        self.data_in_outlier_windows = 0
     
     
 
@@ -22,21 +23,25 @@ class display_results:
 
     def get_true_positive(self):
         true_positive_count = 0
-        f = open('resources/combined_windows.json')
-        data = json.load(f)
-        for i in data[self.target_data]:
+        outlier_windows_file = open('resources/combined_windows.json')
+        outlier_windows = json.load(outlier_windows_file)
+        for i in outlier_windows[self.target_data]:
             minBound = datetime.datetime.strptime(i[0], '%Y-%m-%d %H:%M:%S.%f')
             maxBound = datetime.datetime.strptime(i[1], '%Y-%m-%d %H:%M:%S.%f')
+            found_outlier_in_range = False
             for outlier in self.outliers_x[0]:
                 if (outlier>=minBound and outlier<=maxBound):
-                    true_positive_count = true_positive_count + 1
-        f.close()
+                    self.data_in_outlier_windows += 1
+                    if (found_outlier_in_range == False):
+                        true_positive_count += 1
+                        found_outlier_in_range = True
+        outlier_windows_file.close()
         return true_positive_count
 
 
 
     def get_false_positive(self):
-        false_positive = len(self.outliers_x[0]) - self.get_true_positive()
+        false_positive = len(self.outliers_x[0]) - self.data_in_outlier_windows
         if (false_positive > 0):
             return false_positive
         else:
@@ -79,16 +84,17 @@ class display_results:
         hit_count = 0
         f = open('resources/combined_labels.json')
         data = json.load(f)
-        for i in data[self.target_data]:
-            for outlier in self.outliers_x[0]:
-                if (str(outlier) == str(i)):
-                    hit_count = hit_count + 1
-        f.close()
-        false_negative = (len(data[self.target_data]) - hit_count)
-        if (false_negative > 0):
-            return false_negative
-        else:
-            return 0
+        return len(data[self.target_data]) - self.get_true_positive()
+        #for i in data[self.target_data]:
+        #    for outlier in self.outliers_x[0]:
+        #        if (str(outlier) == str(i)):
+        #            hit_count = hit_count + 1
+        #f.close()
+        #false_negative = (len(data[self.target_data]) - hit_count)
+        #if (false_negative > 0):
+        #    return false_negative
+        #else:
+        #    return 0
 
 
 
@@ -103,7 +109,7 @@ class display_results:
 
         ## Accuracy
         try:
-            accuracy = (tn+tp)/n
+            accuracy = (tn+self.data_in_outlier_windows)/n
         except:
             accuracy = 0
 
@@ -115,7 +121,7 @@ class display_results:
 
         ## Precision
         try:
-            precision = tp/(tp+fp)
+            precision = self.data_in_outlier_windows/(self.data_in_outlier_windows+fp)
         except:
             precision = 0
 

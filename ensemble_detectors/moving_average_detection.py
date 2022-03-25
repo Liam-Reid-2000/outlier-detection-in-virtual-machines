@@ -48,7 +48,7 @@ def detect_average_outliers(threshold, average_points, data_points):
     points_x = data_points['points_x']
     points_y = data_points['points_y']
 
-    bound_mult = 2
+    bound_mult = 2.5
     bound = (find_threshold(points_y)*bound_mult)
 
     i = 0

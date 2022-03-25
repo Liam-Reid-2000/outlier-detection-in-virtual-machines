@@ -128,9 +128,9 @@ def detect_histogram_outliers_predictions_confidence(threshold,interval,data_poi
     i = 0
     while (i < len(points_y)):
         if is_outlier(points_x[i], outliers_x):
-            confidence.append(-0.5)
+            confidence.append(-0.2)
         else:
-            confidence.append(0.5)
+            confidence.append(0.8)
         i += 1
        
     return pd.DataFrame({'timestamp': points_x,'data': points_y,'confidence':confidence})
