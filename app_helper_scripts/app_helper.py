@@ -150,3 +150,22 @@ def get_fig(detection_data, data_to_run, model, plot_actual_outliers=False):
         return fig
     except:
         print('Error getting figure for ' + model + ' on ' + data_to_run + 'data')
+
+
+def get_fig_plot_outliers(detection_data, data_to_run, model):
+
+    #try:
+    pycaret_plots = pd.DataFrame({'timestamp': detection_data[0],'data': detection_data[1]})
+    fig = px.line(pycaret_plots, x='timestamp', y='data',title= data_to_run + ' Data against Time (Using '+model+'-based outlier detection)')
+    print(len(detection_data[4]))
+    print(len(detection_data[5]))
+    detected_outliers = pd.DataFrame({'timestamp': detection_data[4],'data': detection_data[5]})
+    fig.add_trace(go.Scatter(x=detected_outliers['timestamp'], y=detected_outliers['data'], mode='markers',name='True Outliers', line=dict(color='black')))
+
+    detected_outliers = pd.DataFrame({'timestamp': detection_data[2],'data': detection_data[3]})
+    fig.add_trace(go.Scatter(x=detected_outliers['timestamp'], y=detected_outliers['data'], mode='markers',name='Outliers Detected', line=dict(color='red')))
+    fig.update_layout(autotypenumbers='convert types', xaxis_title='timestamp', yaxis_title=data_to_run)
+
+    return fig
+    #except:
+    #    print('Error getting figure for ' + model + ' on ' + data_to_run + 'data')

@@ -121,9 +121,7 @@ def detect_histogram_outliers_predictions_confidence(threshold,interval,data_poi
         subset_size = (len(points_y) - 1)
 
     i = 0
-    print('first loop: should only run once but runs' + str(len(points_y) - subset_size) + 'times')
     while (i < len(points_y) - subset_size):
-        print('first loop: should only run once')
         subset = create_subset(i, subset_size, points_x, points_y)
         outliers = detect_histogram_outliers_for_subset(subset['data'], threshold, points_x, points_y)
         for outlier_x in outliers['timestamp']:
@@ -132,7 +130,6 @@ def detect_histogram_outliers_predictions_confidence(threshold,interval,data_poi
 
     i = 0
     while (i < len(points_y)):
-        print('second loop: appending confidence: iteration = ' + str(i))
         if is_outlier(points_x[i], outliers_x):
             confidence.append(-0.9)
         else:

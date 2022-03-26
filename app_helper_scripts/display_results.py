@@ -31,11 +31,10 @@ class display_results:
         true_positive_count = 0
 
         for outlier in self.outliers_x[0]:
-            print(outlier)
             for outlier2 in outlier_labels[self.target_data]:
-                print('actual_outlier ' + str(outlier2))
-            if (outlier in outlier_labels[self.target_data]):
-                true_positive_count += 1
+                if (str(outlier) == str(outlier2)):
+                    print('actual_outlier ' + str(outlier2))
+                    true_positive_count += 1
 
         #for i in outlier_windows[self.target_data]:
             #minBound = datetime.datetime.strptime(i[0], '%Y-%m-%d %H:%M:%S.%f')

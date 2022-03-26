@@ -48,16 +48,50 @@ def get_outlier_area_ordinates(target_data):
 
 
 def get_true_outliers(target_data):
-    true_outliers_file = open('resources/combined_windows.json')
-    true_outliers = json.load(true_outlier_data_file)
+    true_outliers_file = open('resources/combined_labels.json')
+    true_outliers = json.load(true_outliers_file)
     outliers = []
     for outlier in true_outliers[target_data]:
         outliers.append(outlier)
     true_outliers_file.close()
     return outliers
+
+
+def get_outlier_y_ordinates(points_x, points_y, true_outliers_x):
+        true_outliers_y = []
+        i = 0
+        while i < len(points_x):
+            j = 0
+            while j < len(true_outliers_x):
+                #print(str(points_x[i]) + ' == ' + str(datetime.strptime(true_outliers_x[0][j], '%Y-%m-%d %H:%M:%S.%f')))
+                if (str(points_x[i])==str(datetime.strptime(true_outliers_x[j], '%Y-%m-%d %H:%M:%S'))):
+                    print('match')
+                    true_outliers_y.append(points_y[i])
+                j += 1
+            i += 1
+        return true_outliers_y
     
 
-def collect_detection_data_known_outliers(outliers_df, anomalies_csv_passed, points_x_passed, points_y_passed, real_outlier_areas=[]):
+def collect_detection_data_known_outliers(outliers_df, true_outliers_csv_reference, points_x_passed, points_y_passed, real_outlier_areas=[]):
+
+    outliers_x_detected = []
+    outliers_x_detected.append(outliers_df['timestamp'])
+
+    detection_data = collect_detection_data(outliers_df, points_x_passed, points_y_passed)
+
+    true_outliers = true_outliers = get_true_outliers(true_outliers_csv_reference)
+    if (len(real_outlier_areas)>0):
+        true_outliers = real_outlier_areas
+    detection_data.append(true_outliers)
+    detection_data.append(get_outlier_y_ordinates(points_x_passed, points_y_passed, true_outliers))
+
+    results = display_results(true_outliers_csv_reference, points_x_passed, outliers_x_detected)
+    detection_data.append(results.display_results())
+
+    return detection_data
+
+
+def collect_detection_data_known_outlier_areas(outliers_df, anomalies_csv_passed, points_x_passed, points_y_passed, real_outlier_areas=[]):
     true_outliers = get_outlier_area_ordinates(anomalies_csv_passed)
     if (len(real_outlier_areas)>0):
         true_outliers = real_outlier_areas
