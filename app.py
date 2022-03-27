@@ -9,7 +9,6 @@ from app_helper_scripts.csv_helper import *
 import json
 from ensemble_detectors.ensemble_detection import get_ensemble_detection_data
 import time
-#import logging
 
 from som.outlier_detection_som import detect_som_outliers, detect_som_outliers_circle
 from app_helper_scripts.average_outlier_detection_stream import get_average, get_data_coordinates, get_stream_fig
@@ -125,8 +124,6 @@ app.layout = html.Div([
     
 
 
-
-
     ### Graph to display classifier detection results for unsupervised methods ###
 
     html.Div([
@@ -154,7 +151,7 @@ app.layout = html.Div([
 
             ### The Graph ### 
             dcc.Graph(
-                id='pycaret-plots'
+                id='unsupervised_detection_graph'
             ),
         ],style={'width': '70%', 'display': 'inline-block'}),
         
@@ -339,6 +336,39 @@ app.layout = html.Div([
     ],style={"border":"2px black solid"}),
 ])
 
+###########################################################################
+################### Ensemble 
+
+@app.callback(
+    Output('ensemble-graph', 'figure'),
+    [Input('ensemble-average-radio-btns','value'),
+    Input('ensemble-median-radio-btns','value'),
+    Input('ensemble-histogram-radio-btns','value'),
+    Input('ensemble-boxplot-radio-btns','value'),
+    Input('available_data_ensemble','value'),
+    Input('btn_refresh_ensemble', 'n_clicks')]
+)
+def update_results_title(average_rd, median_rd, histogram_rd, boxplot_rd, data, n_clicks):
+
+    ensemble_detector_list = []
+
+    # Check which detectors user has selected
+    if (average_rd == 'On'):
+        ensemble_detector_list.append('moving_average')
+    if (median_rd == 'On'):
+        ensemble_detector_list.append('moving_median')
+    if (boxplot_rd == 'On'):
+        ensemble_detector_list.append('moving_boxplot')
+    if (histogram_rd == 'On'):
+        ensemble_detector_list.append('moving_histogram')
+
+    detection_data = get_ensemble_detection_data(ensemble_detector_list, data, get_outlier_ref(data))
+
+    ## return the figure
+    fig = get_fig_plot_outliers(detection_data, data, 'moving ensemble')
+    fig.show # This is showing error becuase it should be show() but works anyway
+    return fig
+
 
 @app.callback(
     Output('live-update-results_ensemble', 'children'),
@@ -350,12 +380,15 @@ app.layout = html.Div([
 )
 def update_results(average_rad, median_rad, boxplot_rad, histogram_rad, n_clicks):
     try:
-        return get_result_data('ensemble/ensemble_results.csv')
+        return get_result_data('ensemble/ensemble_detector_evaluation_data.csv')
     except:
         print('Error when getting results')
-        #logging.error('Error when getting results')
+
+###########################################################################
         
 
+###########################################################################
+##################### UNSUPERVISED DETECTION
 @app.callback(
     Output('results_title', 'children'),
     [Input('available_data','value'),
@@ -372,26 +405,23 @@ def update_results_title(data, detector):
     Input('btn_refresh', 'n_clicks')]
 )
 def update_results(data, detector, n_clicks):
-    try:
-        return get_result_data(detector + '_' + data + '/' + detector + '_' + data + '_results.csv')
-    except:
-        print('Error when getting results')
-        #logging.error('Error when getting results')
-        
+    return get_result_data(detector + '_' + data + '/' + detector + '_' + data + '_detector_evaluation_data.csv')
 
 
 @app.callback(
-    Output('pycaret-plots', 'figure'),
+    Output('unsupervised_detection_graph', 'figure'),
     [Input('available_data','value'),
     Input('available_detectors','value')]
 )
 def plot_graph(data, detector):
     detection_data = get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector))
-    return get_fig_known_outliers(detection_data, data, detector)
+    return get_fig_plot_outliers(detection_data, data, detector)
+
+##################### UNSUPERVISED DETECTION
+###########################################################################
 
 
 ################################
-
 # HEALTH DATA
 
 
@@ -415,13 +445,10 @@ def plot_graph(detector, data_subset, dataset):
 
 
 # HEALTH DATA
-
 ################################
 
 ################################
-
 # CLOUD RESOURCE DATA
-
 
 @app.callback(
     Output('graph_cloud_resource_data', 'figure'),
@@ -454,19 +481,13 @@ def update_results_title(data, detector):
     Input('btn_refresh_cloud', 'n_clicks')]
 )
 def update_results(data, detector, n_clicks):
-    try:
-        return get_result_data(detector + '_' + data + '/' + detector + '_' + data + '_results.csv')
-    except:
-        print('Error when getting results')
-        #logging.error('Error when getting results')
+    return get_result_data(detector + '_' + data + '/' + detector + '_' + data + '_detector_evaluation_data.csv')
 
 
 # CLOUD RESOURCE DATA
-
 ################################
 
 ####################################################################################
-
 ### SUPERVISED LEARNING ###
 
 @app.callback(
@@ -477,7 +498,7 @@ def update_results(data, detector, n_clicks):
 )
 def plot_graph(data, detector,ratio):
     detection_data = do_isolation_forest_detection(float(ratio), 'resources/' + data + '.csv', get_outlier_ref(data), False)
-    return get_fig_known_outliers(detection_data, "speed", "isolation forest")
+    return get_fig_plot_outliers(detection_data, "speed", "isolation forest")
 
 @app.callback(
     Output('live-update-results_supervised', 'children'),
@@ -488,7 +509,7 @@ def plot_graph(data, detector,ratio):
 )
 def update_results(data, detector, n_clicks, ratio):
     try:
-        return get_result_data('supervised_histogram_'+ratio+'/supervised_histogram_'+ratio+'_results.csv')
+        return get_result_data('supervised_histogram_'+ratio+'/supervised_histogram_'+ratio+'_detector_evaluation_data.csv')
     except:
         print('Error when getting results')
         #logging.error('Error when getting results')
@@ -500,47 +521,14 @@ def update_results(data, detector, n_clicks, ratio):
     Input('supervised_test_train_split_ratio', 'value')]
 )
 def update_results(data, n_clicks, ratio):
-    return do_isolation_forest_detection(float(ratio), 'resources/' + data + '.csv', get_outlier_ref(data), True)
-
-        
+    return do_isolation_forest_detection(float(ratio), 'resources/' + data + '.csv', get_outlier_ref(data), True)   
 
 ### SUPERVISED LEARNING ###
-
 ####################################################################################
 
 
-
-@app.callback(
-    Output('ensemble-graph', 'figure'),
-    [Input('ensemble-average-radio-btns','value'),
-    Input('ensemble-median-radio-btns','value'),
-    Input('ensemble-histogram-radio-btns','value'),
-    Input('ensemble-boxplot-radio-btns','value'),
-    Input('available_data_ensemble','value'),
-    Input('btn_refresh_ensemble', 'n_clicks')]
-)
-def update_results_title(average_rd, median_rd, histogram_rd, boxplot_rd, data, n_clicks):
-
-    ensemble_detector_list = []
-
-    # Check which detectors user has selected
-    if (average_rd == 'On'):
-        ensemble_detector_list.append('moving_average')
-    if (median_rd == 'On'):
-        ensemble_detector_list.append('moving_median')
-    if (boxplot_rd == 'On'):
-        ensemble_detector_list.append('moving_boxplot')
-    if (histogram_rd == 'On'):
-        ensemble_detector_list.append('moving_histogram')
-
-    detection_data = get_ensemble_detection_data(ensemble_detector_list, data, get_outlier_ref(data))
-
-    ## return the figure
-    fig = get_fig_known_outliers(detection_data, data, 'moving ensemble')
-    fig.show # This is showing error becuase it should be show() but works anyway
-    return fig
-
-
+###################################################
+## SOM
 
 @app.callback(
     Output('som-graph', 'figure'),
@@ -575,6 +563,9 @@ def update_graph_scatter(n):
     fig.add_scatter(x=outliers_x,y=outliers_y,mode='markers',name='Outliers')
 
     return fig
+
+## SOM
+###################################################
 
 #######################################################################################
   
@@ -625,7 +616,6 @@ def update_graph_scatter(n,data):
         return get_stream_fig(data_points, has_average, Xavg, Yavg, X, Y)
     except:
         print('Error with stream graph')
-        #logging.error('Problem with stream graph')
 
 if __name__ == '__main__':
     app.run_server()

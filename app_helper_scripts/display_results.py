@@ -8,9 +8,7 @@ class display_results:
     def __init__(self, target_data, points_x, outliers_x):
         self.target_data = target_data
         self.outliers_x = outliers_x
-        self.points_x = points_x
-        self.data_in_outlier_windows = 0
-    
+        self.points_x = points_x   
     
 
     def get_no_outliers(self):

@@ -8,6 +8,7 @@ from ensemble_detectors.moving_median_detection import *
 from ensemble_detectors.moving_boxplot import *
 from ensemble_detectors.moving_histogram_detection import *
 from app_helper_scripts.display_results import display_results
+from app_helper_scripts.detector_evaluation import detector_evaluation
 from unsupervised_detectors.pycaret_detection import detect_outliers_with_pycaret
 
 
@@ -79,36 +80,19 @@ def collect_detection_data_known_outliers(outliers_df, true_outliers_csv_referen
 
     detection_data = collect_detection_data(outliers_df, points_x_passed, points_y_passed)
 
-    true_outliers = true_outliers = get_true_outliers(true_outliers_csv_reference)
-    if (len(real_outlier_areas)>0):
-        true_outliers = real_outlier_areas
-    detection_data.append(true_outliers)
-    detection_data.append(get_outlier_y_ordinates(points_x_passed, points_y_passed, true_outliers))
+    classification_outcomes = detector_evaluation(true_outliers_csv_reference, points_x_passed, outliers_x_detected)
+    result_data = classification_outcomes.get_detector_classification_evalutaion_data()
 
-    results = display_results(true_outliers_csv_reference, points_x_passed, outliers_x_detected)
-    detection_data.append(results.display_results())
-
-    return detection_data
-
-
-def collect_detection_data_known_outlier_areas(outliers_df, anomalies_csv_passed, points_x_passed, points_y_passed, real_outlier_areas=[]):
-    true_outliers = get_outlier_area_ordinates(anomalies_csv_passed)
-    if (len(real_outlier_areas)>0):
-        true_outliers = real_outlier_areas
-    outliers_x_detected = []
-    outliers_x_detected.append(outliers_df['timestamp'])
-    detection_data = collect_detection_data(outliers_df, points_x_passed, points_y_passed)
-    detection_data.append(true_outliers['first_x'])
-    detection_data.append(true_outliers['second_x'])
-    results = display_results(anomalies_csv_passed, points_x_passed, outliers_x_detected)
-    detection_data.append(results.display_results())
+    detection_data.append(result_data[0])
+    detection_data.append(result_data[1])
+    detection_data.append(result_data[2])
+    detection_data.append(result_data[3])
+    detection_data.append(result_data[4])
 
     return detection_data
 
 
 def collect_detection_data(outliers_df, points_x, points_y):
-    outliers_x_detected = []
-    outliers_x_detected.append(outliers_df['timestamp'])
     detection_data = []
     detection_data.append(points_x)
     detection_data.append(points_y)
