@@ -64,7 +64,7 @@ class display_results:
 
 
     def get_false_positive(self):
-        false_positive = len(self.outliers_x[0]) - self.data_in_outlier_windows
+        false_positive = len(self.outliers_x[0]) - self.get_true_positive()
         if (false_positive > 0):
             return false_positive
         else:
@@ -160,11 +160,11 @@ class display_results:
         results.append(precision)
         results.append(f1)
         
-        #print('\n\nDETECTION RESULTS \n')
-        #print('True Postives: ' + str(tp))
-        #print('False Postives: ' + str(fp))
-        #print('False Negatives: ' + str(fn))
-        #print('True Negatives: ' + str(tn))
+        print('\n\nDETECTION RESULTS \n')
+        print('True Postives: ' + str(tp))
+        print('False Postives: ' + str(fp))
+        print('False Negatives: ' + str(fn))
+        print('True Negatives: ' + str(tn))
         
         #print('\n')
         #print('Accuracy: ' + str(accuracy))
@@ -172,11 +172,11 @@ class display_results:
         #print('Precision: ' + str(precision))
         #print('f1 score: ' + str(f1))
 
-        #print('\n\nDETECTION RESULTS AS PERCENTAGES \n')
+        print('\n\nDETECTION RESULTS AS PERCENTAGES \n')
         
-        #print('Accuracy: ' + str(round(accuracy*100,1))+'%')
-        #print('Recall: ' + str(round(recall*100,1))+'%')
-        #print('Precision: ' + str(round(precision*100,1))+'%')
-        #print('f1 score: ' + str(round(f1*100,1))+'%')
+        print('Accuracy: ' + str(round(accuracy*100,1))+'%')
+        print('Recall: ' + str(round(recall*100,1))+'%')
+        print('Precision: ' + str(round(precision*100,1))+'%')
+        print('f1 score: ' + str(round(f1*100,1))+'%')
 
         return results
