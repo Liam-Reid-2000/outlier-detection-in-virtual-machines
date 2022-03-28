@@ -53,7 +53,8 @@ def get_ensemble_result_confidence(detector_results):
             try:
                 current_conf += (df['confidence'].iloc[0])
             except:
-                print("No confidence to add")
+                poina = 0 #do nothing
+                #print("No confidence to add")
         final_confidence.append(current_conf)
         i += 1
 

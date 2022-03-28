@@ -26,9 +26,12 @@ class detector_evaluation:
                 self.false_positives.append(outlier_detected)
 
         for true_outlier in outlier_labels[self.target_data]:
+            found = False
             for true_positive in self.true_positives:
-                if (str(true_outlier) != str(true_positive)):
-                    self.false_negatives.append(true_outlier)
+                if (str(true_outlier) == str(true_positive)):
+                    found = True
+            if (found == False):
+                self.false_negatives.append(true_outlier)
 
         self.true_negative_count = len(self.points_x) - len(self.false_positives) - len(self.true_positives)
 

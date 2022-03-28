@@ -59,7 +59,6 @@ def get_result_data(path):
 
     output = []
     output.append('Accuracy: ' + str(round(float(accuracy)*100,4))+'%\n')
-    print('accuracy = ' + str(accuracy))
     output.append('Recall: ' + str(round(float(recall)*100,4))+'%\n')
     output.append('Precision: ' + str(round(float(precision)*100,4))+'%\n')
     output.append('f1 score: ' + str(round(float(f1)*100,4))+'%\n')
@@ -91,16 +90,13 @@ def get_detection_data_months(model, data_to_run, data_coordinates, threshold=2)
 def get_detection_data_hours_known_outliers(model, data_to_run, outliers_csv, threshold=2, interval=10):
     return get_detection_data_known_outliers(model, data_to_run, outliers_csv, threshold, interval, True)
 
-def get_detection_data_known_outliers(model, data_to_run, target_data, threshold, interval=10, split_hours=False):
-    requested_data = model + '_' + data_to_run
-
+def load_saved_data(requested_data):
     detection_data = []
-
     if (os.path.isdir('generated_data/' + requested_data)):
         #
     
         #
-
+        print('accessing data at ' + 'generated_data/' + requested_data)
         #
 
         # Remove this repeated code
@@ -120,6 +116,16 @@ def get_detection_data_known_outliers(model, data_to_run, target_data, threshold
         for row in csvreader:
             detection_data.append(row)
     else:
+        print('Requested data: ' + requested_data + ' does not exist')
+    return detection_data
+
+
+def get_detection_data_known_outliers(model, data_to_run, target_data, threshold, interval=10, split_hours=False):
+    requested_data = model + '_' + data_to_run
+    detection_data = []
+    if (os.path.isdir('generated_data/' + requested_data)):
+        detection_data = load_saved_data(requested_data)
+    else:
         path_to_data = 'resources/'+data_to_run+'.csv'
         if (exists(path_to_data) == False):
             path_to_data = 'resources/cloud_resource_data/'+data_to_run+'.csv'
@@ -128,7 +134,6 @@ def get_detection_data_known_outliers(model, data_to_run, target_data, threshold
         else:
             detection_data = run_detection_known_outliers(model, path_to_data, target_data, threshold)
         save_generated_data(requested_data, detection_data)
-
     return detection_data
 
 
@@ -170,36 +175,33 @@ def get_associated_y_value(all_points_x, all_points_y, x_ref):
 
 def get_coordinates_dataframe(all_points_x, all_points_y, points_x):
     points_y = []
-    for point_x in points_x:
-        points_y.append(get_associated_y_value(all_points_x, all_points_y, point_x))
+    if (len(points_x) > 0):
+        for point_x in points_x:
+            index = all_points_x.index(point_x)
+            points_y.append(all_points_y[index])
     return pd.DataFrame({'timestamp': points_x,'data': points_y})
 
 
 def get_fig_plot_outliers(detection_data, data_to_run, model):
 
-    #try:
-    pycaret_plots = pd.DataFrame({'timestamp': detection_data[0],'data': detection_data[1]})
-    fig = px.line(pycaret_plots, x='timestamp', y='data',title= data_to_run + ' Data against Time (Using '+model+'-based outlier detection)')
-    
-    
-    true_positives_x = detection_data[4]
-    tp_df = get_coordinates_dataframe(detection_data[0], detection_data[1], true_positives_x)
-    fig.add_trace(go.Scatter(x=tp_df['timestamp'], y=tp_df['data'], mode='markers',name='True Positives', line=dict(color='green')))
+    try:
+        timeseries_data = pd.DataFrame({'timestamp': detection_data[0],'data': detection_data[1]})
+        fig = px.line(timeseries_data, x='timestamp', y='data',title= data_to_run + ' Data against Time (Using '+model+'-based outlier detection)')
+        
+        false_positives_x = detection_data[5]
+        fp_df = get_coordinates_dataframe(detection_data[0], detection_data[1], false_positives_x)
+        fig.add_trace(go.Scatter(x=fp_df['timestamp'], y=fp_df['data'], mode='markers',name='False Positives', line=dict(color='red')))
 
-    false_positives_x = detection_data[5]
-    fp_df = get_coordinates_dataframe(detection_data[0], detection_data[1], false_positives_x)
-    fig.add_trace(go.Scatter(x=fp_df['timestamp'], y=fp_df['data'], mode='markers',name='False Positives', line=dict(color='red')))
+        false_negatives_x = detection_data[6]
+        fn_df = get_coordinates_dataframe(detection_data[0], detection_data[1], false_negatives_x)
+        fig.add_trace(go.Scatter(x=fn_df['timestamp'], y=fn_df['data'], mode='markers',name='False Negatives', line=dict(color='black')))
 
+        true_positives_x = detection_data[4]
+        tp_df = get_coordinates_dataframe(detection_data[0], detection_data[1], true_positives_x)
+        fig.add_trace(go.Scatter(x=tp_df['timestamp'], y=tp_df['data'], mode='markers',name='True Positives', line=dict(color='green')))
 
-    false_negatives_x = detection_data[6]
+        fig.update_layout(autotypenumbers='convert types', xaxis_title='timestamp', yaxis_title=data_to_run)
 
-    print('fn count = ' + str(len(false_negatives_x)))
-    fn_df = get_coordinates_dataframe(detection_data[0], detection_data[1], false_negatives_x)
-    print(fn_df)
-    fig.add_trace(go.Scatter(x=fn_df['timestamp'], y=fn_df['data'], mode='markers',name='False Negatives', line=dict(color='black')))
-
-    fig.update_layout(autotypenumbers='convert types', xaxis_title='timestamp', yaxis_title=data_to_run)
-
-    return fig
-    #except:
-    #    print('Error getting figure for ' + model + ' on ' + data_to_run + 'data')
+        return fig
+    except:
+        print('Error getting figure for ' + model + ' on ' + data_to_run + 'data')

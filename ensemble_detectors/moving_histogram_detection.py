@@ -86,9 +86,7 @@ def detect_histogram_outliers(threshold,interval,data_points):
         subset_size = (len(points_y) - 1)
 
     i = 0
-    print('doing for length = ' + str(len(points_y) - subset_size))
     while (i < len(points_y) - subset_size):
-        print('doing')
         subset = create_subset(i, subset_size, points_x, points_y)
         outliers = detect_histogram_outliers_for_subset(subset['data'], threshold, points_x, points_y)
         for outlier_x in outliers['timestamp']:

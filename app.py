@@ -458,9 +458,12 @@ def plot_graph(detector, data_subset, dataset):
 def plot_graph(detector, data):
     tic = time.perf_counter()
     #detection_data = get_detection_data_hours_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector))
-    detection_data = get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector)) 
+    get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector)) 
     toc = time.perf_counter()
     print(f"Did the detection in {toc - tic:0.4f} seconds")
+    
+    detection_data = load_saved_data(detector + '_' + data)
+
     fig = get_fig_plot_outliers(detection_data, data, detector)
     return fig
 
