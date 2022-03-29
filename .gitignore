@@ -6,3 +6,4 @@ som/__pycache__/
 app_helper_scripts/__pycache__/
 unsupervised_detectors/__pycache__/
 test/__pycache__/
+database_scripts/__pycache__/
