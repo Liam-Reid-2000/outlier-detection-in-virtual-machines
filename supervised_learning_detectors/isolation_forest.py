@@ -133,7 +133,7 @@ def do_isolation_forest_detection(split_ratio, dataset, outlier_ref, plot=False)
 
     outlier_areas = get_outlier_areas(outlier_data[2],outlier_ref)
 
-    detection_data = collect_detection_data_for_database('isolation_forest', 'speed_7578', outlier_inliers_split[1], outlier_ref,split_data[4],split_data[5])
+    detection_data = collect_detection_data_for_database('iforest', 'speed_7578', outlier_inliers_split[1], outlier_ref,split_data[4],split_data[5])
 
     # save the generated data  
     save_generated_data(detection_data)

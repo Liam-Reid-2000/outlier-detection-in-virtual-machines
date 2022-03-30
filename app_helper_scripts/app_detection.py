@@ -3,7 +3,7 @@ import pandas as pd
 import csv
 import json
 from os.path import exists
-from ensemble_detectors.ensemble_voting import get_ensemble_result, get_ensemble_result_confidence
+from ensemble_detectors.ensemble_voting import get_ensemble_result_confidence
 from ensemble_detectors.moving_average_detection import *
 from ensemble_detectors.moving_median_detection import *
 from ensemble_detectors.moving_boxplot import *
@@ -11,13 +11,6 @@ from ensemble_detectors.moving_histogram_detection import *
 from app_helper_scripts.display_results import display_results
 from app_helper_scripts.detector_evaluation import detector_evaluation
 from unsupervised_detectors.pycaret_detection import detect_outliers_with_pycaret
-
-
-def get_no_outliers(target_data):
-    f = open('resources/combined_labels.json')
-    data = json.load(f)
-    f.close()
-    return len(data[target_data])
 
 
 def load_data_coordinates(dataset_name):
@@ -35,45 +28,6 @@ def load_data_coordinates(dataset_name):
             except ValueError:
                 print("error")
         return pd.DataFrame({'timestamp':points_x,'data':points_y})
-
-
-def get_outlier_area_ordinates(target_data):
-    f = open('resources/combined_windows.json')
-    data = json.load(f)
-    arrX1 = []
-    arrX2 = []
-    known_outliers = data[target_data]
-    if (len(known_outliers) > 0):
-        for i in known_outliers:
-            arrX1.append(datetime.strptime(i[0], '%Y-%m-%d %H:%M:%S.%f'))
-            arrX2.append(datetime.strptime(i[1], '%Y-%m-%d %H:%M:%S.%f'))
-    f.close()
-    return pd.DataFrame({'first_x': arrX1, 'second_x': arrX2})
-
-
-def get_true_outliers(target_data):
-    true_outliers_file = open('resources/combined_labels.json')
-    true_outliers = json.load(true_outliers_file)
-    outliers = []
-    for outlier in true_outliers[target_data]:
-        outliers.append(outlier)
-    true_outliers_file.close()
-    return outliers
-
-
-def get_outlier_y_ordinates(points_x, points_y, true_outliers_x):
-        true_outliers_y = []
-        i = 0
-        while i < len(points_x):
-            j = 0
-            while j < len(true_outliers_x):
-                #print(str(points_x[i]) + ' == ' + str(datetime.strptime(true_outliers_x[0][j], '%Y-%m-%d %H:%M:%S.%f')))
-                if (str(points_x[i])==str(datetime.strptime(true_outliers_x[j], '%Y-%m-%d %H:%M:%S'))):
-                    print('match')
-                    true_outliers_y.append(points_y[i])
-                j += 1
-            i += 1
-        return true_outliers_y
     
 
 def collect_detection_data_known_outliers(outliers_df, true_outliers_csv_reference, points_x_passed, points_y_passed, real_outlier_areas=[]):
@@ -190,34 +144,6 @@ def split_data_to_months(timestamps, data):
     return separated_months_as_dataframes
 
 
-def split_data_to_hours(timestamps, data):
-    data_split_to_hours_x = []
-    data_split_to_hours_y = []
-    i = 0
-    while i < 24:
-        arr = []
-        data_split_to_hours_x.append(arr)
-        arrtoo = []
-        data_split_to_hours_y.append(arrtoo)
-        i += 1
-
-    i = 0
-    while i < len(timestamps):
-        data_split_to_hours_x[timestamps[i].hour-1].append(timestamps[i])
-        data_split_to_hours_y[timestamps[i].hour-1].append(data[i])
-        i += 1
-
-
-    # list of data frames
-    separated_hours_as_dataframes = []
-    i = 0
-    while i < len(data_split_to_hours_x):
-        df = pd.DataFrame({'timestamp':data_split_to_hours_x[i], 'data':data_split_to_hours_y[i]})
-        separated_hours_as_dataframes.append(df)
-        i += 1
-    return separated_hours_as_dataframes
-
-
 
 def run_detection_months(model, data_coordinates, threshold, interval=7):
     
@@ -239,27 +165,6 @@ def run_detection_months(model, data_coordinates, threshold, interval=7):
     return collect_detection_data(all_outliers_df, points_x, points_y)
 
 
-def run_detection_hours_known_outliers(model, dataset_name, outliers_csv, threshold, interval):
-
-    data_coordinates = load_data_coordinates(dataset_name)
-
-    points_x = data_coordinates['timestamp']
-    points_y = data_coordinates['data']
-    
-    separated_months_as_dataframes = split_data_to_hours(points_x, points_y)
-    all_outliers_x = []
-    all_outliers_y = []
-
-    for i in separated_months_as_dataframes:
-        detection_data = run_detection(model, i, threshold, interval)
-        for j in detection_data[2]:
-            all_outliers_x.append(j)
-        for j in detection_data[3]:
-            all_outliers_y.append(j)
-
-    all_outliers_df = pd.DataFrame({'timestamp':all_outliers_x,'data':all_outliers_y})
-    return collect_detection_data_known_outliers(all_outliers_df, outliers_csv, points_x, points_y)
-
 
 def collect_detection_data_for_database(detector, data, outliers_df, true_outliers_csv_reference, points_x_passed, points_y_passed):
     detection_data = []
@@ -280,9 +185,7 @@ def collect_detection_data_for_database(detector, data, outliers_df, true_outlie
 
 
 
-def run_detection_known_outliers(detector, data_to_run, true_outliers_csv, threshold, interval=10, split_hours=False):
-    if (split_hours):
-        return run_detection_hours_known_outliers(detector, data_to_run, true_outliers_csv, threshold, interval)
+def run_detection_known_outliers(detector, data_to_run, true_outliers_csv, threshold, interval=10):
     data_coordinates = load_data_coordinates(data_to_run)
     detection_data = run_detection(detector, data_coordinates, threshold)
     outliers_df = pd.DataFrame({'timestamp': detection_data[2],'data': detection_data[3]})
