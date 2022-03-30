@@ -20,8 +20,11 @@ def get_no_outliers(target_data):
     return len(data[target_data])
 
 
-def load_data_coordinates(csv_file_name):
-    with open(csv_file_name,'r') as csvfile:
+def load_data_coordinates(dataset_name):
+    path_to_data = 'resources/' + dataset_name + '.csv'
+    if (exists(path_to_data) == False):
+        path_to_data = 'resources/cloud_resource_data/'+dataset_name+'.csv'
+    with open(path_to_data,'r') as csvfile:
         lines = csv.reader(csvfile, delimiter=',')
         points_x = []
         points_y = []
@@ -237,9 +240,9 @@ def run_detection_months(model, data_coordinates, threshold, interval=7):
     return collect_detection_data(all_outliers_df, points_x, points_y)
 
 
-def run_detection_hours_known_outliers(model, data_csv, outliers_csv, threshold, interval):
+def run_detection_hours_known_outliers(model, dataset_name, outliers_csv, threshold, interval):
 
-    data_coordinates = load_data_coordinates(data_csv)
+    data_coordinates = load_data_coordinates(dataset_name)
 
     points_x = data_coordinates['timestamp']
     points_y = data_coordinates['data']
@@ -279,13 +282,9 @@ def collect_detection_data_for_database(detector, data, outliers_df, true_outlie
 
 
 def run_detection_known_outliers(detector, data_to_run, true_outliers_csv, threshold, interval=10, split_hours=False):
-    path_to_data = 'resources/'+data_to_run+'.csv'
-    print(path_to_data)
-    if (exists(path_to_data) == False):
-        path_to_data = 'resources/cloud_resource_data/'+data_to_run+'.csv'
     if (split_hours):
-        return run_detection_hours_known_outliers(detector, path_to_data, true_outliers_csv, threshold, interval)
-    data_coordinates = load_data_coordinates(path_to_data)
+        return run_detection_hours_known_outliers(detector, data_to_run, true_outliers_csv, threshold, interval)
+    data_coordinates = load_data_coordinates(data_to_run)
     detection_data = run_detection(detector, data_coordinates, threshold)
     outliers_df = pd.DataFrame({'timestamp': detection_data[2],'data': detection_data[3]})
 

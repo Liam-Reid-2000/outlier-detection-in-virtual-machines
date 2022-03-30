@@ -458,11 +458,10 @@ def plot_graph(detector, data_subset, dataset):
 def plot_graph(detector, data):
     tic = time.perf_counter()
     #detection_data = get_detection_data_hours_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector))
-    get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector)) 
+    detection_data = get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector)) 
     toc = time.perf_counter()
     print(f"Did the detection in {toc - tic:0.4f} seconds")
     
-    detection_data = load_saved_data(detector + '_' + data)
 
     fig = get_fig_plot_outliers(detection_data, data, detector)
     return fig
@@ -484,7 +483,7 @@ def update_results_title(data, detector):
     Input('btn_refresh_cloud', 'n_clicks')]
 )
 def update_results(data, detector, n_clicks):
-    return get_result_data(detector + '_' + data + '/' + detector + '_' + data + '_detector_evaluation_data.csv')
+    return get_result_data(detector, data)
 
 
 # CLOUD RESOURCE DATA
@@ -621,4 +620,5 @@ def update_graph_scatter(n,data):
         print('Error with stream graph')
 
 if __name__ == '__main__':
+    database_helper.create_database()
     app.run_server()

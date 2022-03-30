@@ -44,12 +44,11 @@ class database_helper:
             #print('Created the connection!')
             cursor = conn.cursor()
             cursor.execute(query)
+            rows = []
             for row in cursor.fetchall():
-                print(row)
+                rows.append(row)
+            return rows
 
-    def execute_query_return_first_row(query):
-        with sqlite3.connect(db_file) as conn:
-            cursor = conn.cursor()
-            cursor.execute(query)
-            for row in cursor.fetchall():
-                return row
+    def get_primary_key_of_added_row():
+        primary_key_added_row = database_helper.execute_query("Select detection_id FROM detection ORDER BY detection_id DESC LIMIT 1")
+        return(primary_key_added_row[0][0])
