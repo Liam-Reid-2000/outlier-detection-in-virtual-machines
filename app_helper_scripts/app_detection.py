@@ -2,6 +2,7 @@ from datetime import datetime
 import pandas as pd
 import csv
 import json
+from os.path import exists
 from ensemble_detectors.ensemble_voting import get_ensemble_result, get_ensemble_result_confidence
 from ensemble_detectors.moving_average_detection import *
 from ensemble_detectors.moving_median_detection import *
@@ -258,10 +259,34 @@ def run_detection_hours_known_outliers(model, data_csv, outliers_csv, threshold,
     return collect_detection_data_known_outliers(all_outliers_df, outliers_csv, points_x, points_y)
 
 
-def run_detection_known_outliers(model, data_csv, outliers_csv, threshold):
+def collect_detection_data_for_database(detector, data, outliers_df, true_outliers_csv_reference, points_x_passed, points_y_passed):
+    detection_data = []
+    outliers_x_detected = outliers_df['timestamp']
 
-    data_coordinates = load_data_coordinates(data_csv)
-    detection_data = run_detection(model, data_coordinates, threshold)
+    classification_outcomes = detector_evaluation(true_outliers_csv_reference, points_x_passed, outliers_x_detected)
+    result_data = classification_outcomes.get_detector_classification_evalutaion_data()
+
+    detection_data.append(detector)
+    detection_data.append(data)
+    detection_data.append(result_data[0])
+    detection_data.append(result_data[1])
+    detection_data.append(result_data[2])
+    detection_data.append(result_data[3])
+    detection_data.append(result_data[4])
+
+    return detection_data
+
+
+
+def run_detection_known_outliers(detector, data_to_run, true_outliers_csv, threshold, interval=10, split_hours=False):
+    path_to_data = 'resources/'+data_to_run+'.csv'
+    print(path_to_data)
+    if (exists(path_to_data) == False):
+        path_to_data = 'resources/cloud_resource_data/'+data_to_run+'.csv'
+    if (split_hours):
+        return run_detection_hours_known_outliers(detector, path_to_data, true_outliers_csv, threshold, interval)
+    data_coordinates = load_data_coordinates(path_to_data)
+    detection_data = run_detection(detector, data_coordinates, threshold)
     outliers_df = pd.DataFrame({'timestamp': detection_data[2],'data': detection_data[3]})
 
-    return collect_detection_data_known_outliers(outliers_df, outliers_csv, data_coordinates['timestamp'], data_coordinates['data'])
+    return collect_detection_data_for_database(detector, data_to_run, outliers_df, true_outliers_csv, data_coordinates['timestamp'], data_coordinates['data'])

@@ -11,6 +11,7 @@ import plotly.graph_objects as go
 from app_helper_scripts.app_detection import run_detection_hours_known_outliers, run_detection_known_outliers, run_detection, run_detection_months
 from app_helper_scripts.csv_helper import *
 from app_helper_scripts.metric_calculations import metric_calculations
+from database_scripts.database_helper import database_helper
 
 def get_detector_threshold(ref):
     f = open('resources/config.json',)
@@ -67,17 +68,37 @@ def get_result_data(path):
 
 
 def save_generated_data(requested_data, detection_data):
-    if not os.path.exists('generated_data/' + requested_data):
-        os.makedirs('generated_data/' + requested_data)
-    write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_plots.csv', detection_data[0],'w')
-    write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_plots.csv', detection_data[1],'a')
-    write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_detected_outliers.csv', detection_data[2],'w')
-    write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_detected_outliers.csv', detection_data[3],'a')
-    write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_detector_evaluation_data.csv', detection_data[4],'w')
-    write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_detector_evaluation_data.csv', detection_data[5],'a')
-    write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_detector_evaluation_data.csv', detection_data[6],'a')
-    write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_detector_evaluation_data.csv', detection_data[7],'a')
-    write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_detector_evaluation_data.csv', detection_data[8],'a')
+    #if not os.path.exists('generated_data/' + requested_data):
+    #    os.makedirs('generated_data/' + requested_data)
+    #write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_plots.csv', detection_data[0],'w')
+    #write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_plots.csv', detection_data[1],'a')
+    #write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_detected_outliers.csv', detection_data[2],'w')
+    #write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_detected_outliers.csv', detection_data[3],'a')
+    #write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_detector_evaluation_data.csv', detection_data[4],'w')
+    #write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_detector_evaluation_data.csv', detection_data[5],'a')
+    #write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_detector_evaluation_data.csv', detection_data[6],'a')
+    #write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_detector_evaluation_data.csv', detection_data[7],'a')
+    #write_to_csv('generated_data/'+requested_data+'/'+requested_data+'_detector_evaluation_data.csv', detection_data[8],'a')
+    detector_name = detection_data[0]
+    dataset_name = detection_data[1]
+    true_positives = detection_data[2]
+    false_positives = detection_data[3]
+    false_negatives = detection_data[4]
+    true_negative_count = detection_data[5][0]
+    dataset_size = detection_data[6][0]
+
+    print('Attemping to execture query: '+ 'INSERT INTO DETECTION (detector_name, dataset_name, fn_count, data_size) VALUES ' 
+        + '(\''+ str(detector_name) +'\', '
+        + '\''+ str(dataset_name) +'\', '
+        + str(true_negative_count) + ', ' +
+        str(dataset_size) + ');')
+
+    database_helper.execute_query('INSERT INTO DETECTION (detector_name, dataset_name, fn_count, data_size) VALUES ' 
+        + '(\''+ detector_name +'\', '
+        + '\''+ dataset_name +'\', '
+        + str(true_negative_count) + ', ' +
+        str(dataset_size) + ');')
+
 
 
 
@@ -121,19 +142,20 @@ def load_saved_data(requested_data):
 
 
 def get_detection_data_known_outliers(model, data_to_run, target_data, threshold, interval=10, split_hours=False):
+    detection_data = run_detection_known_outliers(model, data_to_run, target_data, threshold, interval)
     requested_data = model + '_' + data_to_run
-    detection_data = []
-    if (os.path.isdir('generated_data/' + requested_data)):
-        detection_data = load_saved_data(requested_data)
-    else:
-        path_to_data = 'resources/'+data_to_run+'.csv'
-        if (exists(path_to_data) == False):
-            path_to_data = 'resources/cloud_resource_data/'+data_to_run+'.csv'
-        if (split_hours):
-            detection_data = run_detection_hours_known_outliers(model, path_to_data, target_data, threshold, interval)
-        else:
-            detection_data = run_detection_known_outliers(model, path_to_data, target_data, threshold)
-        save_generated_data(requested_data, detection_data)
+    #detection_data = []
+    #if (os.path.isdir('generated_data/' + requested_data)):
+    #    detection_data = load_saved_data(requested_data)
+    #else:
+    #    path_to_data = 'resources/'+data_to_run+'.csv'
+    #    if (exists(path_to_data) == False):
+    #        path_to_data = 'resources/cloud_resource_data/'+data_to_run+'.csv'
+    #    if (split_hours):
+    #        detection_data = run_detection_hours_known_outliers(model, path_to_data, target_data, threshold, interval)
+    #    else:
+    #        detection_data = run_detection_known_outliers(model, path_to_data, target_data, threshold, interval, split_hours)
+    save_generated_data(requested_data, detection_data)
     return detection_data
 
 

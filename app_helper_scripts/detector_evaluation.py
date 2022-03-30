@@ -16,7 +16,7 @@ class detector_evaluation:
         outlier_labels_file = open('resources/combined_labels.json')
         outlier_labels = json.load(outlier_labels_file)
 
-        for outlier_detected in self.outliers_x[0]:
+        for outlier_detected in self.outliers_x:
             is_true_outlier = False
             for true_outlier in outlier_labels[self.target_data]:
                 if (str(outlier_detected) == str(true_outlier)):
