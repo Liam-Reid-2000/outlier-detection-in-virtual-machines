@@ -37,7 +37,6 @@ def load_data_coordinates(dataset_name):
         return pd.DataFrame({'timestamp':points_x,'data':points_y})
 
 
-
 def get_outlier_area_ordinates(target_data):
     f = open('resources/combined_windows.json')
     data = json.load(f)

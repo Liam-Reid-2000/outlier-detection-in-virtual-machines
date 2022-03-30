@@ -380,7 +380,7 @@ def update_results_title(average_rd, median_rd, histogram_rd, boxplot_rd, data, 
 )
 def update_results(average_rad, median_rad, boxplot_rad, histogram_rad, n_clicks):
     try:
-        return get_result_data('ensemble/ensemble_detector_evaluation_data.csv')
+        return get_result_data('ensemble', 'speed_7578')
     except:
         print('Error when getting results')
 
@@ -405,7 +405,7 @@ def update_results_title(data, detector):
     Input('btn_refresh', 'n_clicks')]
 )
 def update_results(data, detector, n_clicks):
-    return get_result_data(detector + '_' + data + '/' + detector + '_' + data + '_detector_evaluation_data.csv')
+    return get_result_data(detector, data)
 
 
 @app.callback(
@@ -500,7 +500,7 @@ def update_results(data, detector, n_clicks):
 )
 def plot_graph(data, detector,ratio):
     detection_data = do_isolation_forest_detection(float(ratio), 'resources/' + data + '.csv', get_outlier_ref(data), False)
-    return get_fig_plot_outliers(detection_data, "speed", "isolation forest")
+    return get_fig_plot_outliers(detection_data, "speed_7578", "isolation forest")
 
 @app.callback(
     Output('live-update-results_supervised', 'children'),
@@ -511,7 +511,7 @@ def plot_graph(data, detector,ratio):
 )
 def update_results(data, detector, n_clicks, ratio):
     try:
-        return get_result_data('supervised_histogram_'+ratio+'/supervised_histogram_'+ratio+'_detector_evaluation_data.csv')
+        return get_result_data(detector, data)
     except:
         print('Error when getting results')
         #logging.error('Error when getting results')
