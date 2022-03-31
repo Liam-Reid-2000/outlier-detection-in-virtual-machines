@@ -1,15 +1,12 @@
 import pandas as pd
-import csv
-import os
 import json
 import datetime
-from os.path import exists
 from dash import html
 import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
 from app_helper_scripts.app_detection import run_detection_known_outliers, run_detection, run_detection_months
-from app_helper_scripts.csv_helper import *
+from app_helper_scripts.csv_helper import csv_helper
 from app_helper_scripts.metric_calculations import metric_calculations
 from database_scripts.database_helper import database_helper
 
@@ -170,25 +167,9 @@ def get_coordinates_dataframe(all_points_x, all_points_y, points_x):
     return pd.DataFrame({'timestamp': points_x,'data': points_y})
 
 
-def load_data_coordinates(dataset_name):
-    path_to_data = 'resources/' + dataset_name + '.csv'
-    if (exists(path_to_data) == False):
-        path_to_data = 'resources/cloud_resource_data/'+dataset_name+'.csv'
-    with open(path_to_data,'r') as csvfile:
-        lines = csv.reader(csvfile, delimiter=',')
-        points_x = []
-        points_y = []
-        for row in lines:
-            try:
-                points_y.append(float(row[1]))
-                points_x.append(datetime.datetime.strptime(str(row[0]), '%Y-%m-%d %H:%M:%S'))
-            except ValueError:
-                print("Error, could not load data coordinates")
-        return pd.DataFrame({'timestamp':points_x,'data':points_y})
-
 
 def get_fig_plot_outliers(detection_data, data_to_run, model):
-    timeseries_data = load_data_coordinates(data_to_run)
+    timeseries_data = csv_helper.load_data_coordinates(data_to_run)
     points_x = timeseries_data['timestamp']
     points_y = timeseries_data['data']
     points_x = change_x_values_to_dates(points_x)

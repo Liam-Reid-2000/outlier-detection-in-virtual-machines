@@ -1,33 +1,12 @@
-from datetime import datetime
 import pandas as pd
-import csv
-import json
-from os.path import exists
+from app_helper_scripts.csv_helper import csv_helper
 from ensemble_detectors.ensemble_voting import get_ensemble_result_confidence
 from ensemble_detectors.moving_average_detection import *
 from ensemble_detectors.moving_median_detection import *
 from ensemble_detectors.moving_boxplot import *
 from ensemble_detectors.moving_histogram_detection import *
-from app_helper_scripts.display_results import display_results
 from app_helper_scripts.detector_evaluation import detector_evaluation
 from unsupervised_detectors.pycaret_detection import detect_outliers_with_pycaret
-
-
-def load_data_coordinates(dataset_name):
-    path_to_data = 'resources/' + dataset_name + '.csv'
-    if (exists(path_to_data) == False):
-        path_to_data = 'resources/cloud_resource_data/'+dataset_name+'.csv'
-    with open(path_to_data,'r') as csvfile:
-        lines = csv.reader(csvfile, delimiter=',')
-        points_x = []
-        points_y = []
-        for row in lines:
-            try:
-                points_y.append(float(row[1]))
-                points_x.append(datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S'))
-            except ValueError:
-                print("error")
-        return pd.DataFrame({'timestamp':points_x,'data':points_y})
     
 
 def collect_detection_data_known_outliers(outliers_df, true_outliers_csv_reference, points_x_passed, points_y_passed, real_outlier_areas=[]):
@@ -186,7 +165,7 @@ def collect_detection_data_for_database(detector, data, outliers_df, true_outlie
 
 
 def run_detection_known_outliers(detector, data_to_run, true_outliers_csv, threshold, interval=10):
-    data_coordinates = load_data_coordinates(data_to_run)
+    data_coordinates = csv_helper.load_data_coordinates(data_to_run)
     detection_data = run_detection(detector, data_coordinates, threshold)
     outliers_df = pd.DataFrame({'timestamp': detection_data[2],'data': detection_data[3]})
 

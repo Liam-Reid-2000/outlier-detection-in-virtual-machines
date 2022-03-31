@@ -3,6 +3,7 @@ import datetime
 import plotly.express as px
 import plotly.graph_objects as go
 import csv
+from os.path import exists
 
 def detect_average_outliers(threshold, average_points, data_points):
     detected_ouliters_x = []
@@ -21,21 +22,6 @@ def detect_average_outliers(threshold, average_points, data_points):
             detected_ouliters_y.append(points_y[i])
         i += 1
     return pd.DataFrame({'average_outlier_x': detected_ouliters_x,'average_outlier_y': detected_ouliters_y})
-
-
-
-def get_data_coordinates(csv_file_name):
-    points_y=[]
-    points_x=[]
-    with open(csv_file_name,'r') as csvfile:
-        lines = csv.reader(csvfile, delimiter=',')
-        for row in lines:
-            try:
-                points_y.append(float(row[1]))
-                points_x.append(datetime.datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S'))
-            except ValueError:
-                o=1#print("error")
-    return pd.DataFrame({'points_x': points_x,'points_y': points_y})
 
 
 def get_average(arr):

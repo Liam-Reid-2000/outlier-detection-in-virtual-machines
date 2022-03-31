@@ -11,7 +11,7 @@ from ensemble_detectors.ensemble_detection import get_ensemble_detection_data
 import time
 
 from som.outlier_detection_som import detect_som_outliers, detect_som_outliers_circle
-from app_helper_scripts.average_outlier_detection_stream import get_average, get_data_coordinates, get_stream_fig
+from app_helper_scripts.average_outlier_detection_stream import get_average, get_stream_fig
 from app_helper_scripts.app_helper import *
 from supervised_learning_detectors.isolation_forest import do_isolation_forest_detection
 
@@ -33,6 +33,25 @@ def get_config(requested_config):
 app.layout = html.Div([
     html.H1('Outlier Detection'),
 
+    ### A live update graph demonstrating real time outlier detection ### 
+
+    html.Div([
+        html.Div([
+            dcc.Dropdown(
+                id='available_data_real_time_detection',
+                options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets_cloud_resource_data')],
+                value='ec2_cpu_utilization_5f5533'
+            ),
+        ],style={'width': '20%', 'display': 'inline-block'}),
+        html.H2("Live Update Graph"),
+        html.H3("Graph demonstrating real-time outlier detection using moving average based outlier detection"),
+        dcc.Graph(id = 'live-graph', animate = True),
+        dcc.Interval(
+            id = 'graph-update',
+            interval = 200000,
+            n_intervals=0
+        ),
+    ],style={"border":"2px black solid"}),
 
     ##################### Dengue Fever Data DATA TESTING SPACE ##########################
 
@@ -231,25 +250,7 @@ app.layout = html.Div([
 
 
 
-    ### A live update graph demonstrating real time outlier detection ### 
-
-    html.Div([
-        html.Div([
-            dcc.Dropdown(
-                id='available_data_real_time_detection',
-                options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets')],
-                value='speed_7578'
-            ),
-        ],style={'width': '20%', 'display': 'inline-block'}),
-        html.H2("Live Update Graph"),
-        html.H3("Graph demonstrating real-time outlier detection using moving average based outlier detection"),
-        dcc.Graph(id = 'live-graph', animate = True),
-        dcc.Interval(
-            id = 'graph-update',
-            interval = 200000,
-            n_intervals=0
-        ),
-    ],style={"border":"2px black solid"}),
+    
 
 
     ### Demonstration of SOM ###
@@ -591,9 +592,9 @@ Current_Data = ''
 def update_graph_scatter(n,data):
 
 
-    dc = get_data_coordinates('resources/'+data+'.csv')
-    points_x = dc['points_x']
-    points_y = dc['points_y']
+    dc = csv_helper.load_data_coordinates(data)
+    points_x = dc['timestamp']
+    points_y = dc['data']
 
 
     X.append(X[-1]+1)
