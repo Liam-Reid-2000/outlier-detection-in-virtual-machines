@@ -61,5 +61,5 @@ def get_stream_fig(data_points, has_average, Xavg, Yavg, X, Y):
             )
 
     fig.update_xaxes(range=[min(X),max(X)])
-    fig.update_yaxes(range=[min(Y),max(Y)])   
+    fig.update_yaxes(range=[min(Y) - min(Y)*0.5,max(Y) + max(X)*0.5])   
     return fig

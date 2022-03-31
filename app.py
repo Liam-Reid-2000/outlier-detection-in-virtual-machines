@@ -3,6 +3,7 @@ from dash import html
 import dash
 from dash.dependencies import Output, Input
 import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd
 from collections import deque
 from app_helper_scripts.csv_helper import *
@@ -16,6 +17,11 @@ from app_helper_scripts.app_helper import *
 from supervised_learning_detectors.isolation_forest import do_isolation_forest_detection
 
 app = dash.Dash(__name__)
+
+colors = {
+    'background': '#111111',
+    'text': '#7FDBFF'
+}
 
 #logging.basicConfig(level=logging.DEBUG)
 
@@ -31,310 +37,334 @@ def get_config(requested_config):
  
 
 app.layout = html.Div([
-    html.H1('Outlier Detection'),
+    html.H1('Outlier Detection Dashboard'),
+    dcc.Tabs([
+        dcc.Tab(label='Real Time Detection', children=[
+            ### A live update graph demonstrating real time outlier detection ### 
 
-    ### A live update graph demonstrating real time outlier detection ### 
-
-    html.Div([
-        html.Div([
-            dcc.Dropdown(
-                id='available_data_real_time_detection',
-                options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets_cloud_resource_data')],
-                value='ec2_cpu_utilization_5f5533'
-            ),
-        ],style={'width': '20%', 'display': 'inline-block'}),
-        html.H2("Live Update Graph"),
-        html.H3("Graph demonstrating real-time outlier detection using moving average based outlier detection"),
-        dcc.Graph(id = 'live-graph', animate = True),
-        dcc.Interval(
-            id = 'graph-update',
-            interval = 200000,
-            n_intervals=0
-        ),
-    ],style={"border":"2px black solid"}),
-
-    ##################### Dengue Fever Data DATA TESTING SPACE ##########################
-
-    html.Div([
-        html.H2('Dengue Fever Data Experimental Space'),
             html.Div([
+                html.H4("Live Update Graph"),
                 html.Div([
-
-                    ### Drop down boxes with options for user ###
-
+                    html.P("Graph demonstrating real-time outlier detection using moving average based outlier detection"),
                     html.Div([
-                        dcc.Dropdown(
-                            id='available_detectors_health_data',
+                        html.Div([html.B('Detector:')],style={'width': '10%', 'display': 'inline-block'}),
+                        html.Div([dcc.Dropdown(
+                            id='available_detectors_real_time_detection',
                             options=[{'label': i[0], 'value': i[0]} for i in get_config('available_detectors')],
-                            value='full_ensemble'
-                        ),
-                    ],style={'width': '20%', 'display': 'inline-block'}),
+                            value='ec2_cpu_utilization_5f5533'
+                        )],style={'width': '25%', 'display': 'inline-block'}),
+                    ],style={'width': '100%', 'display': 'inline-block'}),
                     html.Div([
-                        dcc.Dropdown(
-                            id='available_data_health_data',
-                            options=[{'label': i, 'value': i} for i in get_config('available_datasets_health_data')[0]],
-                            value='AnGiang.xlsx'
-                        ),
-                    ],style={'width': '20%', 'display': 'inline-block'}),
-                    html.Div([
-                        dcc.Dropdown(
-                            id='available_data_health_data_subsets',
-                            options=[{'label': i, 'value': i} for i in get_config('available_datasets_health_data_subsets')[0]],
-                            value='Average_temperature'
-                        ),
-                    ],style={'width': '20%', 'display': 'inline-block'}),
-                ]),
-
-                ### The Graph ### 
-                dcc.Graph(
-                    id='plots_health_data'
-                ),
-            ],style={'width': '70%', 'display': 'inline-block'}),
-
-        ],style={'padding': '10px 5px',"border":"2px black solid"}),
-
-
-
-    ##################### CLOUD RESOURCE DATA TESTING SPACE ##########################
-
-    html.Div([
-        html.H2('Cloud Resource Experimental Space'),
-            html.Div([
-                html.Div([
-
-                    ### Drop down boxes with options for user ###
-
-                    html.Div([
-                        dcc.Dropdown(
-                            id='available_detectors_cloud_resource_data',
-                            options=[{'label': i[0], 'value': i[0]} for i in get_config('available_detectors')],
-                            value='moving_average'
-                        ),
-                    ],style={'width': '30%', 'display': 'inline-block'}),
-                    html.Div([
-                        dcc.Dropdown(
-                            id='available_data_cloud_resource_data',
+                        html.Div([html.B('Dataset:')],style={'width': '10%', 'display': 'inline-block'}),
+                        html.Div([dcc.Dropdown(
+                            id='available_data_real_time_detection',
                             options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets_cloud_resource_data')],
                             value='ec2_cpu_utilization_5f5533'
-                        ),
-                    ],style={'width': '30%', 'display': 'inline-block'}),
+                        )],style={'width': '25%', 'display': 'inline-block'}),
+                    ],style={'width': '100%', 'display': 'inline-block'}),
+                    dcc.Graph(id = 'live-graph', animate = True),
+                    dcc.Interval(
+                        id = 'graph-update',
+                        interval = 3000,
+                        n_intervals=0
+                    ),
+                ],style={'width': '70%', 'display': 'inline-block'}),
+
+                html.Div([
+                    html.H4('CPU Usage'),
+                    dcc.Graph(id='cpu_usage_pie_chart'),
+                ],style={'width': '29%', 'float': 'right', 'display': 'inline-block'}),
+
+            ],style={"border":"2px black solid"}),
+        ]),
+        dcc.Tab(label='Experimental Space', children=[
+
+            dcc.Tabs([
+                dcc.Tab(label='Dengue Fever Experiment', children=[
+            
+                    ##################### Dengue Fever Data DATA TESTING SPACE ##########################
+
+                    html.Div([
+                        html.H4('Dengue Fever Data Experimental Space'),
+                            html.Div([
+                                html.Div([
+
+                                    ### Drop down boxes with options for user ###
+
+                                    html.Div([
+                                        dcc.Dropdown(
+                                            id='available_detectors_health_data',
+                                            options=[{'label': i[0], 'value': i[0]} for i in get_config('available_detectors')],
+                                            value='full_ensemble'
+                                        ),
+                                    ],style={'width': '20%', 'display': 'inline-block'}),
+                                    html.Div([
+                                        dcc.Dropdown(
+                                            id='available_data_health_data',
+                                            options=[{'label': i, 'value': i} for i in get_config('available_datasets_health_data')[0]],
+                                            value='AnGiang.xlsx'
+                                        ),
+                                    ],style={'width': '20%', 'display': 'inline-block'}),
+                                    html.Div([
+                                        dcc.Dropdown(
+                                            id='available_data_health_data_subsets',
+                                            options=[{'label': i, 'value': i} for i in get_config('available_datasets_health_data_subsets')[0]],
+                                            value='Average_temperature'
+                                        ),
+                                    ],style={'width': '20%', 'display': 'inline-block'}),
+                                ]),
+
+                                ### The Graph ### 
+                                dcc.Graph(
+                                    id='plots_health_data'
+                                ),
+                            ],style={'width': '70%', 'display': 'inline-block'}),
+
+                        ],style={'padding': '10px 5px',"border":"2px black solid"}),
+                ]),
+                dcc.Tab(label='Cloud Resource Usage Experiment', children=[
+
+
+                    ##################### CLOUD RESOURCE DATA TESTING SPACE ##########################
+
+                    html.Div([
+                        html.H4('Cloud Resource Experimental Space'),
+                            html.Div([
+                                html.Div([
+
+                                    ### Drop down boxes with options for user ###
+
+                                    html.Div([
+                                        dcc.Dropdown(
+                                            id='available_detectors_cloud_resource_data',
+                                            options=[{'label': i[0], 'value': i[0]} for i in get_config('available_detectors')],
+                                            value='moving_average'
+                                        ),
+                                    ],style={'width': '30%', 'display': 'inline-block'}),
+                                    html.Div([
+                                        dcc.Dropdown(
+                                            id='available_data_cloud_resource_data',
+                                            options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets_cloud_resource_data')],
+                                            value='ec2_cpu_utilization_5f5533'
+                                        ),
+                                    ],style={'width': '30%', 'display': 'inline-block'}),
+                                ]),
+
+                                ### The Graph ### 
+                                dcc.Graph(
+                                    id='graph_cloud_resource_data'
+                                ),
+                            ],style={'width': '70%', 'display': 'inline-block'}),
+
+                            ### The detection results as text ###
+
+                            html.Div([
+                                html.H4('Detection Results'),
+                                html.Button('Refresh Results', id='btn_refresh_cloud', n_clicks=0),
+                                html.Br(),
+                                html.Br(),
+                                html.Div([
+                                    html.Div(id='results_title_cloud_resource', children='...'),
+                                    html.Div(id='live_update_results_cloud_resource')
+                                ],style={'width': '50%', 'float': 'left', 'display': 'inline-block',"border":"2px black solid"})
+                            ],style={'width': '29%', 'float': 'right', 'display': 'inline-block'}),
+
+                        ],style={'padding': '10px 5px',"border":"2px black solid"}),
+                    
                 ]),
 
-                ### The Graph ### 
-                dcc.Graph(
-                    id='graph_cloud_resource_data'
-                ),
-            ],style={'width': '70%', 'display': 'inline-block'}),
+                dcc.Tab(label='Unsupervised Detection', children=[
 
-            ### The detection results as text ###
+                    ### Graph to display classifier detection results for unsupervised methods ###
 
-            html.Div([
-                html.H2('Detection Results'),
-                html.Button('Refresh Results', id='btn_refresh_cloud', n_clicks=0),
-                html.Br(),
-                html.Br(),
-                html.Div([
-                    html.Div(id='results_title_cloud_resource', children='...'),
-                    html.Div(id='live_update_results_cloud_resource')
-                ],style={'width': '50%', 'float': 'left', 'display': 'inline-block',"border":"2px black solid"})
-            ],style={'width': '29%', 'float': 'right', 'display': 'inline-block'}),
+                    html.Div([
+                        html.H4('Unsupervised Detection'),
+                        html.Div([
+                            html.Div([
 
-        ],style={'padding': '10px 5px',"border":"2px black solid"}),
-    
+                                ### Drop down boxes with options for user ###
 
+                                html.Div([
+                                    dcc.Dropdown(
+                                        id='available_detectors',
+                                        options=[{'label': i[0], 'value': i[0]} for i in get_config('available_detectors')],
+                                        value='svm'
+                                    ),
+                                ],style={'width': '30%', 'display': 'inline-block'}),
+                                html.Div([
+                                    dcc.Dropdown(
+                                        id='available_data',
+                                        options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets')],
+                                        value='speed_7578'
+                                    ),
+                                ],style={'width': '30%', 'display': 'inline-block'}),
+                            ]),
 
-    ### Graph to display classifier detection results for unsupervised methods ###
+                            ### The Graph ### 
+                            dcc.Graph(
+                                id='unsupervised_detection_graph'
+                            ),
+                        ],style={'width': '70%', 'display': 'inline-block'}),
+                        
+                        ### The detection results as text ###
 
-    html.Div([
-        html.H2('Unsupervised Detection'),
-        html.Div([
-            html.Div([
+                        html.Div([
+                            html.H4('Detection Results'),
+                            html.Button('Refresh Results', id='btn_refresh', n_clicks=0),
+                            html.Br(),
+                            html.Br(),
+                            html.Div([
+                                html.Div(id='results_title', children='...'),
+                                html.Div(id='live-update-results')
+                            ],style={'width': '50%', 'float': 'left', 'display': 'inline-block',"border":"2px black solid"})
+                        ],style={'width': '29%', 'float': 'right', 'display': 'inline-block'}),
 
-                ### Drop down boxes with options for user ###
+                    ],style={'padding': '10px 5px',"border":"2px black solid"}),
+                ]),
+                dcc.Tab(label='Supervised Detection', children=[
 
-                html.Div([
-                    dcc.Dropdown(
-                        id='available_detectors',
-                        options=[{'label': i[0], 'value': i[0]} for i in get_config('available_detectors')],
-                        value='svm'
-                    ),
-                ],style={'width': '30%', 'display': 'inline-block'}),
-                html.Div([
-                    dcc.Dropdown(
-                        id='available_data',
-                        options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets')],
-                        value='speed_7578'
-                    ),
-                ],style={'width': '30%', 'display': 'inline-block'}),
+                   ### Graph to display classifier detection results using supervised training ###
+
+                    html.Div([
+                        html.H4('Supervised Detection'),
+                        html.Div([
+                            html.Div([
+
+                                ### Drop down boxes with options for user ###
+
+                                html.Div([
+                                    dcc.Dropdown(
+                                        id='available_detectors_supervised',
+                                        options=[{'label': i[0], 'value': i[0]} for i in get_config('available_supervised_detectors')],
+                                        value='iforest'
+                                    ),
+                                ],style={'width': '20%', 'display': 'inline-block'}),
+                                html.Div([
+                                    dcc.Dropdown(
+                                        id='available_data_supervised',
+                                        options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets')],
+                                        value='speed_7578'
+                                    ),
+                                ],style={'width': '20%', 'display': 'inline-block'}),
+                                html.Div([
+                                    dcc.Textarea(
+                                        id='supervised_test_train_split_ratio',
+                                        value='0.75',
+                                        style={'width': '100%', 'height': '100%'},
+                                    ),
+                                ],style={'width': '20%', 'display': 'inline-block'}),
+                            ]),
+
+                            ### The Graph ### 
+                            dcc.Graph(
+                                id='supervised-plots_supervised'
+                            ),
+                        ],style={'width': '70%', 'display': 'inline-block'}),
+                        
+                        ### The detection results as text ###
+
+                        html.Div([
+                            html.H4('Detection Results'),
+                            html.Button('Refresh Results', id='btn_refresh_supervised', n_clicks=0),
+                            html.Button('Show Learning', id='btn_show_supervised', n_clicks=0),
+                            html.Br(),
+                            html.Br(),
+                            html.Div([
+                                html.Div(id='results_title_supervised', children='...'),
+                                html.Div(id='live-update-results_supervised')
+                            ],style={'width': '50%', 'float': 'left', 'display': 'inline-block',"border":"2px black solid"})
+                        ],style={'width': '29%', 'float': 'right', 'display': 'inline-block'}),
+                        ### The Graph ### 
+                            dcc.Graph(
+                                id='supervised_plots_supervised_learning'
+                            ),
+                    ],style={'padding': '10px 5px',"border":"2px black solid"}),
+
+                ]),
+                dcc.Tab(label='SOM', children=[
+                    ### Demonstration of SOM ###
+
+                    html.Div([
+                        html.Div(),
+                        html.H4("SOM"),
+                        html.H4("Demonstrating SOM outlier detection using 'Minisom' library, I plan to make an improved version of this algorithm based on 'An Incremental Approach to Outlier Detection in Virtual Machines'"),
+                        html.Div([
+                            dcc.Graph(id = 'som-graph')
+                        ],style={'width': '49%', 'display': 'inline-block'}),
+                        html.Div([
+                            dcc.Graph(id = 'som-graph-2')
+                        ],style={'width': '49%', 'display': 'inline-block'}),
+                    ],style={"border":"2px black solid"}),
+                ]),
+
+                dcc.Tab(label='Ensemble Testing Space', children=[
+                    ### A graph demonstrating how weak ensembes are strong outlier detectors ### 
+                    html.Div([
+                        html.H4("Ensemble of Detectors"),
+                        html.H4("Graph demonstrating how an ensemble of weak classifiers are strong outlier detectors"),
+                        html.Div([
+                            ### Drop down boxes with options for user ###
+                            html.Div([
+                                dcc.Dropdown(
+                                    id='available_data_ensemble',
+                                    options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets')],
+                                    value='speed_7578'
+                                ),
+                            ],style={'width': '20%', 'display': 'inline-block'}),
+                        ]),
+                        
+                        # Moving Average
+                        html.H4('Moving Average'),
+                        dcc.RadioItems(
+                            id='ensemble-average-radio-btns',
+                            options=[{'label': i, 'value': i} for i in ['On', 'Off']],
+                            value='Off',
+                            labelStyle={'display': 'inline-block', 'marginTop': '5px'}
+                        ),
+
+                        # Moving Median
+                        html.H4('Moving Median'),
+                        dcc.RadioItems(
+                            id='ensemble-median-radio-btns',
+                            options=[{'label': i, 'value': i} for i in ['On', 'Off']],
+                            value='Off',
+                            labelStyle={'display': 'inline-block', 'marginTop': '5px'}
+                        ),
+
+                        # Moving Boxplot
+                        html.H4('Moving Boxplot'),
+                        dcc.RadioItems(
+                            id='ensemble-boxplot-radio-btns',
+                            options=[{'label': i, 'value': i} for i in ['On', 'Off']],
+                            value='Off',
+                            labelStyle={'display': 'inline-block', 'marginTop': '5px'}
+                        ),
+
+                        # Moving Histogram
+                        html.H4('Moving Histogram'),
+                        dcc.RadioItems(
+                            id='ensemble-histogram-radio-btns',
+                            options=[{'label': i, 'value': i} for i in ['On', 'Off']],
+                            value='Off',
+                            labelStyle={'display': 'inline-block', 'marginTop': '5px'}
+                        ),
+
+                        # Graph
+                        dcc.Graph(id = 'ensemble-graph'),
+                        html.Div([
+                            html.H4('Ensemble Detection Results'),
+                            html.Button('Refresh Results', id='btn_refresh_ensemble', n_clicks=0),
+                            html.Br(),
+                            html.Br(),
+                            html.Div([
+                                html.Div(id='live-update-results_ensemble')
+                            ],)
+                        ],),
+                    ],style={"border":"2px black solid"}),
+                ]),
             ]),
-
-            ### The Graph ### 
-            dcc.Graph(
-                id='unsupervised_detection_graph'
-            ),
-        ],style={'width': '70%', 'display': 'inline-block'}),
-        
-        ### The detection results as text ###
-
-        html.Div([
-            html.H2('Detection Results'),
-            html.Button('Refresh Results', id='btn_refresh', n_clicks=0),
-            html.Br(),
-            html.Br(),
-            html.Div([
-                html.Div(id='results_title', children='...'),
-                html.Div(id='live-update-results')
-            ],style={'width': '50%', 'float': 'left', 'display': 'inline-block',"border":"2px black solid"})
-        ],style={'width': '29%', 'float': 'right', 'display': 'inline-block'}),
-
-    ],style={'padding': '10px 5px',"border":"2px black solid"}),
-
-
-
-    ### Graph to display classifier detection results using supervised training ###
-
-    html.Div([
-        html.H2('Supervised Detection'),
-        html.Div([
-            html.Div([
-
-                ### Drop down boxes with options for user ###
-
-                html.Div([
-                    dcc.Dropdown(
-                        id='available_detectors_supervised',
-                        options=[{'label': i[0], 'value': i[0]} for i in get_config('available_supervised_detectors')],
-                        value='iforest'
-                    ),
-                ],style={'width': '20%', 'display': 'inline-block'}),
-                html.Div([
-                    dcc.Dropdown(
-                        id='available_data_supervised',
-                        options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets')],
-                        value='speed_7578'
-                    ),
-                ],style={'width': '20%', 'display': 'inline-block'}),
-                html.Div([
-                    dcc.Textarea(
-                        id='supervised_test_train_split_ratio',
-                        value='0.75',
-                        style={'width': '100%', 'height': '100%'},
-                    ),
-                ],style={'width': '20%', 'display': 'inline-block'}),
-            ]),
-
-            ### The Graph ### 
-            dcc.Graph(
-                id='supervised-plots_supervised'
-            ),
-        ],style={'width': '70%', 'display': 'inline-block'}),
-        
-        ### The detection results as text ###
-
-        html.Div([
-            html.H2('Detection Results'),
-            html.Button('Refresh Results', id='btn_refresh_supervised', n_clicks=0),
-            html.Button('Show Learning', id='btn_show_supervised', n_clicks=0),
-            html.Br(),
-            html.Br(),
-            html.Div([
-                html.Div(id='results_title_supervised', children='...'),
-                html.Div(id='live-update-results_supervised')
-            ],style={'width': '50%', 'float': 'left', 'display': 'inline-block',"border":"2px black solid"})
-        ],style={'width': '29%', 'float': 'right', 'display': 'inline-block'}),
-        ### The Graph ### 
-            dcc.Graph(
-                id='supervised_plots_supervised_learning'
-            ),
-    ],style={'padding': '10px 5px',"border":"2px black solid"}),
-
-
-
-    
-
-
-    ### Demonstration of SOM ###
-
-    html.Div([
-        html.Div(),
-        html.H2("SOM"),
-        html.H3("Demonstrating SOM outlier detection using 'Minisom' library, I plan to make an improved version of this algorithm based on 'An Incremental Approach to Outlier Detection in Virtual Machines'"),
-        html.Div([
-            dcc.Graph(id = 'som-graph')
-        ],style={'width': '49%', 'display': 'inline-block'}),
-        html.Div([
-            dcc.Graph(id = 'som-graph-2')
-        ],style={'width': '49%', 'display': 'inline-block'}),
-    ],style={"border":"2px black solid"}),
-
-
-
-    ### A graph demonstrating how weak ensembes are strong outlier detectors ### 
-
-    html.Div([
-        html.H2("Ensemble of Detectors"),
-        html.H3("Graph demonstrating how an ensemble of weak classifiers are strong outlier detectors"),
-
-        html.Div([
-
-            ### Drop down boxes with options for user ###
-            html.Div([
-                dcc.Dropdown(
-                    id='available_data_ensemble',
-                    options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets')],
-                    value='speed_7578'
-                ),
-            ],style={'width': '20%', 'display': 'inline-block'}),
         ]),
-        
-        # Moving Average
-        html.H3('Moving Average'),
-        dcc.RadioItems(
-            id='ensemble-average-radio-btns',
-            options=[{'label': i, 'value': i} for i in ['On', 'Off']],
-            value='Off',
-            labelStyle={'display': 'inline-block', 'marginTop': '5px'}
-        ),
-
-        # Moving Median
-        html.H3('Moving Median'),
-        dcc.RadioItems(
-            id='ensemble-median-radio-btns',
-            options=[{'label': i, 'value': i} for i in ['On', 'Off']],
-            value='Off',
-            labelStyle={'display': 'inline-block', 'marginTop': '5px'}
-        ),
-
-        # Moving Boxplot
-        html.H3('Moving Boxplot'),
-        dcc.RadioItems(
-            id='ensemble-boxplot-radio-btns',
-            options=[{'label': i, 'value': i} for i in ['On', 'Off']],
-            value='Off',
-            labelStyle={'display': 'inline-block', 'marginTop': '5px'}
-        ),
-
-        # Moving Histogram
-        html.H3('Moving Histogram'),
-        dcc.RadioItems(
-            id='ensemble-histogram-radio-btns',
-            options=[{'label': i, 'value': i} for i in ['On', 'Off']],
-            value='Off',
-            labelStyle={'display': 'inline-block', 'marginTop': '5px'}
-        ),
-
-        # Graph
-        dcc.Graph(id = 'ensemble-graph'),
-        html.Div([
-            html.H2('Ensemble Detection Results'),
-            html.Button('Refresh Results', id='btn_refresh_ensemble', n_clicks=0),
-            html.Br(),
-            html.Br(),
-            html.Div([
-                html.Div(id='live-update-results_ensemble')
-            ],)
-        ],),
-    ],style={"border":"2px black solid"}),
+    ])
 ])
 
 ###########################################################################
@@ -396,7 +426,7 @@ def update_results(average_rad, median_rad, boxplot_rad, histogram_rad, n_clicks
     Input('available_detectors','value')]
 )
 def update_results_title(data, detector):
-    return html.H3(detector.upper() + ' on \'' + data + '\' data')
+    return html.H4(detector.upper() + ' on \'' + data + '\' data')
 
 
 @app.callback(
@@ -474,7 +504,7 @@ def plot_graph(detector, data):
     Input('available_detectors_cloud_resource_data','value')]
 )
 def update_results_title(data, detector):
-    return html.H3(detector.upper() + ' on \'' + data + '\' data')
+    return html.H4(detector.upper() + ' on \'' + data + '\' data')
 
 
 @app.callback(
@@ -582,11 +612,9 @@ Y.append(1)
 Yavg = deque(maxlen = 30)
 Yavg.append(1)
 
-Current_Data = ''
-
 @app.callback(
     Output('live-graph', 'figure'),
-    [ Input('graph-update', 'n_intervals'),
+    [Input('graph-update', 'n_intervals'),
     Input('available_data_real_time_detection','value') ]
 )
 def update_graph_scatter(n,data):
@@ -619,6 +647,20 @@ def update_graph_scatter(n,data):
         return get_stream_fig(data_points, has_average, Xavg, Yavg, X, Y)
     except:
         print('Error with stream graph')
+
+@app.callback(
+    Output('cpu_usage_pie_chart', 'figure'),
+    [Input('graph-update', 'n_intervals')]
+)
+def generate_pie_chat(n):
+    colors = ['green', 'red']
+    labels = ['Available', 'In use']
+    values = [100-Y[len(Y)-1], Y[len(Y)-1]]
+    fig = go.Figure(data=[go.Pie(labels=labels,values=values)])
+    fig.update_traces(hoverinfo='label+percent', textinfo='value', textfont_size=20,
+                  marker=dict(colors=colors, line=dict(color='#000000', width=2)))
+    return fig
+
 
 if __name__ == '__main__':
     database_helper.create_database()
