@@ -33,17 +33,10 @@ def get_outlier_ref(ref):
     f.close()
 
 
-def is_data_generated(detector_name, dataset_name):
-    rows_returned = database_helper.execute_query('SELECT * FROM DETECTION WHERE detector_name == \'' + detector_name + '\' AND dataset_name == \'' + dataset_name + '\';')
-    if len(rows_returned) > 0:
-        return True
-    return False
-
-
 def get_result_data(detector_name, dataset_name):
-    if is_data_generated(detector_name, dataset_name) == False:
+    if database_helper.does_data_exist(detector_name, dataset_name) == False:
         print('ERROR: attemping to access database for ' + detector_name + ' ' + dataset_name)
-        return (html.H3('No data generated yet - This could take several minutes'))
+        return (html.B('No data generated yet - This could take several minutes'))
     
     detection_data = load_generated_data_from_database(detector_name, dataset_name)
 
@@ -76,6 +69,10 @@ def save_generated_data(detection_data):
     false_negatives = detection_data[4]
     true_negative_count = detection_data[5][0]
     dataset_size = detection_data[6][0]
+
+    # Delete previous detection data if exists
+    if database_helper.does_data_exist(detector_name, dataset_name):
+        database_helper.delete_data(detector_name, dataset_name)
 
     database_helper.execute_query('INSERT INTO DETECTION (detector_name, dataset_name, fn_count, data_size) VALUES ' 
         + '(\''+ detector_name +'\', '
@@ -131,7 +128,7 @@ def get_detection_data_months(model, data_to_run, data_coordinates, threshold=2)
 
 
 def get_detection_data_known_outliers(detector_name, dataset_name, target_data, threshold, interval=10):
-    if is_data_generated(detector_name, dataset_name):
+    if database_helper.does_data_exist(detector_name, dataset_name):
         return load_generated_data_from_database(detector_name, dataset_name)
     detection_data = run_detection_known_outliers(detector_name, dataset_name, target_data, threshold, interval)
     save_generated_data(detection_data)

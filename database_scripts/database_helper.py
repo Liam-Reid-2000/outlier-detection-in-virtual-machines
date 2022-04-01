@@ -52,3 +52,24 @@ class database_helper:
     def get_primary_key_of_added_row():
         primary_key_added_row = database_helper.execute_query("Select detection_id FROM detection ORDER BY detection_id DESC LIMIT 1")
         return(primary_key_added_row[0][0])
+
+    def does_data_exist(detector_name, dataset_name):
+        returned_data = database_helper.execute_query("SELECT * FROM DETECTION WHERE detector_name == \'" + detector_name + "\' AND dataset_name == \'" + dataset_name + "\';")
+        if len(returned_data) > 0:
+            return True
+        return False
+
+    def get_primary_keys_of_generated_data(detector_name, dataset_name):
+        keys = []
+        rows = database_helper.execute_query("SELECT * FROM DETECTION WHERE detector_name == \'" + detector_name + "\' AND dataset_name == \'" + dataset_name + "\';")
+        for row in rows:
+            keys.append(row[0])
+        return keys
+
+    def delete_data(detector_name, dataset_name):
+        keys = database_helper.get_primary_keys_of_generated_data(detector_name, dataset_name)
+        for key in keys:
+            database_helper.execute_query("DELETE FROM detection WHERE detection_id == \'" + str(key) + "\';")
+            database_helper.execute_query("DELETE FROM true_positives WHERE detection_id == \'" + str(key) + "\';")
+            database_helper.execute_query("DELETE FROM false_positives WHERE detection_id == \'" + str(key) + "\';")
+            database_helper.execute_query("DELETE FROM false_negatives WHERE detection_id == \'" + str(key) + "\';")

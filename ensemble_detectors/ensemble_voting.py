@@ -1,6 +1,6 @@
 import pandas as pd
 
-def get_ensemble_result(all_outliers, no_detectors):
+def get_ensemble_result(all_outliers):
 
     all_points_x = []
     all_points_y = []

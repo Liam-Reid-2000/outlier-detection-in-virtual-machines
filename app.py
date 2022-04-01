@@ -300,66 +300,68 @@ app.layout = html.Div([
                 dcc.Tab(label='Ensemble Testing Space', children=[
                     ### A graph demonstrating how weak ensembes are strong outlier detectors ### 
                     html.Div([
-                        html.H4("Ensemble of Detectors"),
-                        html.H4("Graph demonstrating how an ensemble of weak classifiers are strong outlier detectors"),
                         html.Div([
-                            ### Drop down boxes with options for user ###
-                            html.Div([
-                                dcc.Dropdown(
-                                    id='available_data_ensemble',
-                                    options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets')],
-                                    value='speed_7578'
-                                ),
-                            ],style={'width': '20%', 'display': 'inline-block'}),
-                        ]),
-                        
-                        # Moving Average
-                        html.H4('Moving Average'),
-                        dcc.RadioItems(
-                            id='ensemble-average-radio-btns',
-                            options=[{'label': i, 'value': i} for i in ['On', 'Off']],
-                            value='Off',
-                            labelStyle={'display': 'inline-block', 'marginTop': '5px'}
-                        ),
-
-                        # Moving Median
-                        html.H4('Moving Median'),
-                        dcc.RadioItems(
-                            id='ensemble-median-radio-btns',
-                            options=[{'label': i, 'value': i} for i in ['On', 'Off']],
-                            value='Off',
-                            labelStyle={'display': 'inline-block', 'marginTop': '5px'}
-                        ),
-
-                        # Moving Boxplot
-                        html.H4('Moving Boxplot'),
-                        dcc.RadioItems(
-                            id='ensemble-boxplot-radio-btns',
-                            options=[{'label': i, 'value': i} for i in ['On', 'Off']],
-                            value='Off',
-                            labelStyle={'display': 'inline-block', 'marginTop': '5px'}
-                        ),
-
-                        # Moving Histogram
-                        html.H4('Moving Histogram'),
-                        dcc.RadioItems(
-                            id='ensemble-histogram-radio-btns',
-                            options=[{'label': i, 'value': i} for i in ['On', 'Off']],
-                            value='Off',
-                            labelStyle={'display': 'inline-block', 'marginTop': '5px'}
-                        ),
-
-                        # Graph
-                        dcc.Graph(id = 'ensemble-graph'),
+                            html.H4("Ensemble of Detectors"),
+                            html.B("Graph demonstrating how an ensemble of weak classifiers are strong outlier detectors"),
+                        ],style={'width': '100%'}),
+                        ### Drop down boxes with options for user ###
                         html.Div([
-                            html.H4('Ensemble Detection Results'),
+                            html.Div([html.B('Dataset:')],style={'width': '30%'}),
+                            html.Div([dcc.Dropdown(
+                                id='available_data_ensemble',
+                                options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets_cloud_resource_data')],
+                                value='ec2_cpu_utilization_5f5533'
+                            )],style={'width': '100%'}),
+
+                            # Moving Average
+                            html.B('Moving Average'),
+                            dcc.RadioItems(
+                                id='ensemble-average-radio-btns',
+                                options=[{'label': i, 'value': i} for i in ['On', 'Off']],
+                                value='Off',
+                                labelStyle={'display': 'inline-block', 'marginTop': '5px'}
+                            ),
+
+                            # Moving Median
+                            html.B('Moving Median'),
+                            dcc.RadioItems(
+                                id='ensemble-median-radio-btns',
+                                options=[{'label': i, 'value': i} for i in ['On', 'Off']],
+                                value='Off',
+                                labelStyle={'display': 'inline-block', 'marginTop': '5px'}
+                            ),
+
+                            # Moving Boxplot
+                            html.B('Moving Boxplot'),
+                            dcc.RadioItems(
+                                id='ensemble-boxplot-radio-btns',
+                                options=[{'label': i, 'value': i} for i in ['On', 'Off']],
+                                value='Off',
+                                labelStyle={'display': 'inline-block', 'marginTop': '5px'}
+                            ),
+
+                            # Moving Histogram
+                            html.B('Moving Histogram'),
+                            dcc.RadioItems(
+                                id='ensemble-histogram-radio-btns',
+                                options=[{'label': i, 'value': i} for i in ['On', 'Off']],
+                                value='Off',
+                                labelStyle={'display': 'inline-block', 'marginTop': '5px'}
+                            ),
+                        ],style={'width': '30%', 'display': 'inline-block'}),
+                        html.Div([
+                            html.B('Ensemble Detection Results'),
                             html.Button('Refresh Results', id='btn_refresh_ensemble', n_clicks=0),
                             html.Br(),
                             html.Br(),
                             html.Div([
                                 html.Div(id='live-update-results_ensemble')
-                            ],)
-                        ],),
+                            ]),
+                        ],style={'width': '30%', 'display': 'inline-block', "border":"2px black solid"}),
+                        html.Div([
+                            # Graph
+                            dcc.Graph(id = 'ensemble-graph'),
+                        ]),
                     ],style={"border":"2px black solid"}),
                 ]),
             ]),
