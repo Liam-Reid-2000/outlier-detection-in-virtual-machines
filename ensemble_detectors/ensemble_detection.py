@@ -21,7 +21,7 @@ def get_ensemble_detection_data(ensemble_detector_list, dataset, known_outliers_
 
     ensemble_outliers = []
     # Pass outlier data from each detector to voting system
-    ensemble_outliers = get_ensemble_result_confidence(all_outlier_coordinates)
+    ensemble_outliers = get_ensemble_result(all_outlier_coordinates)
 
     ## convert time stamps to date data types
     #ensemble_outlier_timestamps_dates = []

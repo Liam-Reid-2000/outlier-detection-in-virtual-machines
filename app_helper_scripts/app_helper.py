@@ -46,6 +46,8 @@ def get_result_data(detector_name, dataset_name):
     tn = detection_data[5][0]
     n = detection_data[6][0]
 
+    detection_time = detection_data[7]
+
     accuracy = metric_calculations.calculate_accuracy(tn, tp, n)
     recall = metric_calculations.calulate_recall(tp, fn)
     precision = metric_calculations.calculate_precision(tp, fp)
@@ -55,9 +57,10 @@ def get_result_data(detector_name, dataset_name):
     output.append('Accuracy: ' + str(round(float(accuracy)*100,4))+'%\n')
     output.append('Recall: ' + str(round(float(recall)*100,4))+'%\n')
     output.append('Precision: ' + str(round(float(precision)*100,4))+'%\n')
-    output.append('f1 score: ' + str(round(float(f1)*100,4))+'%\n')
+    output.append('F1 score: ' + str(round(float(f1)*100,4))+'%\n')
+    output.append('Detection time: ' + str(round(float(detection_time),4))+' seconds\n')
 
-    return (html.P([output[0],html.Br(),output[1],html.Br(),output[2],html.Br(),output[3]]))
+    return (html.P([output[0],html.Br(),output[1],html.Br(),output[2],html.Br(),output[3],html.Br(),output[4]]))
 
 
 def save_generated_data(detection_data):
@@ -69,16 +72,18 @@ def save_generated_data(detection_data):
     false_negatives = detection_data[4]
     true_negative_count = detection_data[5][0]
     dataset_size = detection_data[6][0]
+    detection_time = detection_data[7]
 
     # Delete previous detection data if exists
     if database_helper.does_data_exist(detector_name, dataset_name):
         database_helper.delete_data(detector_name, dataset_name)
 
-    database_helper.execute_query('INSERT INTO DETECTION (detector_name, dataset_name, fn_count, data_size) VALUES ' 
+    database_helper.execute_query('INSERT INTO DETECTION (detector_name, dataset_name, fn_count, data_size, detection_time) VALUES ' 
         + '(\''+ detector_name +'\', '
         + '\''+ dataset_name +'\', '
-        + str(true_negative_count) + ', ' +
-        str(dataset_size) + ');')
+        + str(true_negative_count) + ', '
+        + str(dataset_size) + ', '
+        + str(detection_time) + ');')
 
     detection_key = database_helper.get_primary_key_of_added_row()
     for true_poitive in true_positives:
@@ -96,6 +101,7 @@ def load_generated_data_from_database(detector_name, dataset_name):
     key = returned_detection_data[0]
     true_negative_count = returned_detection_data[3]
     dataset_size = returned_detection_data[4]
+    detection_time = returned_detection_data[5]
 
     true_positives = []
     for true_positive_row in database_helper.execute_query('SELECT * FROM TRUE_POSITIVES WHERE detection_id == ' + str(key)):
@@ -115,6 +121,7 @@ def load_generated_data_from_database(detector_name, dataset_name):
     detection_data.append(false_negatives)
     detection_data.append([true_negative_count])
     detection_data.append([dataset_size])
+    detection_data.append(detection_time)
 
     return detection_data
 

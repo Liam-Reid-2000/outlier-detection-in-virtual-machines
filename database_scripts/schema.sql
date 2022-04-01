@@ -8,7 +8,8 @@ CREATE TABLE detection(
     detector_name text,
     dataset_name text,
     fn_count int,
-    data_size int
+    data_size int,
+    detection_time, float
 );
 
 CREATE TABLE true_positives(

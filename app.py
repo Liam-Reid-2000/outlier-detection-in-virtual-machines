@@ -381,7 +381,7 @@ app.layout = html.Div([
     Input('available_data_ensemble','value'),
     Input('btn_refresh_ensemble', 'n_clicks')]
 )
-def update_results_title(average_rd, median_rd, histogram_rd, boxplot_rd, data, n_clicks):
+def update_ensemble_graph(average_rd, median_rd, histogram_rd, boxplot_rd, data, n_clicks):
 
     ensemble_detector_list = []
 
@@ -396,10 +396,11 @@ def update_results_title(average_rd, median_rd, histogram_rd, boxplot_rd, data, 
         ensemble_detector_list.append('moving_histogram')
 
     detection_data = get_ensemble_detection_data(ensemble_detector_list, data, get_outlier_ref(data))
-
+    print('Detection data got - Plotting')
+    print('detection data')
+    print(detection_data)
     ## return the figure
     fig = get_fig_plot_outliers(detection_data, data, 'moving ensemble')
-    fig.show # This is showing error becuase it should be show() but works anyway
     return fig
 
 
@@ -409,11 +410,12 @@ def update_results_title(average_rd, median_rd, histogram_rd, boxplot_rd, data, 
     Input('ensemble-median-radio-btns','value'),
     Input('ensemble-boxplot-radio-btns','value'),
     Input('ensemble-histogram-radio-btns','value'),
+    Input('available_data_ensemble','value'),
     Input('btn_refresh_ensemble', 'n_clicks')]
 )
-def update_results(average_rad, median_rad, boxplot_rad, histogram_rad, n_clicks):
+def update_results(average_rad, median_rad, boxplot_rad, histogram_rad, data, n_clicks):
     try:
-        return get_result_data('ensemble', 'speed_7578')
+        return get_result_data('ensemble', data)
     except:
         print('Error when getting results')
 
@@ -489,13 +491,7 @@ def plot_graph(detector, data_subset, dataset):
     Input('available_data_cloud_resource_data','value')]
 )
 def plot_graph(detector, data):
-    tic = time.perf_counter()
-    #detection_data = get_detection_data_hours_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector))
     detection_data = get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector)) 
-    toc = time.perf_counter()
-    print(f"Did the detection in {toc - tic:0.4f} seconds")
-    
-
     fig = get_fig_plot_outliers(detection_data, data, detector)
     return fig
 
@@ -503,9 +499,10 @@ def plot_graph(detector, data):
 @app.callback(
     Output('results_title_cloud_resource', 'children'),
     [Input('available_data_cloud_resource_data','value'),
-    Input('available_detectors_cloud_resource_data','value')]
+    Input('available_detectors_cloud_resource_data','value'),
+    Input('graph_cloud_resource_data', 'figure')]
 )
-def update_results_title(data, detector):
+def update_results_title(data, detector, fig):
     return html.H4(detector.upper() + ' on \'' + data + '\' data')
 
 
@@ -513,9 +510,10 @@ def update_results_title(data, detector):
     Output('live_update_results_cloud_resource', 'children'),
     [Input('available_data_cloud_resource_data','value'),
     Input('available_detectors_cloud_resource_data','value'),
-    Input('btn_refresh_cloud', 'n_clicks')]
+    Input('btn_refresh_cloud', 'n_clicks'),
+    Input('graph_cloud_resource_data', 'figure')]
 )
-def update_results(data, detector, n_clicks):
+def update_results(data, detector, n_clicks, fig):
     return get_result_data(detector, data)
 
 
@@ -603,6 +601,7 @@ def update_graph_scatter(n):
 ###################################################
 
 #######################################################################################
+####### REAL TIME STREAMING DATA #######
   
 X = deque(maxlen = 30)
 X.append(1)

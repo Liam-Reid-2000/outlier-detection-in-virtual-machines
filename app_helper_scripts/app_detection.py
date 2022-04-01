@@ -1,4 +1,5 @@
 import pandas as pd
+import time
 from app_helper_scripts.csv_helper import csv_helper
 from ensemble_detectors.ensemble_voting import get_ensemble_result_confidence
 from ensemble_detectors.moving_average_detection import *
@@ -145,7 +146,7 @@ def run_detection_months(model, data_coordinates, threshold, interval=7):
 
 
 
-def collect_detection_data_for_database(detector, data, outliers_df, true_outliers_csv_reference, points_x_passed, points_y_passed):
+def collect_detection_data_for_database(detector, data, outliers_df, true_outliers_csv_reference, points_x_passed, points_y_passed, detection_time):
     detection_data = []
     outliers_x_detected = outliers_df['timestamp']
 
@@ -159,6 +160,7 @@ def collect_detection_data_for_database(detector, data, outliers_df, true_outlie
     detection_data.append(result_data[2])
     detection_data.append(result_data[3])
     detection_data.append(result_data[4])
+    detection_data.append(detection_time)
 
     return detection_data
 
@@ -166,7 +168,11 @@ def collect_detection_data_for_database(detector, data, outliers_df, true_outlie
 
 def run_detection_known_outliers(detector, data_to_run, true_outliers_csv, threshold, interval=10):
     data_coordinates = csv_helper.load_data_coordinates(data_to_run)
+    tic = time.perf_counter()
     detection_data = run_detection(detector, data_coordinates, threshold)
+    toc = time.perf_counter()
+    detection_time = toc - tic
     outliers_df = pd.DataFrame({'timestamp': detection_data[2],'data': detection_data[3]})
 
-    return collect_detection_data_for_database(detector, data_to_run, outliers_df, true_outliers_csv, data_coordinates['timestamp'], data_coordinates['data'])
+
+    return collect_detection_data_for_database(detector, data_to_run, outliers_df, true_outliers_csv, data_coordinates['timestamp'], data_coordinates['data'], detection_time)
