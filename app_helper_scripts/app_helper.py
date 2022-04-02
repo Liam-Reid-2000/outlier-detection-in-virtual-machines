@@ -164,18 +164,43 @@ def change_x_values_to_dates(points_x):
 
 def get_coordinates_dataframe(all_points_x, all_points_y, points_x):
     points_y = []
+    points_x_new = []
     if (len(points_x) > 0):
-        for point_x in points_x:
-            index = all_points_x.index(datetime.datetime.strptime(str(point_x), '%Y-%m-%d %H:%M:%S'))
-            points_y.append(all_points_y[index])
-    return pd.DataFrame({'timestamp': points_x,'data': points_y})
+        this_point_x = points_x[0]
+        try:
+            for point_x in points_x:
+                this_point_x = point_x
+                index = all_points_x.index(datetime.datetime.strptime(str(point_x), '%Y-%m-%d %H:%M:%S'))
+                points_y.append(all_points_y[index])
+                points_x_new.append(all_points_x[index])
+        except:
+            print('ValueError: data not found to plot')
+            points_x.remove(this_point_x)
+        print(len(points_x))
+        print(len(points_y))
+    return pd.DataFrame({'timestamp': points_x_new,'data': points_y})
 
 
+def split_timeseries_data(points_x, points_y, split):
+    data_size = len(points_x)
+    data_split_point = round(float(data_size) * float(split))
+    points_x_after_split = []
+    points_y_after_split = []
+    i = data_split_point
+    while i < data_size:
+        points_x_after_split.append(points_x[i])
+        points_y_after_split.append(points_y[i])
+        i += 1
+    return pd.DataFrame({'timestamp':points_x_after_split,'data':points_y_after_split})
 
-def get_fig_plot_outliers(detection_data, data_to_run, model):
+
+def get_fig_plot_outliers(detection_data, data_to_run, model, split=0):
     timeseries_data = csv_helper.load_data_coordinates(data_to_run)
+    if (split != 0):
+        timeseries_data = split_timeseries_data(timeseries_data['timestamp'], timeseries_data['data'], split)
     points_x = timeseries_data['timestamp']
     points_y = timeseries_data['data']
+
     points_x = change_x_values_to_dates(points_x)
 
     #try:

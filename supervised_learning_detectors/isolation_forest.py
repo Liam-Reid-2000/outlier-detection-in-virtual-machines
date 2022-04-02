@@ -1,13 +1,13 @@
-import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import IsolationForest
 import plotly.express as px
 import plotly.graph_objects as go
-from app_helper_scripts.app_detection import collect_detection_data_for_database, collect_detection_data_known_outliers
+from app_helper_scripts.app_detection import collect_detection_data_for_database
 from app_helper_scripts.app_helper import save_generated_data
 from supervised_learning_detectors.data_splitter import *
-from datetime import *
+from datetime import datetime
+import time
 
 
 def train_model(X_train):
@@ -38,35 +38,8 @@ def get_min(arr1, arr2):
 
 
 
-def plot_iso_detection_data(isolation_forest_model, X_train, inliers_detected_x, inliers_detected_y, outliers_detected_x, outliers_detected_y):
-    # plot the line, the samples, and the nearest vectors to the plane
-
-    #calc graph bounds
-    #min_x = get_min(inliers_detected_x,outliers_detected_x)
-    #max_x = get_max(inliers_detected_x,outliers_detected_x)
-    #min_y = get_min(inliers_detected_y,outliers_detected_y)
-    #max_y = get_max(inliers_detected_y,outliers_detected_y)
-
-
-    #xx, yy = np.meshgrid(np.linspace(min_x,max_x, 50), np.linspace(min_y, max_y, 50))
-    #Z = isolation_forest_model.decision_function(np.c_[xx.ravel(), yy.ravel()])
-    #Z = Z.reshape(xx.shape)
-
-    #plt.title("Isolation Forest")
-    #plt.contourf(xx, yy, Z, cmap=plt.cm.Blues_r)
-
-    #b1 = plt.scatter(X_train[:, 0], X_train[:, 1], c="white", s=20, edgecolor="k")
-    #b2 = plt.scatter(inliers_detected_x, inliers_detected_y, c="green", s=20, edgecolor="k")
-    #c = plt.scatter(outliers_detected_x, outliers_detected_y, c="red", s=20, edgecolor="k")
-    #plt.axis("tight")
-    #plt.xlim(min_x, max_x)
-    #plt.ylim(min_y, max_y)
-    #plt.legend(
-    #    [b1, b2, c],
-    #    ["training observations", "new regular observations", "new abnormal observations"],
-    #    loc="upper left",
-    #)
-
+def plot_iso_detection_data(X_train, inliers_detected_x, inliers_detected_y, outliers_detected_x, outliers_detected_y):
+   
     train_data_df = pd.DataFrame({'minutes': X_train[:, 0],'data': X_train[:, 1]})
     inliers_data_df = pd.DataFrame({'minutes': inliers_detected_x,'data':inliers_detected_y})
     outliers_data_df = pd.DataFrame({'minutes': outliers_detected_x,'data':outliers_detected_y})
@@ -76,10 +49,6 @@ def plot_iso_detection_data(isolation_forest_model, X_train, inliers_detected_x,
   
     fig.add_trace(go.Scatter(x=inliers_data_df['minutes'], y=inliers_data_df['data'], mode='markers',name='Inliers Detected', line=dict(color='green')))
     fig.add_trace(go.Scatter(x=outliers_data_df['minutes'], y=outliers_data_df['data'], mode='markers',name='Outliers Detected', line=dict(color='red')))
-
-    #fig.show()
-
-    #plt.show()
 
     return fig
     
@@ -110,6 +79,12 @@ def split_outliers_inliers(labeled_test_data):
 
 def do_isolation_forest_detection(split_ratio, dataset, outlier_ref, plot=False):
 
+    if (split_ratio >= 1 or split_ratio <=0):
+        print('Invalid split ratio')
+        return
+
+    tic = time.perf_counter()
+
     # Load data and outliers
     split_data = load_data(dataset, split_ratio)
     outlier_data = split_outliers(outlier_ref,split_data[4][0])
@@ -133,13 +108,16 @@ def do_isolation_forest_detection(split_ratio, dataset, outlier_ref, plot=False)
 
     outlier_areas = get_outlier_areas(outlier_data[2],outlier_ref)
 
-    detection_data = collect_detection_data_for_database('iforest', 'speed_7578', outlier_inliers_split[1], outlier_ref,split_data[4],split_data[5])
+    toc = time.perf_counter()
+    detection_time = toc - tic
+
+    detection_data = collect_detection_data_for_database('iforest', 'speed_7578', outlier_inliers_split[1], outlier_ref,split_data[4],split_data[5], detection_time)
 
     # save the generated data  
     save_generated_data(detection_data)
 
     if (plot):
-        return plot_iso_detection_data(isolation_forest_model, X_train, 
+        return plot_iso_detection_data(X_train, 
             convert_time_data_to_minutes_of_day(outlier_inliers_split[0]['timestamp']), 
             outlier_inliers_split[0]['data'],
             convert_time_data_to_minutes_of_day(outlier_inliers_split[1]['timestamp']), 
@@ -151,12 +129,6 @@ def do_isolation_forest_detection(split_ratio, dataset, outlier_ref, plot=False)
     #make_prediction(isolation_forest_model, 700, 110)
 
     return detection_data
-
-    
-
-#do_isolation_forest_detection(0.75)
-
-
 
 
     ### https://scikit-learn.org/stable/modules/outlier_detection.html ###

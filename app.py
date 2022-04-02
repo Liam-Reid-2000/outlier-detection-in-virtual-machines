@@ -116,7 +116,7 @@ app.layout = html.Div([
 
                                 ### The Graph ### 
                                 dcc.Graph(
-                                    id='plots_health_data'
+                                    id='dengue_fever_graph'
                                 ),
                             ],style={'width': '70%', 'display': 'inline-block'}),
 
@@ -160,7 +160,6 @@ app.layout = html.Div([
 
                             html.Div([
                                 html.H4('Detection Results'),
-                                html.Button('Refresh Results', id='btn_refresh_cloud', n_clicks=0),
                                 html.Br(),
                                 html.Br(),
                                 html.Div([
@@ -257,7 +256,7 @@ app.layout = html.Div([
 
                             ### The Graph ### 
                             dcc.Graph(
-                                id='supervised-plots_supervised'
+                                id='supervised_learning_graph'
                             ),
                         ],style={'width': '70%', 'display': 'inline-block'}),
                         
@@ -265,8 +264,7 @@ app.layout = html.Div([
 
                         html.Div([
                             html.H4('Detection Results'),
-                            html.Button('Refresh Results', id='btn_refresh_supervised', n_clicks=0),
-                            html.Button('Show Learning', id='btn_show_supervised', n_clicks=0),
+                            html.B('Supervised Detection Results'),
                             html.Br(),
                             html.Br(),
                             html.Div([
@@ -276,7 +274,7 @@ app.layout = html.Div([
                         ],style={'width': '29%', 'float': 'right', 'display': 'inline-block'}),
                         ### The Graph ### 
                             dcc.Graph(
-                                id='supervised_plots_supervised_learning'
+                                id='supervised_train_test_graph'
                             ),
                     ],style={'padding': '10px 5px',"border":"2px black solid"}),
 
@@ -351,7 +349,6 @@ app.layout = html.Div([
                         ],style={'width': '30%', 'display': 'inline-block'}),
                         html.Div([
                             html.B('Ensemble Detection Results'),
-                            html.Button('Refresh Results', id='btn_refresh_ensemble', n_clicks=0),
                             html.Br(),
                             html.Br(),
                             html.Div([
@@ -378,10 +375,9 @@ app.layout = html.Div([
     Input('ensemble-median-radio-btns','value'),
     Input('ensemble-histogram-radio-btns','value'),
     Input('ensemble-boxplot-radio-btns','value'),
-    Input('available_data_ensemble','value'),
-    Input('btn_refresh_ensemble', 'n_clicks')]
+    Input('available_data_ensemble','value')]
 )
-def update_ensemble_graph(average_rd, median_rd, histogram_rd, boxplot_rd, data, n_clicks):
+def update_ensemble_graph(average_rd, median_rd, histogram_rd, boxplot_rd, data):
 
     ensemble_detector_list = []
 
@@ -411,9 +407,9 @@ def update_ensemble_graph(average_rd, median_rd, histogram_rd, boxplot_rd, data,
     Input('ensemble-boxplot-radio-btns','value'),
     Input('ensemble-histogram-radio-btns','value'),
     Input('available_data_ensemble','value'),
-    Input('btn_refresh_ensemble', 'n_clicks')]
+    Input('ensemble-graph', 'figure')]
 )
-def update_results(average_rad, median_rad, boxplot_rad, histogram_rad, data, n_clicks):
+def update_results(average_rad, median_rad, boxplot_rad, histogram_rad, data, fig):
     try:
         return get_result_data('ensemble', data)
     except:
@@ -427,9 +423,10 @@ def update_results(average_rad, median_rad, boxplot_rad, histogram_rad, data, n_
 @app.callback(
     Output('results_title', 'children'),
     [Input('available_data','value'),
-    Input('available_detectors','value')]
+    Input('available_detectors','value'),
+    Input('unsupervised_detection_graph', 'figure')]
 )
-def update_results_title(data, detector):
+def update_results_title(data, detector, fig):
     return html.H4(detector.upper() + ' on \'' + data + '\' data')
 
 
@@ -437,9 +434,10 @@ def update_results_title(data, detector):
     Output('live-update-results', 'children'),
     [Input('available_data','value'),
     Input('available_detectors','value'),
-    Input('btn_refresh', 'n_clicks')]
+    Input('btn_refresh', 'n_clicks'),
+    Input('unsupervised_detection_graph', 'figure')]
 )
-def update_results(data, detector, n_clicks):
+def update_results(data, detector, n_clicks, fig):
     return get_result_data(detector, data)
 
 
@@ -461,7 +459,7 @@ def plot_graph(data, detector):
 
 
 @app.callback(
-    Output('plots_health_data', 'figure'),
+    Output('dengue_fever_graph', 'figure'),
     [Input('available_detectors_health_data','value'),
     Input('available_data_health_data_subsets','value'),
     Input('available_data_health_data','value')]
@@ -510,10 +508,9 @@ def update_results_title(data, detector, fig):
     Output('live_update_results_cloud_resource', 'children'),
     [Input('available_data_cloud_resource_data','value'),
     Input('available_detectors_cloud_resource_data','value'),
-    Input('btn_refresh_cloud', 'n_clicks'),
     Input('graph_cloud_resource_data', 'figure')]
 )
-def update_results(data, detector, n_clicks, fig):
+def update_results(data, detector, fig):
     return get_result_data(detector, data)
 
 
@@ -524,36 +521,35 @@ def update_results(data, detector, n_clicks, fig):
 ### SUPERVISED LEARNING ###
 
 @app.callback(
-    Output('supervised-plots_supervised', 'figure'),
+    Output('supervised_learning_graph', 'figure'),
     [Input('available_data_supervised','value'),
     Input('available_detectors_supervised','value'),
     Input('supervised_test_train_split_ratio', 'value')]
 )
-def plot_graph(data, detector,ratio):
+def plot_graph(data, detector, ratio):
     detection_data = do_isolation_forest_detection(float(ratio), 'resources/' + data + '.csv', get_outlier_ref(data), False)
-    return get_fig_plot_outliers(detection_data, "speed_7578", "isolation forest")
+    return get_fig_plot_outliers(detection_data, "speed_7578", "isolation forest", ratio)
 
 @app.callback(
     Output('live-update-results_supervised', 'children'),
     [Input('available_data_supervised','value'),
     Input('available_detectors_supervised','value'),
-    Input('btn_refresh_supervised', 'n_clicks'),
-    Input('supervised_test_train_split_ratio', 'value')]
+    Input('supervised_test_train_split_ratio', 'value'),
+    Input('supervised_learning_graph', 'figure')]
 )
-def update_results(data, detector, n_clicks, ratio):
+def update_results(data, detector, ratio, fig):
     try:
         return get_result_data(detector, data)
     except:
-        print('Error when getting results')
-        #logging.error('Error when getting results')
+        print('Error when getting results for ' + detector + ' ' + data)
 
 @app.callback(
-    Output('supervised_plots_supervised_learning','figure'),
+    Output('supervised_train_test_graph','figure'),
     [Input('available_data_supervised','value'),
-    Input('btn_show_supervised', 'n_clicks'),
-    Input('supervised_test_train_split_ratio', 'value')]
+    Input('supervised_test_train_split_ratio', 'value'),
+    Input('supervised_learning_graph', 'figure')]
 )
-def update_results(data, n_clicks, ratio):
+def update_results(data, ratio, fig):
     return do_isolation_forest_detection(float(ratio), 'resources/' + data + '.csv', get_outlier_ref(data), True)   
 
 ### SUPERVISED LEARNING ###
