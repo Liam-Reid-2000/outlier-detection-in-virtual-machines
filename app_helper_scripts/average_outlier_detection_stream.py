@@ -32,33 +32,9 @@ def get_average(arr):
         count += 1
     return total/count
 
-def get_stream_fig(data_points, has_average, Xavg, Yavg, X, Y):
+def get_stream_fig(data_points, X, Y):
     # Plot and return the graph
     fig = px.line(data_points, x='points_x', y='points_y')
-    if (has_average):
-        average_data_points = pd.DataFrame({'points_x': Xavg,'points_y': Yavg})
-        fig.add_scatter(x=average_data_points['points_x'], y=average_data_points['points_y'],mode='lines',name='Average')
-
-        
-        outliers = detect_average_outliers(25, average_data_points, data_points)
-        if (outliers.size>0):
-           # scatter trace with medium sized markers
-            fig.add_trace(
-                go.Scatter(
-                    mode='markers',
-                    x=outliers['average_outlier_x'],
-                    y=outliers['average_outlier_y'],
-                    marker=dict(
-                        color='LightSkyBlue',
-                        size=20,
-                        line=dict(
-                            color='MediumPurple',
-                            width=2
-                        )
-                    ),
-                    showlegend=False
-                )
-            )
 
     fig.update_xaxes(range=[min(X),max(X)])
     fig.update_yaxes(range=[min(Y) - min(Y)*0.5,max(Y) + max(X)*0.5])   

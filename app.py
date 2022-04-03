@@ -10,6 +10,9 @@ from app_helper_scripts.csv_helper import *
 import json
 from ensemble_detectors.ensemble_detection import get_ensemble_detection_data
 import time
+import requests
+from ensemble_detectors.moving_average_detection import moving_average_detection
+from ensemble_detectors.moving_median_detection import moving_median_detection
 
 from som.outlier_detection_som import detect_som_outliers, detect_som_outliers_circle
 from app_helper_scripts.average_outlier_detection_stream import get_average, get_stream_fig
@@ -65,7 +68,7 @@ app.layout = html.Div([
                     dcc.Graph(id = 'live-graph', animate = True),
                     dcc.Interval(
                         id = 'graph-update',
-                        interval = 3000,
+                        interval = 5000,
                         n_intervals=0
                     ),
                 ],style={'width': '70%', 'display': 'inline-block'}),
@@ -616,32 +619,22 @@ Yavg.append(1)
 )
 def update_graph_scatter(n,data):
 
-
-    dc = csv_helper.load_data_coordinates(data)
-    points_x = dc['timestamp']
-    points_y = dc['data']
-
+    headers = {'Accept': 'application/json'}
+    r = requests.get('http://localhost:8000/ec2_cpu_utilization_5f5533/' + str(X[-1]+1), headers=headers)
 
     X.append(X[-1]+1)
-    Y.append(points_y[X[-1]+1])
-    points_y[X[-1]+1]
+    Y.append(r.json()['cpu_usage'])
 
     data_points = pd.DataFrame({'points_x': X,'points_y': Y})
-    has_average = False
-    average = 0
 
-    if(X[-1]+1 > 5):
-        arr = []
-        i = 0
-        while(i < 5):
-            arr.append(points_y[X[-1]+1 - i])
-            has_average = True
-            i += 1
-        average = get_average(arr)
-        Xavg.append(X[-1])
-        Yavg.append(average)
+    moving_average_prediction = moving_average_detection.real_time_prediction(Y, Y[len(Y)-1])
+    print('Moving average predicts: ' + str(moving_average_prediction))
+
+    moving_median_prediciton = moving_median_detection.real_time_prediction(Y, Y[len(Y)-1])
+    print('Moving median predicts: ' + str(moving_median_prediciton))
+
     try:
-        return get_stream_fig(data_points, has_average, Xavg, Yavg, X, Y)
+        return get_stream_fig(data_points, X, Y)
     except:
         print('Error with stream graph')
 

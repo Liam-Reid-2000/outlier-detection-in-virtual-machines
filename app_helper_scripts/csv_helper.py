@@ -24,5 +24,5 @@ class csv_helper:
                     points_y.append(float(row[1]))
                     points_x.append(datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S'))
                 except ValueError:
-                    print("error")
+                    print("Error accessing data for request: " + dataset_name)
             return pd.DataFrame({'timestamp':points_x,'data':points_y})
