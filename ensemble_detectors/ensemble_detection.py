@@ -1,7 +1,7 @@
 from app_helper_scripts.csv_helper import csv_helper
 from app_helper_scripts.app_detection import collect_detection_data_for_database, run_detection
 from app_helper_scripts.app_helper import get_detector_threshold, save_generated_data
-from ensemble_detectors.ensemble_voting import get_ensemble_result
+from ensemble_detectors.ensemble_voting import ensemble_voting
 import pandas as pd
 import time
 
@@ -22,7 +22,7 @@ def get_ensemble_detection_data(ensemble_detector_list, dataset, known_outliers_
 
     ensemble_outliers = []
     # Pass outlier data from each detector to voting system
-    ensemble_outliers = get_ensemble_result(all_outlier_coordinates)
+    ensemble_outliers = ensemble_voting.get_ensemble_result_majority(all_outlier_coordinates)
     
     toc = time.perf_counter()
     detection_time = toc - tic

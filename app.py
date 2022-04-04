@@ -12,31 +12,16 @@ from ensemble_detectors.ensemble_detection import get_ensemble_detection_data
 import time
 import requests
 from ensemble_detectors.moving_average_detection import moving_average_detection
+from ensemble_detectors.moving_boxplot import moving_boxplot_detection
+from ensemble_detectors.moving_histogram_detection import moving_histogram_detection
 from ensemble_detectors.moving_median_detection import moving_median_detection
 
 from som.outlier_detection_som import detect_som_outliers, detect_som_outliers_circle
-from app_helper_scripts.average_outlier_detection_stream import get_average, get_stream_fig
 from app_helper_scripts.app_helper import *
+from app_helper_scripts.config_utilities import config_utlilities
 from supervised_learning_detectors.isolation_forest import do_isolation_forest_detection
 
 app = dash.Dash(__name__)
-
-colors = {
-    'background': '#111111',
-    'text': '#7FDBFF'
-}
-
-#logging.basicConfig(level=logging.DEBUG)
-
-def get_config(requested_config):
-    f = open('resources/config.json',)
-    data = json.load(f) 
-    requested_config_list = []
-    for i in data[requested_config]:
-        requested_config_list.append(i)
-    # Closing file
-    f.close()
-    return requested_config_list
  
 
 app.layout = html.Div([
@@ -53,22 +38,22 @@ app.layout = html.Div([
                         html.Div([html.B('Detector:')],style={'width': '10%', 'display': 'inline-block'}),
                         html.Div([dcc.Dropdown(
                             id='available_detectors_real_time_detection',
-                            options=[{'label': i[0], 'value': i[0]} for i in get_config('available_detectors')],
-                            value='ec2_cpu_utilization_5f5533'
+                            options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_real_time_detectors', 'detector_config')],
+                            value='full_ensemble'
                         )],style={'width': '25%', 'display': 'inline-block'}),
                     ],style={'width': '100%', 'display': 'inline-block'}),
                     html.Div([
                         html.Div([html.B('Dataset:')],style={'width': '10%', 'display': 'inline-block'}),
                         html.Div([dcc.Dropdown(
                             id='available_data_real_time_detection',
-                            options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets_cloud_resource_data')],
+                            options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_datasets_cloud_resource_data', 'dataset_config')],
                             value='ec2_cpu_utilization_5f5533'
                         )],style={'width': '25%', 'display': 'inline-block'}),
                     ],style={'width': '100%', 'display': 'inline-block'}),
                     dcc.Graph(id = 'live-graph', animate = True),
                     dcc.Interval(
                         id = 'graph-update',
-                        interval = 5000,
+                        interval = 10000,
                         n_intervals=0
                     ),
                 ],style={'width': '70%', 'display': 'inline-block'}),
@@ -97,21 +82,21 @@ app.layout = html.Div([
                                     html.Div([
                                         dcc.Dropdown(
                                             id='available_detectors_health_data',
-                                            options=[{'label': i[0], 'value': i[0]} for i in get_config('available_detectors')],
+                                            options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_detectors', 'detector_config')],
                                             value='full_ensemble'
                                         ),
                                     ],style={'width': '20%', 'display': 'inline-block'}),
                                     html.Div([
                                         dcc.Dropdown(
                                             id='available_data_health_data',
-                                            options=[{'label': i, 'value': i} for i in get_config('available_datasets_health_data')[0]],
+                                            options=[{'label': i, 'value': i} for i in config_utlilities.get_config('available_datasets_health_data', 'dataset_config')[0]],
                                             value='AnGiang.xlsx'
                                         ),
                                     ],style={'width': '20%', 'display': 'inline-block'}),
                                     html.Div([
                                         dcc.Dropdown(
                                             id='available_data_health_data_subsets',
-                                            options=[{'label': i, 'value': i} for i in get_config('available_datasets_health_data_subsets')[0]],
+                                            options=[{'label': i, 'value': i} for i in config_utlilities.get_config('available_datasets_health_data_subsets', 'dataset_config')[0]],
                                             value='Average_temperature'
                                         ),
                                     ],style={'width': '20%', 'display': 'inline-block'}),
@@ -140,14 +125,14 @@ app.layout = html.Div([
                                     html.Div([
                                         dcc.Dropdown(
                                             id='available_detectors_cloud_resource_data',
-                                            options=[{'label': i[0], 'value': i[0]} for i in get_config('available_detectors')],
+                                            options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_detectors', 'detector_config')],
                                             value='moving_average'
                                         ),
                                     ],style={'width': '30%', 'display': 'inline-block'}),
                                     html.Div([
                                         dcc.Dropdown(
                                             id='available_data_cloud_resource_data',
-                                            options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets_cloud_resource_data')],
+                                            options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_datasets_cloud_resource_data', 'dataset_config')],
                                             value='ec2_cpu_utilization_5f5533'
                                         ),
                                     ],style={'width': '30%', 'display': 'inline-block'}),
@@ -189,14 +174,14 @@ app.layout = html.Div([
                                 html.Div([
                                     dcc.Dropdown(
                                         id='available_detectors',
-                                        options=[{'label': i[0], 'value': i[0]} for i in get_config('available_detectors')],
+                                        options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_detectors', 'detector_config')],
                                         value='svm'
                                     ),
                                 ],style={'width': '30%', 'display': 'inline-block'}),
                                 html.Div([
                                     dcc.Dropdown(
                                         id='available_data',
-                                        options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets')],
+                                        options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_datasets', 'dataset_config')],
                                         value='speed_7578'
                                     ),
                                 ],style={'width': '30%', 'display': 'inline-block'}),
@@ -237,14 +222,14 @@ app.layout = html.Div([
                                 html.Div([
                                     dcc.Dropdown(
                                         id='available_detectors_supervised',
-                                        options=[{'label': i[0], 'value': i[0]} for i in get_config('available_supervised_detectors')],
+                                        options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_supervised_detectors', 'detector_config')],
                                         value='iforest'
                                     ),
                                 ],style={'width': '20%', 'display': 'inline-block'}),
                                 html.Div([
                                     dcc.Dropdown(
                                         id='available_data_supervised',
-                                        options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets')],
+                                        options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_datasets', 'dataset_config')],
                                         value='speed_7578'
                                     ),
                                 ],style={'width': '20%', 'display': 'inline-block'}),
@@ -288,7 +273,7 @@ app.layout = html.Div([
                     html.Div([
                         html.Div(),
                         html.H4("SOM"),
-                        html.H4("Demonstrating SOM outlier detection using 'Minisom' library, I plan to make an improved version of this algorithm based on 'An Incremental Approach to Outlier Detection in Virtual Machines'"),
+                        html.H4("Demonstrating SOM outlier detection using 'Minisom' library."),
                         html.Div([
                             dcc.Graph(id = 'som-graph')
                         ],style={'width': '49%', 'display': 'inline-block'}),
@@ -310,7 +295,7 @@ app.layout = html.Div([
                             html.Div([html.B('Dataset:')],style={'width': '30%'}),
                             html.Div([dcc.Dropdown(
                                 id='available_data_ensemble',
-                                options=[{'label': i[0], 'value': i[0]} for i in get_config('available_datasets_cloud_resource_data')],
+                                options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_datasets_cloud_resource_data', 'dataset_config')],
                                 value='ec2_cpu_utilization_5f5533'
                             )],style={'width': '100%'}),
 
@@ -394,7 +379,7 @@ def update_ensemble_graph(average_rd, median_rd, histogram_rd, boxplot_rd, data)
     if (histogram_rd == 'On'):
         ensemble_detector_list.append('moving_histogram')
 
-    detection_data = get_ensemble_detection_data(ensemble_detector_list, data, get_outlier_ref(data))
+    detection_data = get_ensemble_detection_data(ensemble_detector_list, data, config_utlilities.get_true_outliers(data))
     print('Detection data got - Plotting')
     print('detection data')
     print(detection_data)
@@ -450,7 +435,7 @@ def update_results(data, detector, n_clicks, fig):
     Input('available_detectors','value')]
 )
 def plot_graph(data, detector):
-    detection_data = get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector))
+    detection_data = get_detection_data_known_outliers(detector, data, config_utlilities.get_true_outliers(data), get_detector_threshold(detector))
     return get_fig_plot_outliers(detection_data, data, detector)
 
 ##################### UNSUPERVISED DETECTION
@@ -492,7 +477,7 @@ def plot_graph(detector, data_subset, dataset):
     Input('available_data_cloud_resource_data','value')]
 )
 def plot_graph(detector, data):
-    detection_data = get_detection_data_known_outliers(detector, data, get_outlier_ref(data), get_detector_threshold(detector)) 
+    detection_data = get_detection_data_known_outliers(detector, data, config_utlilities.get_true_outliers(data), get_detector_threshold(detector)) 
     fig = get_fig_plot_outliers(detection_data, data, detector)
     return fig
 
@@ -530,7 +515,7 @@ def update_results(data, detector, fig):
     Input('supervised_test_train_split_ratio', 'value')]
 )
 def plot_graph(data, detector, ratio):
-    detection_data = do_isolation_forest_detection(float(ratio), 'resources/' + data + '.csv', get_outlier_ref(data), False)
+    detection_data = do_isolation_forest_detection(float(ratio), 'resources/' + data + '.csv', config_utlilities.get_true_outliers(data), False)
     return get_fig_plot_outliers(detection_data, "speed_7578", "isolation forest", ratio)
 
 @app.callback(
@@ -553,7 +538,7 @@ def update_results(data, detector, ratio, fig):
     Input('supervised_learning_graph', 'figure')]
 )
 def update_results(data, ratio, fig):
-    return do_isolation_forest_detection(float(ratio), 'resources/' + data + '.csv', get_outlier_ref(data), True)   
+    return do_isolation_forest_detection(float(ratio), 'resources/' + data + '.csv', config_utlilities.get_true_outliers(data), True)   
 
 ### SUPERVISED LEARNING ###
 ####################################################################################
@@ -577,8 +562,7 @@ def update_graph_scatter(n):
         fig.add_scatter(x=outliers_x,y=outliers_y,mode='markers',name='Outliers')
         return fig
     except:
-        print('Error when getting results')
-        #logging.error('Error creating SOM fig')
+        print('Error when getting som figure')
 
 @app.callback(
     Output('som-graph-2', 'figure'),
@@ -602,41 +586,92 @@ def update_graph_scatter(n):
 #######################################################################################
 ####### REAL TIME STREAMING DATA #######
   
-X = deque(maxlen = 30)
+X = deque(maxlen = 50)
 X.append(1)
-Xavg = deque(maxlen = 30)
-Xavg.append(1)
+
+XTime = deque(maxlen = 50)
+XTime.append(datetime.datetime.now())
   
-Y = deque(maxlen = 30)
+Y = deque(maxlen = 50)
 Y.append(1)
-Yavg = deque(maxlen = 30)
-Yavg.append(1)
+
+Outliers = deque(maxlen = 50)
+Outliers.append(False)
+
+
+def get_stream_fig():
+    outlier_indexes = []
+    i = 0
+    while i < len(Outliers):
+        if Outliers[i]:
+            outlier_indexes.append(i)
+        i += 1
+    outliers_x = []
+    outliers_y = []
+    for i in outlier_indexes:
+        outliers_x.append(XTime[i])
+        outliers_y.append(Y[i])
+    fig = px.line(pd.DataFrame({'points_x': XTime,'points_y': Y}), x='points_x', y='points_y')
+    fig.add_trace(go.Scatter(x=outliers_x, y=outliers_y, mode='markers',name='Outliers detected', line=dict(color='red')))
+    fig.update_xaxes(range=[min(XTime),max(XTime)])
+    fig.update_yaxes(range=[min(Y) - min(Y)*0.5,max(Y) + max(Y)*0.5])  
+    return fig
 
 @app.callback(
     Output('live-graph', 'figure'),
     [Input('graph-update', 'n_intervals'),
-    Input('available_data_real_time_detection','value') ]
+    Input('available_data_real_time_detection','value'),
+    Input('available_detectors_real_time_detection', 'value') ]
 )
-def update_graph_scatter(n,data):
+def update_graph_scatter(n,dataset_name, detector_name):
+
+    current_dataset = ''
+    with open("temp_storage.txt", "r") as file:
+        current_dataset = file.readline()
+    print(current_dataset)
+
+    if (dataset_name != current_dataset):
+        print('swaping dataset_name')
+        with open('temp_storage.txt', 'w') as f:
+            f.write(dataset_name)
+            X.clear()
+            X.append(1)
+            Y.clear()
+            Y.append(1)
+            XTime.clear()
+            XTime.append(datetime.datetime.now())
+            Outliers.clear()
+            Outliers.append(False)
 
     headers = {'Accept': 'application/json'}
-    r = requests.get('http://localhost:8000/ec2_cpu_utilization_5f5533/' + str(X[-1]+1), headers=headers)
+    r = requests.get('http://localhost:8000/' + dataset_name + '/' + str(X[-1]+1), headers=headers)
 
     X.append(X[-1]+1)
     Y.append(r.json()['cpu_usage'])
+    XTime.append(datetime.datetime.now())
 
-    data_points = pd.DataFrame({'points_x': X,'points_y': Y})
+    confidence = 0
 
-    moving_average_prediction = moving_average_detection.real_time_prediction(Y, Y[len(Y)-1])
-    print('Moving average predicts: ' + str(moving_average_prediction))
+    if (detector_name == 'moving_average'):
+        confidence = moving_average_detection.real_time_prediction(Y, Y[len(Y)-1])
+    elif (detector_name == 'moving_median'):
+        confidence = moving_median_detection.real_time_prediction(Y, Y[len(Y)-1])
+    elif (detector_name == 'moving_boxplot'):
+        confidence = moving_boxplot_detection.real_time_prediction(Y, Y[len(Y)-1])
+    elif (detector_name == 'moving_histogram'):
+        confidence = moving_histogram_detection.real_time_prediction(Y, Y[len(Y)-1])
+    else: # FULL ENSEMBLE
+        confidence += moving_average_detection.real_time_prediction(Y, Y[len(Y)-1])
+        confidence += moving_median_detection.real_time_prediction(Y, Y[len(Y)-1])
+        confidence += moving_boxplot_detection.real_time_prediction(Y, Y[len(Y)-1])
+        confidence += moving_histogram_detection.real_time_prediction(Y, Y[len(Y)-1])
 
-    moving_median_prediciton = moving_median_detection.real_time_prediction(Y, Y[len(Y)-1])
-    print('Moving median predicts: ' + str(moving_median_prediciton))
+    if (confidence < 0):
+        Outliers.append(True)
+    else:
+        Outliers.append(False)
 
-    try:
-        return get_stream_fig(data_points, X, Y)
-    except:
-        print('Error with stream graph')
+    return get_stream_fig()
 
 @app.callback(
     Output('cpu_usage_pie_chart', 'figure'),
@@ -648,7 +683,7 @@ def generate_pie_chat(n):
     values = [100-Y[len(Y)-1], Y[len(Y)-1]]
     fig = go.Figure(data=[go.Pie(labels=labels,values=values)])
     fig.update_traces(hoverinfo='label+percent', textinfo='value', textfont_size=20,
-                  marker=dict(colors=colors, line=dict(color='#000000', width=2)))
+                  marker=dict(colors=colors, line=dict(color='#000000', width=1)))
     return fig
 
 

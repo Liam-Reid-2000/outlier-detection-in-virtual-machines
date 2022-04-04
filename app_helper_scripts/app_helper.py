@@ -18,19 +18,6 @@ def get_detector_threshold(ref):
             f.close()
             return i[1]
     f.close()
-   
-def get_outlier_ref(ref):
-    f = open('resources/config.json',)
-    data = json.load(f)
-    for i in data['available_datasets']:
-        if (i[0] ==ref):
-            f.close()
-            return i[1]
-    for i in data['available_datasets_cloud_resource_data']:
-        if (i[0] ==ref):
-            f.close()
-            return i[1]
-    f.close()
 
 
 def get_result_data(detector_name, dataset_name):

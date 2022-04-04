@@ -107,7 +107,6 @@ class moving_histogram_detection:
 
     def detect_histogram_outliers_predictions_confidence(threshold,interval,data_points):                                                                                                                                                                                                                                                                                                                                                                                                     
 
-        print('starting')
         confidence = []
         outliers_x = []
 
@@ -135,3 +134,34 @@ class moving_histogram_detection:
             i += 1
         
         return pd.DataFrame({'timestamp': points_x,'data': points_y,'confidence':confidence})
+
+    
+    def real_time_prediction(previous_data_values, next_data_value):
+        confidence = 0
+        # get last 10 items in previous data
+        i = len(previous_data_values)-2
+        if (i <= 45):
+            return confidence
+        temp = []
+        while (i > len(previous_data_values)-42):
+            temp.append(previous_data_values[i])
+            i -= 1
+        previous_data_values = temp
+        
+        
+        histogram_data = moving_histogram_detection.get_histogram(previous_data_values)
+        heights = []
+        x_left_corners = []
+        bin_widths = [] 
+
+        for bin in histogram_data:
+            heights.append(bin.get_height())
+            x_left_corners.append(bin.get_xy()[0])
+            bin_widths.append(bin.get_width())
+
+        outlier_ranges = moving_histogram_detection.get_outlier_ranges(heights, x_left_corners, bin_widths, 1)
+
+        for range in outlier_ranges:
+            if ((next_data_value < range[0]) and (next_data_value >= range[1])):
+                return(-0.5)
+        return 0.5

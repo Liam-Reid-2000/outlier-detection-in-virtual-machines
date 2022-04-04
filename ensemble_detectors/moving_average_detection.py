@@ -1,4 +1,3 @@
-from cv2 import threshold
 import pandas as pd
 import numpy as np
 

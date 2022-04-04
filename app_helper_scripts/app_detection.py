@@ -1,7 +1,7 @@
 import pandas as pd
 import time
 from app_helper_scripts.csv_helper import csv_helper
-from ensemble_detectors.ensemble_voting import get_ensemble_result_confidence
+from ensemble_detectors.ensemble_voting import ensemble_voting
 from ensemble_detectors.moving_average_detection import moving_average_detection
 from ensemble_detectors.moving_median_detection import moving_median_detection
 from ensemble_detectors.moving_boxplot import moving_boxplot_detection
@@ -81,7 +81,7 @@ def run_detection(model, data_coordinates, threshold, interval=10):
         ensemble_outliers_confidence.append(moving_median_detection.detect_median_outliers_labelled_prediction(threshold, moving_median_detection.get_moving_median_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
         ensemble_outliers_confidence.append(moving_boxplot_detection.detect_boxplot_outliers_predictions_confidence(threshold, interval, data_coordinates_renamed))
         ensemble_outliers_confidence.append(moving_histogram_detection.detect_histogram_outliers_predictions_confidence(1,1, data_coordinates_renamed))
-        outliers_after_voting = get_ensemble_result_confidence(ensemble_outliers_confidence)
+        outliers_after_voting = ensemble_voting.get_ensemble_result_confidence(ensemble_outliers_confidence)
 
         #print(outliers_after_voting)
         outliers_x = outliers_after_voting['timestamp']
