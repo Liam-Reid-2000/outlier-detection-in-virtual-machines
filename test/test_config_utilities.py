@@ -31,6 +31,10 @@ class config_utilities_test(unittest.TestCase):
         requested_outlier_data = config_utlilities.get_true_outliers('speed_7578')
         self.assertEqual(requested_outlier_data, 'realTraffic/speed_7578.csv')
 
+    def test_get_true_outliers_valid_reference_cloud_resource_data(self):
+        requested_outlier_data = config_utlilities.get_true_outliers('ec2_cpu_utilization_5f553')
+        self.assertEqual(requested_outlier_data, 'realAWSCloudwatch/ec2_cpu_utilization_5f5533.csv')
+
     def test_get_true_outliers_invalid_reference(self):
         requested_outlier_data = config_utlilities.get_true_outliers('invalid_7578')
         self.assertIsNone(requested_outlier_data)
