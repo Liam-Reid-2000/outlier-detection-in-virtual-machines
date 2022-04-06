@@ -5,24 +5,21 @@ from dash.dependencies import Output, Input
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
-from collections import deque
-from app_helper_scripts.csv_helper import *
-import json
-from ensemble_detectors.ensemble_detection import get_ensemble_detection_data
 import time
 import requests
-from ensemble_detectors.moving_average_detection import moving_average_detection
-from ensemble_detectors.moving_boxplot import moving_boxplot_detection
-from ensemble_detectors.moving_histogram_detection import moving_histogram_detection
-from ensemble_detectors.moving_median_detection import moving_median_detection
+from collections import deque
 
+from app_helper_scripts.app_detection import detection_runner
+from app_helper_scripts.csv_helper import *
+from ensemble_detectors.ensemble_detection import get_ensemble_detection_data
 from som.outlier_detection_som import detect_som_outliers, detect_som_outliers_circle
 from app_helper_scripts.app_helper import *
 from app_helper_scripts.config_utilities import config_utlilities
 from supervised_learning_detectors.isolation_forest import do_isolation_forest_detection
+from app_helper_scripts.fig_generator_helper import fig_generator
+from app_helper_scripts.app_helper import detection_helper
 
 app = dash.Dash(__name__)
- 
 
 app.layout = html.Div([
     html.H1('Outlier Detection Dashboard'),
@@ -384,7 +381,7 @@ def update_ensemble_graph(average_rd, median_rd, histogram_rd, boxplot_rd, data)
     print('detection data')
     print(detection_data)
     ## return the figure
-    fig = get_fig_plot_outliers(detection_data, data, 'moving ensemble')
+    fig = fig_generator.get_fig_plot_outliers(detection_data, data, 'moving ensemble')
     return fig
 
 
@@ -399,7 +396,7 @@ def update_ensemble_graph(average_rd, median_rd, histogram_rd, boxplot_rd, data)
 )
 def update_results(average_rad, median_rad, boxplot_rad, histogram_rad, data, fig):
     try:
-        return get_result_data('ensemble', data)
+        return detection_helper.get_result_data('ensemble', data)
     except:
         print('Error when getting results')
 
@@ -426,7 +423,7 @@ def update_results_title(data, detector, fig):
     Input('unsupervised_detection_graph', 'figure')]
 )
 def update_results(data, detector, n_clicks, fig):
-    return get_result_data(detector, data)
+    return detection_helper.get_result_data(detector, data)
 
 
 @app.callback(
@@ -435,8 +432,8 @@ def update_results(data, detector, n_clicks, fig):
     Input('available_detectors','value')]
 )
 def plot_graph(data, detector):
-    detection_data = get_detection_data_known_outliers(detector, data, config_utlilities.get_true_outliers(data), get_detector_threshold(detector))
-    return get_fig_plot_outliers(detection_data, data, detector)
+    detection_data = detection_helper.get_detection_data_known_outliers(detector, data, config_utlilities.get_true_outliers(data), detection_helper.get_detector_threshold(detector))
+    return fig_generator.get_fig_plot_outliers(detection_data, data, detector)
 
 ##################### UNSUPERVISED DETECTION
 ###########################################################################
@@ -459,10 +456,10 @@ def plot_graph(detector, data_subset, dataset):
     data = data[data_subset]
     health_data = pd.DataFrame({'timestamp':timestamp,'data':data})
     tic = time.perf_counter()
-    detection_data = get_detection_data_months(detector, dataset + '_' + data_subset, health_data)
+    detection_data = detection_helper.get_detection_data_months(detector, dataset + '_' + data_subset, health_data)
     toc = time.perf_counter()
     print(f"Did the detection in {toc - tic:0.4f} seconds")
-    return get_fig(detection_data, dataset.replace('.xlsx','') + '_' + data_subset, detector)
+    return fig_generator.get_fig(detection_data, dataset.replace('.xlsx','') + '_' + data_subset, detector)
 
 
 # HEALTH DATA
@@ -477,8 +474,8 @@ def plot_graph(detector, data_subset, dataset):
     Input('available_data_cloud_resource_data','value')]
 )
 def plot_graph(detector, data):
-    detection_data = get_detection_data_known_outliers(detector, data, config_utlilities.get_true_outliers(data), get_detector_threshold(detector)) 
-    fig = get_fig_plot_outliers(detection_data, data, detector)
+    detection_data = detection_helper.get_detection_data_known_outliers(detector, data, config_utlilities.get_true_outliers(data), detection_helper.get_detector_threshold(detector)) 
+    fig = fig_generator.get_fig_plot_outliers(detection_data, data, detector)
     return fig
 
 
@@ -499,7 +496,7 @@ def update_results_title(data, detector, fig):
     Input('graph_cloud_resource_data', 'figure')]
 )
 def update_results(data, detector, fig):
-    return get_result_data(detector, data)
+    return detection_helper.get_result_data(detector, data)
 
 
 # CLOUD RESOURCE DATA
@@ -516,7 +513,7 @@ def update_results(data, detector, fig):
 )
 def plot_graph(data, detector, ratio):
     detection_data = do_isolation_forest_detection(float(ratio), 'resources/' + data + '.csv', config_utlilities.get_true_outliers(data), False)
-    return get_fig_plot_outliers(detection_data, "speed_7578", "isolation forest", ratio)
+    return fig_generator.get_fig_plot_outliers(detection_data, "speed_7578", "isolation forest", ratio)
 
 @app.callback(
     Output('live-update-results_supervised', 'children'),
@@ -527,7 +524,7 @@ def plot_graph(data, detector, ratio):
 )
 def update_results(data, detector, ratio, fig):
     try:
-        return get_result_data(detector, data)
+        return detection_helper.get_result_data(detector, data)
     except:
         print('Error when getting results for ' + detector + ' ' + data)
 
@@ -590,7 +587,7 @@ X = deque(maxlen = 50)
 X.append(1)
 
 XTime = deque(maxlen = 50)
-XTime.append(datetime.datetime.now())
+XTime.append(datetime.now())
   
 Y = deque(maxlen = 50)
 Y.append(1)
@@ -598,24 +595,19 @@ Y.append(1)
 Outliers = deque(maxlen = 50)
 Outliers.append(False)
 
+def reset_ques(dataset_name):
+    print('swaping dataset_name')
+    with open('temp_storage.txt', 'w') as f:
+        f.write(dataset_name)
+        X.clear()
+        X.append(1)
+        Y.clear()
+        Y.append(1)
+        XTime.clear()
+        XTime.append(datetime.now())
+        Outliers.clear()
+        Outliers.append(False)
 
-def get_stream_fig():
-    outlier_indexes = []
-    i = 0
-    while i < len(Outliers):
-        if Outliers[i]:
-            outlier_indexes.append(i)
-        i += 1
-    outliers_x = []
-    outliers_y = []
-    for i in outlier_indexes:
-        outliers_x.append(XTime[i])
-        outliers_y.append(Y[i])
-    fig = px.line(pd.DataFrame({'points_x': XTime,'points_y': Y}), x='points_x', y='points_y')
-    fig.add_trace(go.Scatter(x=outliers_x, y=outliers_y, mode='markers',name='Outliers detected', line=dict(color='red')))
-    fig.update_xaxes(range=[min(XTime),max(XTime)])
-    fig.update_yaxes(range=[min(Y) - min(Y)*0.5,max(Y) + max(Y)*0.5])  
-    return fig
 
 @app.callback(
     Output('live-graph', 'figure'),
@@ -624,54 +616,27 @@ def get_stream_fig():
     Input('available_detectors_real_time_detection', 'value') ]
 )
 def update_graph_scatter(n,dataset_name, detector_name):
-
     current_dataset = ''
     with open("temp_storage.txt", "r") as file:
         current_dataset = file.readline()
     print(current_dataset)
-
     if (dataset_name != current_dataset):
-        print('swaping dataset_name')
-        with open('temp_storage.txt', 'w') as f:
-            f.write(dataset_name)
-            X.clear()
-            X.append(1)
-            Y.clear()
-            Y.append(1)
-            XTime.clear()
-            XTime.append(datetime.datetime.now())
-            Outliers.clear()
-            Outliers.append(False)
+        reset_ques(dataset_name)
 
     headers = {'Accept': 'application/json'}
     r = requests.get('http://localhost:8000/' + dataset_name + '/' + str(X[-1]+1), headers=headers)
 
     X.append(X[-1]+1)
     Y.append(r.json()['cpu_usage'])
-    XTime.append(datetime.datetime.now())
-
-    confidence = 0
-
-    if (detector_name == 'moving_average'):
-        confidence = moving_average_detection.real_time_prediction(Y, Y[len(Y)-1])
-    elif (detector_name == 'moving_median'):
-        confidence = moving_median_detection.real_time_prediction(Y, Y[len(Y)-1])
-    elif (detector_name == 'moving_boxplot'):
-        confidence = moving_boxplot_detection.real_time_prediction(Y, Y[len(Y)-1])
-    elif (detector_name == 'moving_histogram'):
-        confidence = moving_histogram_detection.real_time_prediction(Y, Y[len(Y)-1])
-    else: # FULL ENSEMBLE
-        confidence += moving_average_detection.real_time_prediction(Y, Y[len(Y)-1])
-        confidence += moving_median_detection.real_time_prediction(Y, Y[len(Y)-1])
-        confidence += moving_boxplot_detection.real_time_prediction(Y, Y[len(Y)-1])
-        confidence += moving_histogram_detection.real_time_prediction(Y, Y[len(Y)-1])
-
+    XTime.append(datetime.now())
+    confidence = detection_runner.detect_in_real_time(detector_name, Y)
     if (confidence < 0):
         Outliers.append(True)
     else:
         Outliers.append(False)
+    return fig_generator.get_stream_fig(Outliers, XTime, Y)
 
-    return get_stream_fig()
+
 
 @app.callback(
     Output('cpu_usage_pie_chart', 'figure'),

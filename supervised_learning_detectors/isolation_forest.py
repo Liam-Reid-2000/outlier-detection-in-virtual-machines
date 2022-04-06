@@ -3,10 +3,9 @@ import numpy as np
 from sklearn.ensemble import IsolationForest
 import plotly.express as px
 import plotly.graph_objects as go
-from app_helper_scripts.app_detection import collect_detection_data_for_database
-from app_helper_scripts.app_helper import save_generated_data
+from app_helper_scripts.app_detection import detection_data_collector
+from database_scripts.database_helper import database_helper
 from supervised_learning_detectors.data_splitter import *
-from datetime import datetime
 import time
 
 
@@ -45,7 +44,6 @@ def plot_iso_detection_data(X_train, inliers_detected_x, inliers_detected_y, out
     outliers_data_df = pd.DataFrame({'minutes': outliers_detected_x,'data':outliers_detected_y})
 
     fig = px.scatter(train_data_df, x='minutes', y='data',title= 'Data against Time (Using supervised isolation forest based outlier detection)')
-    
   
     fig.add_trace(go.Scatter(x=inliers_data_df['minutes'], y=inliers_data_df['data'], mode='markers',name='Inliers Detected', line=dict(color='green')))
     fig.add_trace(go.Scatter(x=outliers_data_df['minutes'], y=outliers_data_df['data'], mode='markers',name='Outliers Detected', line=dict(color='red')))
@@ -111,10 +109,10 @@ def do_isolation_forest_detection(split_ratio, dataset, outlier_ref, plot=False)
     toc = time.perf_counter()
     detection_time = toc - tic
 
-    detection_data = collect_detection_data_for_database('iforest', 'speed_7578', outlier_inliers_split[1], outlier_ref,split_data[4],split_data[5], detection_time)
+    detection_data = detection_data_collector.collect_detection_data_for_database('iforest', 'speed_7578', outlier_inliers_split[1], outlier_ref,split_data[4],split_data[5], detection_time)
 
     # save the generated data  
-    save_generated_data(detection_data)
+    database_helper.save_generated_data(detection_data)
 
     if (plot):
         return plot_iso_detection_data(X_train, 

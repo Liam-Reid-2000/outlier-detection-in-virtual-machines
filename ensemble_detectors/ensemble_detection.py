@@ -1,6 +1,7 @@
 from app_helper_scripts.csv_helper import csv_helper
-from app_helper_scripts.app_detection import collect_detection_data_for_database, run_detection
-from app_helper_scripts.app_helper import get_detector_threshold, save_generated_data
+from app_helper_scripts.app_detection import detection_runner, detection_data_collector
+from app_helper_scripts.app_helper import detection_helper
+from database_scripts.database_helper import database_helper
 from ensemble_detectors.ensemble_voting import ensemble_voting
 import pandas as pd
 import time
@@ -16,7 +17,7 @@ def get_ensemble_detection_data(ensemble_detector_list, dataset, known_outliers_
     
     data_coordinates = csv_helper.load_data_coordinates(dataset)
     for ensemble_detector in ensemble_detector_list:
-        detection_data = run_detection(ensemble_detector, data_coordinates, get_detector_threshold(ensemble_detector))
+        detection_data = detection_runner.run_detection(ensemble_detector, data_coordinates, detection_helper.get_detector_threshold(ensemble_detector))
         outliers = pd.DataFrame({'timestamp':detection_data[2],'data':detection_data[3]})
         all_outlier_coordinates.append(outliers)
 
@@ -28,10 +29,10 @@ def get_ensemble_detection_data(ensemble_detector_list, dataset, known_outliers_
     detection_time = toc - tic
 
     ## get the detection results
-    ensemble_collected_data = collect_detection_data_for_database('ensemble', dataset, ensemble_outliers, known_outliers_csv, data_coordinates['timestamp'], data_coordinates['data'], detection_time)
+    ensemble_collected_data = detection_data_collector.collect_detection_data_for_database('ensemble', dataset, ensemble_outliers, known_outliers_csv, data_coordinates['timestamp'], data_coordinates['data'], detection_time)
 
     # save the generated ensemble data  
-    save_generated_data(ensemble_collected_data)
+    database_helper.save_generated_data(ensemble_collected_data)
 
     ## return the figure
     return ensemble_collected_data
