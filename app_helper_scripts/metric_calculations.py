@@ -1,36 +1,30 @@
 class metric_calculations:
+    
     def calculate_accuracy(tn, tp, n):
-        accuracy = 0
-        try:
-            accuracy = (int(tn)+int(tp))/int(n)
-        except:
-            accuracy = 0
-            print('acc acuracy = ' + accuracy)
+        if (tn<0 or tp<0 or n <= 0 or (int(tp) + int(tn)>n)):
+            print('Invalid parameters passed to calculate accuracy')
+            return 0
+        accuracy = (int(tn)+int(tp))/int(n)
         return accuracy
 
-
     def calculate_precision(tp, fp):
-        precision = 0
-        try:
-            precision = tp/(tp+fp)
-        except:
-            precision = 0
+        if (fp<0 or tp<0):
+            print('Invalid parameters passed to calculate precision')
+            return 0
+        precision = tp/(tp+fp)
         return precision
 
-
     def calulate_recall(tp, fn):
-        recall = 0
-        try:
-            recall = tp/(tp+fn)
-        except:
-            recall = 0
+        if (fn<0 or tp<0):
+            print('Invalid parameters passed to calculate recall')
+            return 0
+        recall = tp/(tp+fn)
         return recall
 
 
     def calculate_f1(precision, recall):
-        f1 = 0
-        try:
-            f1 = (2*(recall*precision))/(precision+recall)
-        except:
-            f1 = 0
+        if ((precision < 0) or (precision > 1) or ((recall < 0) or (recall > 1))):
+            print('Invalid parameters passed to calculate f1')
+            return 0
+        f1 = (2*(recall*precision))/(precision+recall)
         return f1

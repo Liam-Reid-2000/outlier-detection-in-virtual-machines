@@ -3,7 +3,7 @@ import unittest
 from ensemble_detectors.moving_median_detection import moving_median_detection
 from ensemble_detectors.moving_average_detection import moving_average_detection
 
-class outlier_detection_test(unittest.TestCase):
+class ensemble_test(unittest.TestCase):
 
     def test_average(self):
         test_array = [1,2,3,4,5]
