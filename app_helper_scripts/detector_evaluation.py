@@ -2,8 +2,8 @@ import json
 
 class detector_evaluation:
 
-    def __init__(self, target_data, points_x, outliers_x):
-        self.target_data = target_data
+    def __init__(self, true_outliers_csv, points_x, outliers_x):
+        self.true_outliers_csv = true_outliers_csv
         self.outliers_x = outliers_x
         self.points_x = points_x   
         self.true_positives = []
@@ -18,14 +18,14 @@ class detector_evaluation:
 
         for outlier_detected in self.outliers_x:
             is_true_outlier = False
-            for true_outlier in outlier_labels[self.target_data]:
+            for true_outlier in outlier_labels[self.true_outliers_csv]:
                 if (str(outlier_detected) == str(true_outlier)):
                     is_true_outlier = True
                     self.true_positives.append(outlier_detected)
             if (is_true_outlier == False):
                 self.false_positives.append(outlier_detected)
 
-        for true_outlier in outlier_labels[self.target_data]:
+        for true_outlier in outlier_labels[self.true_outliers_csv]:
             found = False
             for true_positive in self.true_positives:
                 if (str(true_outlier) == str(true_positive)):
