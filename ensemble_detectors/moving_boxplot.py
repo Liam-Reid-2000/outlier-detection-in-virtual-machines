@@ -15,6 +15,9 @@ class moving_boxplot_detection:
 
     
     def calculate_lower_bound(q1, iqr, threshold):
+        if (iqr<=0 or threshold <=0):
+            print('Invalid parameters')
+            return 0
         if (q1 - iqr*float(threshold) > 0):
             return q1 - iqr*float(threshold)
         return 0
