@@ -15,6 +15,9 @@ class csv_helper:
         path_to_data = 'resources/' + dataset_name + '.csv'
         if (exists(path_to_data) == False):
             path_to_data = 'resources/cloud_resource_data/'+dataset_name+'.csv'
+        if (exists(path_to_data) == False):
+            print('Error: data could not be found')
+            return pd.DataFrame({'timestamp':[],'data':[]})
         with open(path_to_data,'r') as csvfile:
             lines = csv.reader(csvfile, delimiter=',')
             points_x = []
