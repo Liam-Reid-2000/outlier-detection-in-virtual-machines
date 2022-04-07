@@ -4,6 +4,8 @@ from ensemble_detectors.ensemble_shared_methods import shared_methods
 
 class moving_median_detection:
     def get_median(arr):
+        if len(arr)==0:
+            return 0
         return statistics.median(arr)
 
     def get_moving_median_coordinates(median_interval, data_points):

@@ -4,6 +4,9 @@ from ensemble_detectors.ensemble_shared_methods import shared_methods
 
 class moving_average_detection:
     def get_average(arr):
+        if len(arr)==0:
+            print('Empty list passed')
+            return 0
         total = 0
         count = 0
         for num in arr:
