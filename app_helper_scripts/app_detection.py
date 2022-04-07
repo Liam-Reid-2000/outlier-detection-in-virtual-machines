@@ -30,30 +30,36 @@ class detection_runner:
         return confidence
 
 
-    def run_detection(model, data_coordinates, threshold, interval=10):
+    def run_detection(detector_name, data_coordinates, threshold, interval=10):
+        if (threshold<=0 or interval <=0):
+            print('Invalid parameters passed for: ' + detector_name)
+            return
         points_x = data_coordinates['timestamp']
         points_y = data_coordinates['data']
+        if len(points_x)==0:
+            print('Error: Data coordinates passed do not contain data')
+            return
         data_coordinates_renamed = pd.DataFrame({'points_x': points_x,'points_y': points_y})
 
         outliers_x = []
         outliers_y = []
-        if (model == 'moving_average'):
+        if (detector_name == 'moving_average'):
             outliers_ = moving_average_detection.detect_average_outliers(threshold, moving_average_detection.get_moving_average_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed)
             outliers_x = outliers_['timestamp']
             outliers_y = outliers_['data']
-        elif (model == 'moving_median'):
+        elif (detector_name == 'moving_median'):
             outliers_ = moving_median_detection.detect_median_outliers(threshold, moving_median_detection.get_moving_median_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed)
             outliers_x = outliers_['timestamp']
             outliers_y = outliers_['data']
-        elif (model == 'moving_boxplot'):
+        elif (detector_name == 'moving_boxplot'):
             outliers_ = moving_boxplot_detection.detect_boxplot_outliers(threshold, interval, data_coordinates_renamed)
             outliers_x = outliers_['timestamp']
             outliers_y = outliers_['data']
-        elif (model == 'moving_histogram'):
+        elif (detector_name == 'moving_histogram'):
             outliers_ = moving_histogram_detection.detect_histogram_outliers(threshold,1, data_coordinates_renamed)
             outliers_x = outliers_['timestamp']
             outliers_y = outliers_['data']
-        elif (model == 'full_ensemble'):
+        elif (detector_name == 'full_ensemble'):
             #ensemble_outliers = []
             #ensemble_outliers.append(detect_average_outliers(threshold, get_moving_average_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
             #ensemble_outliers.append(detect_median_outliers(threshold, get_moving_median_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
@@ -72,9 +78,13 @@ class detection_runner:
             outliers_x = outliers_after_voting['timestamp']
             outliers_y = outliers_after_voting['data']
         else:
-            outliers_ = detect_outliers_with_pycaret(model, data_coordinates)
-            outliers_x = outliers_['timestamp']
-            outliers_y = outliers_['data']
+            try:
+                outliers_ = detect_outliers_with_pycaret(detector_name, data_coordinates)
+                outliers_x = outliers_['timestamp']
+                outliers_y = outliers_['data']
+            except:
+                print('Error: Detector does not exist')
+                return
         outliers = pd.DataFrame({'timestamp': outliers_x,'data': outliers_y})
 
         return detection_data_collector.collect_detection_data(outliers, points_x, points_y)
@@ -108,12 +118,15 @@ class detection_runner:
         return separated_months_as_dataframes
 
 
-    def run_detection_months(model, data_coordinates, threshold, interval=7):
+    def run_detection_months(detector_name, data_coordinates, threshold, interval=7):
+        if (threshold<=0 or interval<=0):
+            print('invalid parameters passed')
+            return
         separated_months_as_dataframes = detection_runner.split_data_to_months(data_coordinates['timestamp'], data_coordinates['data'])
         all_outliers_x = []
         all_outliers_y = []
         for i in separated_months_as_dataframes:
-            detection_data = detection_runner.run_detection(model, i, threshold, interval)
+            detection_data = detection_runner.run_detection(detector_name, i, threshold, interval)
             for j in detection_data[2]:
                 all_outliers_x.append(j)
             for j in detection_data[3]:
@@ -123,6 +136,9 @@ class detection_runner:
     
 
     def run_detection_known_outliers(detector, data_to_run, true_outliers_csv, threshold, interval=10):
+        if (threshold<=0 or interval<=0):
+            print('Error: Invalid parameters passed')
+            return
         data_coordinates = csv_helper.load_data_coordinates(data_to_run)
         tic = time.perf_counter()
         detection_data = detection_runner.run_detection(detector, data_coordinates, threshold)
