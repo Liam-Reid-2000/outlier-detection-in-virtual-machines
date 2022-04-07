@@ -129,7 +129,7 @@ class moving_median_detection:
         average = moving_median_detection.get_median(previous_data_values)
 
         if (moving_median_detection.is_data_outside_bounds(next_data_value, average, bound)):
-            confidence = moving_median_detection.calculate_confidence_outlier(next_data_value, average, bound)
+            confidence = -1 * moving_median_detection.calculate_confidence_outlier(next_data_value, average, bound)
         elif (next_data_value > average):
             confidence = (((average+int(bound)) - next_data_value)/bound)
         else:

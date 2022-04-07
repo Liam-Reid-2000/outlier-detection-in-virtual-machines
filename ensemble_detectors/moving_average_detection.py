@@ -136,7 +136,7 @@ class moving_average_detection:
         average = moving_average_detection.get_average(previous_data_values)
 
         if (moving_average_detection.is_data_outside_bounds(next_data_value, average, bound)):
-            confidence = moving_average_detection.calculate_confidence_outlier(next_data_value, average, bound)
+            confidence = -1 * moving_average_detection.calculate_confidence_outlier(next_data_value, average, bound)
         elif (next_data_value > average):
             confidence = (((average+int(bound)) - next_data_value)/bound)
         else:
