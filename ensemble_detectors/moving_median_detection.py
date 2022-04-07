@@ -1,22 +1,16 @@
 import pandas as pd
 import statistics
-import numpy as np
+from ensemble_detectors.ensemble_shared_methods import shared_methods
 
 class moving_median_detection:
     def get_median(arr):
         return statistics.median(arr)
 
-    def find_threshold(arr):
-        return np.std(arr)
-
     def get_moving_median_coordinates(median_interval, data_points):
-        
         points_x = data_points['points_x']
         points_y = data_points['points_y']
-        
         median_point_y = []
         median_point_x = []
-
         i = 0
         while (i < (len(points_y))):
             previous_points = []
@@ -29,7 +23,6 @@ class moving_median_detection:
                 median_point_y.append(moving_median_detection.get_median(previous_points))
                 median_point_x.append(points_x[i])
             i = i + 1
-
         return pd.DataFrame({'points_median_x': median_point_x,'points_median_y': median_point_y})
 
 
@@ -37,15 +30,12 @@ class moving_median_detection:
 
         detected_ouliters_x = []
         detected_ouliters_y = []
-
         median_points_x = median_points['points_median_x']
         median_points_y = median_points['points_median_y']
-
         points_x = data_points['points_x']
         points_y = data_points['points_y']
-
         bound_mult = 3
-        bound = (moving_median_detection.find_threshold(points_y)*bound_mult)
+        bound = (shared_methods.find_threshold(points_y)*bound_mult)
 
         i = 0
         while i < len(median_points_x):
@@ -54,25 +44,7 @@ class moving_median_detection:
                 detected_ouliters_y.append(points_y[i])
             i += 1
         return pd.DataFrame({'timestamp': detected_ouliters_x,'data': detected_ouliters_y})
-
-
-
-    def is_data_outside_bounds(data_y, average_point, bound):
-        if ((data_y < average_point-bound) or (data_y > average_point+bound)):
-            return True
-        return False
-
-
-    def calculate_confidence_outlier(data_y, average_point, bound):
-        distance_to_threshold = 0
-        if (data_y > average_point+bound):
-            distance_to_threshold = abs(data_y - (average_point+bound))
-        else:
-            distance_to_threshold = abs(data_y - (average_point-bound))
-        confidence = distance_to_threshold/bound
-        if confidence > 1:
-            return 1
-        return confidence
+    
 
 
     def detect_median_outliers_labelled_prediction(threshold, median_points, data_points):
@@ -80,22 +52,19 @@ class moving_median_detection:
         predictions_x = []
         predictions_y = []
         confidence = []
-
         median_points_x = median_points['points_median_x']
         median_points_y = median_points['points_median_y']
-
         points_x = data_points['points_x']
         points_y = data_points['points_y']
-
         bound_mult = 3
-        bound = (moving_median_detection.find_threshold(points_y)*bound_mult)
+        bound = (shared_methods.find_threshold(points_y)*bound_mult)
 
         i = 0
         while i < len(median_points_x):
             predictions_x.append(points_x[i])
             predictions_y.append(points_y[i])
-            if (moving_median_detection.is_data_outside_bounds(points_y[i], median_points_y[i], int(bound))):
-                confidence.append(-1 * moving_median_detection.calculate_confidence_outlier(points_y[i], median_points_y[i], bound))
+            if (shared_methods.is_data_outside_bounds(points_y[i], median_points_y[i], int(bound))):
+                confidence.append(-1 * shared_methods.calculate_confidence_outlier(points_y[i], median_points_y[i], bound))
             elif (points_y[i] > median_points_y[i]):
                 confidence.append(((median_points_y[i]+int(bound)) - points_y[i])/bound)
             else:
@@ -118,7 +87,7 @@ class moving_median_detection:
         previous_data_values = temp
 
         # get threshold
-        threshold = moving_median_detection.find_threshold(previous_data_values)
+        threshold = shared_methods.find_threshold(previous_data_values)
 
         # get bound
         bound_mult = 3
@@ -128,8 +97,8 @@ class moving_median_detection:
         # calculate confidence
         average = moving_median_detection.get_median(previous_data_values)
 
-        if (moving_median_detection.is_data_outside_bounds(next_data_value, average, bound)):
-            confidence = -1 * moving_median_detection.calculate_confidence_outlier(next_data_value, average, bound)
+        if (shared_methods.is_data_outside_bounds(next_data_value, average, bound)):
+            confidence = -1 * shared_methods.calculate_confidence_outlier(next_data_value, average, bound)
         elif (next_data_value > average):
             confidence = (((average+int(bound)) - next_data_value)/bound)
         else:
