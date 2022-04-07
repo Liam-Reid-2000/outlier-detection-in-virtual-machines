@@ -1,4 +1,4 @@
 pandas
 matplotlib
 coverage
-pycaret.anomaly
+pycaret
