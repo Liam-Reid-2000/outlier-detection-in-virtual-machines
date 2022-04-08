@@ -12,9 +12,6 @@ class database_helper:
     def does_database_exist(filename):
         return os.path.exists(filename)
 
-    def create_db_if_not_exists(db_name):
-        if (database_helper.does_database_exist(db_name) == False):
-            database_helper.create_database()
 
     def create_database():
         if database_helper.does_database_exist(db_file):
@@ -32,12 +29,14 @@ class database_helper:
             print('Created the Tables!')
         print('Closed the connection!')
 
+
     def get_data_from_table(table_name):
         with sqlite3.connect(db_file) as conn:
             cursor = conn.cursor()
             cursor.execute("select * from " + table_name)
             for row in cursor.fetchall():
                 print(row)
+
 
     def execute_query(query):
         with sqlite3.connect(db_file) as conn:
@@ -49,9 +48,11 @@ class database_helper:
                 rows.append(row)
             return rows
 
+
     def get_primary_key_of_added_row():
         primary_key_added_row = database_helper.execute_query("Select detection_id FROM detection ORDER BY detection_id DESC LIMIT 1")
         return(primary_key_added_row[0][0])
+
 
     def does_data_exist(detector_name, dataset_name):
         returned_data = database_helper.execute_query("SELECT * FROM DETECTION WHERE detector_name == \'" + detector_name + "\' AND dataset_name == \'" + dataset_name + "\';")
@@ -59,12 +60,14 @@ class database_helper:
             return True
         return False
 
+
     def get_primary_keys_of_generated_data(detector_name, dataset_name):
         keys = []
         rows = database_helper.execute_query("SELECT * FROM DETECTION WHERE detector_name == \'" + detector_name + "\' AND dataset_name == \'" + dataset_name + "\';")
         for row in rows:
             keys.append(row[0])
         return keys
+
 
     def delete_data(detector_name, dataset_name):
         keys = database_helper.get_primary_keys_of_generated_data(detector_name, dataset_name)
@@ -109,7 +112,11 @@ class database_helper:
 
 
     def load_generated_data_from_database(detector_name, dataset_name):
-        returned_detection_data = database_helper.execute_query('SELECT * FROM DETECTION WHERE detector_name == \'' + detector_name + '\' AND dataset_name == \'' + dataset_name + '\';')[0]
+        returned_detection_data = database_helper.execute_query('SELECT * FROM DETECTION WHERE detector_name == \'' + detector_name + '\' AND dataset_name == \'' + dataset_name + '\';')
+        if (len(returned_detection_data) == 0):
+            print('Error: Could not load data from database, data could not be found')
+            return []
+        returned_detection_data = returned_detection_data[0]
         key = returned_detection_data[0]
         true_negative_count = returned_detection_data[3]
         dataset_size = returned_detection_data[4]
