@@ -87,6 +87,10 @@ class moving_boxplot_detection:
         predictions_y = []
         confidence = []
 
+        if (threshold<0 or boxplot_dataset_size<0):
+            print('invalid parameters passed')
+            return []
+
         points_x = data_points['points_x']
         points_y = data_points['points_y']
 

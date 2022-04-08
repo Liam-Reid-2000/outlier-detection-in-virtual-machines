@@ -53,6 +53,26 @@ class moving_boxplot_detection_detection_test(unittest.TestCase):
         outliers = moving_boxplot_detection.detect_boxplot_outliers(3, -10, dataframe_renamed)
         self.assertEqual(0, len(outliers))
 
+    
+    # TEST DETECT BOXPLOT OUTLIERS
+    def test_detect_boxplot_outliers_confidence(self):
+        data_coordinates = get_data_for_test('test_data_coordinates')
+        dataframe_renamed = pd.DataFrame({'points_x':data_coordinates['timestamp'],'points_y':data_coordinates['data']})
+        outliers = moving_boxplot_detection.detect_boxplot_outliers_predictions_confidence(3, 10, dataframe_renamed)
+        self.assertIsNotNone(outliers['confidence'])
+
+    def test_detect_boxplot_outliers_invalid_threshold_confidence(self):
+        data_coordinates = get_data_for_test('test_data_coordinates')
+        dataframe_renamed = pd.DataFrame({'points_x':data_coordinates['timestamp'],'points_y':data_coordinates['data']})
+        outliers = moving_boxplot_detection.detect_boxplot_outliers_predictions_confidence(-3, 10, dataframe_renamed)
+        self.assertEqual(0, len(outliers))
+
+    def test_detect_boxplot_outliers_invalid_dataset_size_confidence(self):
+        data_coordinates = get_data_for_test('test_data_coordinates')
+        dataframe_renamed = pd.DataFrame({'points_x':data_coordinates['timestamp'],'points_y':data_coordinates['data']})
+        outliers = moving_boxplot_detection.detect_boxplot_outliers_predictions_confidence(3, -10, dataframe_renamed)
+        self.assertEqual(0, len(outliers))
+
 
     # TEST CALCULATE LOWER BOUND
     def test_calculate_lower_bound(self):
