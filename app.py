@@ -8,16 +8,15 @@ import pandas as pd
 import time
 import requests
 from collections import deque
+from datetime import datetime
 
-from app_helper_scripts.csv_helper import *
-from app_helper_scripts.app_helper import *
+from database_scripts.database_helper import database_helper
 from app_helper_scripts.config_utilities import config_utlilities
 from app_helper_scripts.fig_generator_helper import fig_generator
 from app_helper_scripts.app_helper import detection_helper
 
 from ensemble_detectors.ensemble_detection import get_ensemble_detection_data
 from som.outlier_detection_som import detect_som_outliers, detect_som_outliers_circle
-from supervised_learning_detectors.isolation_forest import do_isolation_forest_detection
 
 app = dash.Dash(__name__)
 
