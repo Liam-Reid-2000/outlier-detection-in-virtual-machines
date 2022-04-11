@@ -34,5 +34,5 @@ def get_ensemble_detection_data(ensemble_detector_list, dataset, known_outliers_
     # save the generated ensemble data  
     database_helper.save_generated_data(ensemble_collected_data)
 
-    ## return the figure
+    ## return the data
     return ensemble_collected_data

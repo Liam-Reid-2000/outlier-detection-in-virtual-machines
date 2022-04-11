@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from app_helper_scripts.csv_helper import csv_helper
+from supervised_learning_detectors.isolation_forest import do_isolation_forest_detection
 
 class fig_generator:
     def get_fig(detection_data, dataset_name, detector):
@@ -68,20 +69,21 @@ class fig_generator:
 
         fig = px.line(timeseries_data, x='timestamp', y='data',title= data_to_run + ' Data against Time (Using '+model+'-based outlier detection)')
         
-        false_positives_x = detection_data[3]
-        if len(false_positives_x) > 0:
-            fp_df = fig_generator.get_coordinates_dataframe(points_x, points_y, fig_generator.change_x_values_to_dates(false_positives_x))
-            fig.add_trace(go.Scatter(x=fp_df['timestamp'], y=fp_df['data'], mode='markers',name='False Positives', line=dict(color='red')))
+        if len(detection_data) > 2:
+            false_positives_x = detection_data[3]
+            if len(false_positives_x) > 0:
+                fp_df = fig_generator.get_coordinates_dataframe(points_x, points_y, fig_generator.change_x_values_to_dates(false_positives_x))
+                fig.add_trace(go.Scatter(x=fp_df['timestamp'], y=fp_df['data'], mode='markers',name='False Positives', line=dict(color='red')))
 
-        false_negatives_x = detection_data[4]
-        if len(false_negatives_x) > 0:
-            fn_df = fig_generator.get_coordinates_dataframe(points_x, points_y, fig_generator.change_x_values_to_dates(false_negatives_x))
-            fig.add_trace(go.Scatter(x=fn_df['timestamp'], y=fn_df['data'], mode='markers',name='False Negatives', line=dict(color='black')))
+            false_negatives_x = detection_data[4]
+            if len(false_negatives_x) > 0:
+                fn_df = fig_generator.get_coordinates_dataframe(points_x, points_y, fig_generator.change_x_values_to_dates(false_negatives_x))
+                fig.add_trace(go.Scatter(x=fn_df['timestamp'], y=fn_df['data'], mode='markers',name='False Negatives', line=dict(color='black')))
 
-        true_positives_x = detection_data[2]
-        if len(true_positives_x) > 0:
-            tp_df = fig_generator.get_coordinates_dataframe(points_x, points_y, fig_generator.change_x_values_to_dates(true_positives_x))
-            fig.add_trace(go.Scatter(x=tp_df['timestamp'], y=tp_df['data'], mode='markers',name='True Positives', line=dict(color='green')))
+            true_positives_x = detection_data[2]
+            if len(true_positives_x) > 0:
+                tp_df = fig_generator.get_coordinates_dataframe(points_x, points_y, fig_generator.change_x_values_to_dates(true_positives_x))
+                fig.add_trace(go.Scatter(x=tp_df['timestamp'], y=tp_df['data'], mode='markers',name='True Positives', line=dict(color='green')))
 
         fig.update_layout(autotypenumbers='convert types', xaxis_title='timestamp', yaxis_title=data_to_run)
 
@@ -104,4 +106,30 @@ class fig_generator:
         fig.add_trace(go.Scatter(x=outliers_x, y=outliers_y, mode='markers',name='Outliers detected', line=dict(color='red')))
         fig.update_xaxes(range=[min(XTime),max(XTime)])
         fig.update_yaxes(range=[min(Y) - min(Y)*0.5,max(Y) + max(Y)*0.5])  
+        return fig
+
+
+    def plot_iso_detection_data(split_ratio, dataset, outlier_ref):
+
+        timeseries_data = csv_helper.load_data_coordinates(dataset)
+
+        print(timeseries_data)
+
+        supervised_training_data = do_isolation_forest_detection(split_ratio, timeseries_data, outlier_ref, plot=True)
+        
+        X_train = supervised_training_data[0]
+        inliers_detected_x = supervised_training_data[1]
+        inliers_detected_y = supervised_training_data[2]
+        outliers_detected_x = supervised_training_data[3]
+        outliers_detected_y = supervised_training_data[4]
+   
+        train_data_df = pd.DataFrame({'minutes': X_train[:, 0],'data': X_train[:, 1]})
+        inliers_data_df = pd.DataFrame({'minutes': inliers_detected_x,'data':inliers_detected_y})
+        outliers_data_df = pd.DataFrame({'minutes': outliers_detected_x,'data':outliers_detected_y})
+
+        fig = px.scatter(train_data_df, x='minutes', y='data',title= 'Data against Time (Using supervised isolation forest based outlier detection)')
+    
+        fig.add_trace(go.Scatter(x=inliers_data_df['minutes'], y=inliers_data_df['data'], mode='markers',name='Inliers Detected', line=dict(color='green')))
+        fig.add_trace(go.Scatter(x=outliers_data_df['minutes'], y=outliers_data_df['data'], mode='markers',name='Outliers Detected', line=dict(color='red')))
+
         return fig

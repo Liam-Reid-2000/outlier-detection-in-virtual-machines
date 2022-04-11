@@ -59,3 +59,12 @@ class detection_helper:
         database_helper.save_generated_data(detection_data)
         return detection_data
 
+    def get_real_time_prediction(detector_name, Y):
+        return detection_runner.detect_in_real_time(detector_name, Y)
+
+    def get_detection_data_supervised(detector_name, dataset_name, true_outliers_csv, split_ratio):
+        if database_helper.does_data_exist(detector_name + '_' + str(split_ratio), dataset_name):
+            return database_helper.load_generated_data_from_database(detector_name + '_' + str(split_ratio), dataset_name)
+        detection_data = detection_runner.run_detection_supervised_model(detector_name, dataset_name, true_outliers_csv, split_ratio)
+        database_helper.save_generated_data(detection_data)
+        return detection_data

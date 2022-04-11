@@ -1,13 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import IsolationForest
-import plotly.express as px
-import plotly.graph_objects as go
-from app_helper_scripts.app_detection import detection_data_collector
-from database_scripts.database_helper import database_helper
 from supervised_learning_detectors.data_splitter import *
-import time
-
 
 def train_model(X_train):
     rng = np.random.RandomState(42)
@@ -34,21 +28,6 @@ def get_min(arr1, arr2):
     min_arr_1 = np.min(arr1)
     min_arr_2 = np.min(arr2)
     return np.minimum(min_arr_1, min_arr_2)
-
-
-
-def plot_iso_detection_data(X_train, inliers_detected_x, inliers_detected_y, outliers_detected_x, outliers_detected_y):
-   
-    train_data_df = pd.DataFrame({'minutes': X_train[:, 0],'data': X_train[:, 1]})
-    inliers_data_df = pd.DataFrame({'minutes': inliers_detected_x,'data':inliers_detected_y})
-    outliers_data_df = pd.DataFrame({'minutes': outliers_detected_x,'data':outliers_detected_y})
-
-    fig = px.scatter(train_data_df, x='minutes', y='data',title= 'Data against Time (Using supervised isolation forest based outlier detection)')
-  
-    fig.add_trace(go.Scatter(x=inliers_data_df['minutes'], y=inliers_data_df['data'], mode='markers',name='Inliers Detected', line=dict(color='green')))
-    fig.add_trace(go.Scatter(x=outliers_data_df['minutes'], y=outliers_data_df['data'], mode='markers',name='Outliers Detected', line=dict(color='red')))
-
-    return fig
     
 
 
@@ -81,8 +60,6 @@ def do_isolation_forest_detection(split_ratio, dataset, outlier_ref, plot=False)
         print('Invalid split ratio')
         return
 
-    tic = time.perf_counter()
-
     # Load data and outliers
     split_data = load_data(dataset, split_ratio)
     outlier_data = split_outliers(outlier_ref,split_data[4][0])
@@ -104,29 +81,15 @@ def do_isolation_forest_detection(split_ratio, dataset, outlier_ref, plot=False)
     # Separate outliers and inliers
     outlier_inliers_split = split_outliers_inliers(labeled_test_data)
 
-    outlier_areas = get_outlier_areas(outlier_data[2],outlier_ref)
-
-    toc = time.perf_counter()
-    detection_time = toc - tic
-
-    detection_data = detection_data_collector.collect_detection_data_for_database('iforest', 'speed_7578', outlier_inliers_split[1], outlier_ref,split_data[4],split_data[5], detection_time)
-
-    # save the generated data  
-    database_helper.save_generated_data(detection_data)
-
     if (plot):
-        return plot_iso_detection_data(X_train, 
-            convert_time_data_to_minutes_of_day(outlier_inliers_split[0]['timestamp']), 
-            outlier_inliers_split[0]['data'],
-            convert_time_data_to_minutes_of_day(outlier_inliers_split[1]['timestamp']), 
-            outlier_inliers_split[1]['data'])
+        plot_data = []
+        plot_data.append(X_train) 
+        plot_data.append(convert_time_data_to_minutes_of_day(outlier_inliers_split[0]['timestamp']))
+        plot_data.append(outlier_inliers_split[0]['data'])
+        plot_data.append(convert_time_data_to_minutes_of_day(outlier_inliers_split[1]['timestamp']))
+        plot_data.append(outlier_inliers_split[1]['data'])
+        return plot_data
 
-    #make_prediction(isolation_forest_model, 700, 70)
-    #make_prediction(isolation_forest_model, 700, 0)
-    #make_prediction(isolation_forest_model, 700, 50)
-    #make_prediction(isolation_forest_model, 700, 110)
-
-    return detection_data
-
+    return outlier_inliers_split[1]
 
     ### https://scikit-learn.org/stable/modules/outlier_detection.html ###

@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 from ensemble_detectors.ensemble_shared_methods import shared_methods
 
 class moving_average_detection:

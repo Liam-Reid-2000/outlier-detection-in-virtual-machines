@@ -7,6 +7,7 @@ from ensemble_detectors.moving_median_detection import moving_median_detection
 from ensemble_detectors.moving_boxplot import moving_boxplot_detection
 from ensemble_detectors.moving_histogram_detection import moving_histogram_detection
 from app_helper_scripts.detector_evaluation import detector_evaluation
+from supervised_learning_detectors.isolation_forest import do_isolation_forest_detection
 from unsupervised_detectors.pycaret_detection import detect_outliers_with_pycaret
 
 
@@ -89,6 +90,14 @@ class detection_runner:
 
         return detection_data_collector.collect_detection_data(outliers, points_x, points_y)
 
+
+    def run_detection_supervised_model(detector, data_to_run, true_outliers_csv, split_ratio):  
+        data_coordinates = csv_helper.load_data_coordinates(data_to_run)
+        tic = time.perf_counter()
+        outliers = do_isolation_forest_detection(split_ratio, data_coordinates, true_outliers_csv)
+        toc = time.perf_counter()
+        detection_time = toc - tic
+        return detection_data_collector.collect_detection_data_for_database('supervised_isolation_forest_' + str(split_ratio), data_to_run, outliers, true_outliers_csv, data_coordinates['timestamp'], data_coordinates['data'], detection_time)
 
 
     def split_data_to_months(timestamps, data):
