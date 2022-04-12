@@ -143,3 +143,26 @@ class database_helper:
         detection_data.append(detection_time)
 
         return detection_data
+
+    
+    def store_real_time_outlier_in_database(session_name, outlier_datetime, outlier_data):
+        rows_returned = database_helper.execute_query('SELECT * FROM real_time_detection WHERE real_time_session_name == \'' + session_name + '\'')
+        key = 0
+        if len(rows_returned)>0:
+            key = rows_returned[0][0]
+        else:
+            database_helper.execute_query('INSERT INTO real_time_detection (real_time_session_name) VALUES (\'' + session_name + '\');')
+            key = database_helper.execute_query("Select real_time_session_id FROM real_time_detection ORDER BY real_time_session_id DESC LIMIT 1")
+        print('Attempting to execute query')
+        print('INSERT INTO real_time_outliers (real_time_session_id, outlier_datetime, outlier_data) VALUES (' +
+                str(key) + ', \'' + str(outlier_datetime) + '\', ' + str(outlier_data) + ');')
+        database_helper.execute_query('INSERT INTO real_time_outliers (real_time_session_id, outlier_datetime, outlier_data) VALUES (' +
+                str(key) + ', \'' + str(outlier_datetime) + '\', ' + str(outlier_data) + ');')
+
+    
+    def get_real_time_detections_for_session(session_name):
+        key = database_helper.execute_query('Select real_time_session_id FROM real_time_detection WHERE real_time_session_name == \'' + session_name + '\' ORDER BY real_time_session_id DESC LIMIT 1')
+        if len(key)!=0:
+            if len(key[0])!=0:
+                return database_helper.execute_query('SELECT * FROM real_time_outliers WHERE real_time_session_id == ' + str(key[0][0]))
+        return []

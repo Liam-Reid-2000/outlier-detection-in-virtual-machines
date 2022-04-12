@@ -1,5 +1,7 @@
+from click import style
 from dash import dcc
 from dash import html
+from dash import dash_table
 import dash
 from dash.dependencies import Output, Input
 import plotly.express as px
@@ -58,6 +60,20 @@ app.layout = html.Div([
                     html.H4('CPU Usage'),
                     dcc.Graph(id='cpu_usage_pie_chart'),
                 ],style={'width': '29%', 'float': 'right', 'display': 'inline-block'}),
+                
+                html.H4('Outlier Data'),
+                html.Div([
+                    html.Div(id='cpu_usage_dataset_title'),
+                    dash_table.DataTable(
+                        id='real_time_outlier_data',
+                        data = pd.DataFrame({'timestamp':[],'data':[]}).to_dict('records'),
+                        columns = [{'name':i, 'id':i} for i in {'timestamp', 'data'}],
+                    ),
+                ],style={'width': '29%', 'display': 'inline-block', 'margin-right':'50px'}),
+                html.Div([
+                    html.Div(id='real_time_outlier_count',style={'width': '49%', 'display': 'inline-block'}),
+                    html.Div(id='real_time_stream_status',style={'width': '50%', 'display': 'inline-block'}),
+                ],style={'width': '20%', 'display': 'inline-block'}),
 
             ],style={"border":"2px black solid"}),
         ]),
@@ -622,14 +638,21 @@ def update_graph_scatter(n,dataset_name, detector_name):
     print(current_dataset)
     if (dataset_name != current_dataset):
         reset_ques(dataset_name)
+    cpu_usage = 0
+    try:
+        headers = {'Accept': 'application/json'}
+        r = requests.get('http://localhost:8000/' + dataset_name + '/' + str(X[-1]+1), headers=headers,timeout=5)
+        cpu_usage = r.json()['cpu_usage']
+    except(requests.ConnectionError, requests.ConnectTimeout) as exception:
+        print('Could not connect to server')
 
-    headers = {'Accept': 'application/json'}
-    r = requests.get('http://localhost:8000/' + dataset_name + '/' + str(X[-1]+1), headers=headers)
+
+    time = datetime.now()
 
     X.append(X[-1]+1)
-    Y.append(r.json()['cpu_usage'])
-    XTime.append(datetime.now())
-    confidence = detection_helper.get_real_time_prediction(detector_name, Y)
+    Y.append(cpu_usage)
+    XTime.append(time)
+    confidence = detection_helper.get_real_time_prediction(detector_name, Y, dataset_name, time)
     if (confidence < 0):
         Outliers.append(True)
     else:
@@ -650,6 +673,66 @@ def generate_pie_chat(n):
     fig.update_traces(hoverinfo='label+percent', textinfo='value', textfont_size=20,
                   marker=dict(colors=colors, line=dict(color='#000000', width=1)))
     return fig
+
+@app.callback(
+    Output('real_time_outlier_data', 'data'),
+    [Input('graph-update', 'n_intervals')]
+)
+def get_outlier_data_table(n):
+    with open("temp_storage.txt", "r") as file:
+        current_dataset = file.readline()
+    outlier_real_time_data = database_helper.get_real_time_detections_for_session(current_dataset)
+    outlier_timestamp = []
+    outlier_data = []
+    for outlier in outlier_real_time_data:
+        outlier_timestamp.append(outlier[2])
+        outlier_data.append(outlier[3])
+    outlier_df = pd.DataFrame({'timestamp':outlier_timestamp, 'data':outlier_data})
+    return outlier_df.to_dict('records')
+
+@app.callback(
+    Output('cpu_usage_dataset_title', 'children'),
+    [Input('graph-update', 'n_intervals')]
+)
+def get_outlier_table_name(n):
+    current_dataset = ''
+    with open("temp_storage.txt", "r") as file:
+        current_dataset = file.readline()
+    return html.B(current_dataset + ' outliers detected')
+
+
+@app.callback(
+    Output('real_time_outlier_count', 'children'),
+    [Input('graph-update', 'n_intervals')]
+)
+def get_outlier_count(n):
+    current_dataset = ''
+    with open("temp_storage.txt", "r") as file:
+        current_dataset = file.readline()
+    outlier_real_time_data = database_helper.get_real_time_detections_for_session(current_dataset)
+    return html.Div([
+        html.B('Outlier Count'),
+        html.H3(str(len(outlier_real_time_data)))
+    ])
+
+
+@app.callback(
+    Output('real_time_stream_status', 'children'),
+    [Input('graph-update', 'n_intervals')]
+)
+def get_outlier_count(n):
+    error = True
+    try:
+        headers = {'Accept': 'application/json'}
+        r = requests.get('http://localhost:8000/' + 'ec2_cpu_utilization_5f5533' + '/' + '1', headers=headers,timeout=5)
+        error = r.json()['error']
+    except(requests.ConnectionError, requests.ConnectTimeout) as exception:
+        print('Could not connect to server')
+
+    if (error == False):
+        return (html.B('Stream Status'), html.H3('LIVE',style={'color':'green'}))
+    return (html.B('Stream Status'), html.H3('DOWN',style={'color':'red'}))
+
 
 
 if __name__ == '__main__':

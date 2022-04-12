@@ -5,7 +5,7 @@ class moving_histogram_detection:
     def create_subset(index_of_start_of_subset, subset_size, points_x, points_y):
         subset_x = []
         subset_y = []
-        if (index_of_start_of_subset<0 or subset_size<0):
+        if (int(index_of_start_of_subset)<0 or int(subset_size)<0):
             print('invalid parameters passed')
             return pd.DataFrame({'timestamp':subset_x,'data':subset_y})
         i = index_of_start_of_subset
@@ -80,7 +80,7 @@ class moving_histogram_detection:
 
         outliers_x = []
         outliers_y = []
-        if (threshold<0 or interval<0):
+        if (int(threshold)<0 or int(interval)<0):
             print('invalid parameters passed')
             return pd.DataFrame({'timestamp':outliers_x,'data':outliers_y})
         points_x = data_points['points_x']

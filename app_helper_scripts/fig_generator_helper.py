@@ -102,7 +102,7 @@ class fig_generator:
         for i in outlier_indexes:
             outliers_x.append(XTime[i])
             outliers_y.append(Y[i])
-        fig = px.line(pd.DataFrame({'points_x': XTime,'points_y': Y}), x='points_x', y='points_y')
+        fig = px.line(pd.DataFrame({'Timestamp': XTime,'CPU_Usage': Y}), x='Timestamp', y='CPU_Usage')
         fig.add_trace(go.Scatter(x=outliers_x, y=outliers_y, mode='markers',name='Outliers detected', line=dict(color='red')))
         fig.update_xaxes(range=[min(XTime),max(XTime)])
         fig.update_yaxes(range=[min(Y) - min(Y)*0.5,max(Y) + max(Y)*0.5])  

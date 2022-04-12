@@ -26,7 +26,7 @@ class moving_boxplot_detection:
     def detect_boxplot_outliers(threshold, boxplot_dataset_size, data_points):
         outliers_x = []
         outliers_y = []
-        if (threshold<=0 or boxplot_dataset_size<=0):
+        if (int(threshold)<=0 or int(boxplot_dataset_size)<=0):
             print('Invalid parameters passed')
             return pd.DataFrame({'timestamp': outliers_x,'data': outliers_y}) 
         points_x = data_points['points_x']
