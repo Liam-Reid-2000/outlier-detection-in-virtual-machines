@@ -29,26 +29,38 @@ app.layout = html.Div([
             ### A live update graph demonstrating real time outlier detection ### 
 
             html.Div([
-                html.H4("Live Update Graph"),
+                html.H4("Real Time Outlier Detection"),
+                html.P("Data streamed and outliers detected in real time."),
+                
                 html.Div([
-                    html.P("Graph demonstrating real-time outlier detection using moving average based outlier detection"),
                     html.Div([
-                        html.Div([html.B('Detector:')],style={'width': '10%', 'display': 'inline-block'}),
+                        html.Div([html.B('Detector:')],style={'width': '20%', 'display': 'inline-block'}),
                         html.Div([dcc.Dropdown(
                             id='available_detectors_real_time_detection',
                             options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_real_time_detectors', 'detector_config')],
                             value='full_ensemble'
-                        )],style={'width': '25%', 'display': 'inline-block'}),
+                        )],style={'width': '80%', 'display': 'inline-block'}),
                     ],style={'width': '100%', 'display': 'inline-block'}),
                     html.Div([
-                        html.Div([html.B('Dataset:')],style={'width': '10%', 'display': 'inline-block'}),
+                        html.Div([html.B('Dataset:')],style={'width': '20%', 'display': 'inline-block'}),
                         html.Div([dcc.Dropdown(
                             id='available_data_real_time_detection',
                             options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_datasets_cloud_resource_data', 'dataset_config')],
                             value='ec2_cpu_utilization_5f5533'
-                        )],style={'width': '25%', 'display': 'inline-block'}),
+                        )],style={'width': '80%', 'display': 'inline-block'}),
                     ],style={'width': '100%', 'display': 'inline-block'}),
-                    dcc.Graph(id = 'live-graph', animate = True),
+                ],style={'width': '30%', 'display': 'inline-block', 'border':'2px black solid', 'background-color':'white','border-radius':'25px', 'padding': '10px', 'margin-bottom':'20px'}),
+                html.Div([
+                    html.Div(id='real_time_stream_status',style={'width': '20%', 'display': 'inline-block', 'border':'2px black solid', 'margin-left':'50px', 'background-color':'white','border-radius':'20px', 'padding': '7px'}),
+                    html.Div(id='real_time_data_behaviour_status',style={'width': '20%', 'display': 'inline-block', 'border':'2px black solid', 'margin-left':'50px', 'background-color':'white','border-radius':'20px', 'padding': '7px'}),
+                    html.Div(id='real_time_outlier_count',style={'width': '20%', 'display': 'inline-block', 'border':'2px black solid', 'margin-left':'50px', 'background-color':'white','border-radius':'20px', 'padding': '7px'}),
+                    html.Div(id='real_time_data_outlier_status',style={'width': '20%', 'display': 'inline-block', 'border':'2px black solid', 'margin-left':'50px', 'background-color':'white','border-radius':'20px', 'padding': '7px'}),
+                ],style={'width': '70%', 'display': 'inline-block', 'padding': '10px', 'margin-bottom':'20px'}),
+
+                html.Div([
+                    html.Div([
+                        dcc.Graph(id = 'live-graph', animate = True),
+                    ], style={'border':'2px black solid', 'border-radius':'25px', 'padding': '10px', 'background-color':'white'}),
                     dcc.Interval(
                         id = 'graph-update',
                         interval = 10000,
@@ -59,10 +71,10 @@ app.layout = html.Div([
                 html.Div([
                     html.H4('CPU Usage'),
                     dcc.Graph(id='cpu_usage_pie_chart'),
-                ],style={'width': '29%', 'float': 'right', 'display': 'inline-block'}),
+                ],style={'width': '29%', 'float': 'right', 'display': 'inline-block', 'border':'2px black solid', 'background-color':'white','border-radius':'25px', 'padding': '10px'}),
                 
-                html.H4('Outlier Data'),
                 html.Div([
+                    html.H4('Outlier Data'),
                     html.Div(id='cpu_usage_dataset_title'),
                     dash_table.DataTable(
                         id='real_time_outlier_data',
@@ -70,10 +82,10 @@ app.layout = html.Div([
                         columns = [{'name':i, 'id':i} for i in {'timestamp', 'data'}],
                     ),
                 ],style={'width': '29%', 'display': 'inline-block', 'margin-right':'50px'}),
-                html.Div([
-                    html.Div(id='real_time_outlier_count',style={'width': '49%', 'display': 'inline-block'}),
-                    html.Div(id='real_time_stream_status',style={'width': '50%', 'display': 'inline-block'}),
-                ],style={'width': '20%', 'display': 'inline-block'}),
+                #html.Div([
+                #    html.Div(id='real_time_outlier_count',style={'width': '30%', 'display': 'inline-block', 'border':'2px black solid', 'margin-right':'50px', 'background-color':'white','border-radius':'20px', 'padding': '7px'}),
+                #    html.Div(id='real_time_stream_status',style={'width': '30%', 'display': 'inline-block', 'border':'2px black solid', 'margin-right':'50px', 'background-color':'white','border-radius':'20px', 'padding': '7px'}),
+                #],style={'width': '30%', 'display': 'inline-block'}),
 
             ],style={"border":"2px black solid"}),
         ]),
@@ -646,7 +658,6 @@ def update_graph_scatter(n,dataset_name, detector_name):
     except(requests.ConnectionError, requests.ConnectTimeout) as exception:
         print('Could not connect to server')
 
-
     time = datetime.now()
 
     X.append(X[-1]+1)
@@ -657,7 +668,7 @@ def update_graph_scatter(n,dataset_name, detector_name):
         Outliers.append(True)
     else:
         Outliers.append(False)
-    return fig_generator.get_stream_fig(Outliers, XTime, Y)
+    return fig_generator.get_stream_fig(Outliers, XTime, Y, detector_name + ' on ' + dataset_name)
 
 
 
@@ -714,6 +725,37 @@ def get_outlier_count(n):
         html.B('Outlier Count'),
         html.H3(str(len(outlier_real_time_data)))
     ])
+
+
+@app.callback(
+    Output('real_time_data_behaviour_status', 'children'),
+    [Input('graph-update', 'n_intervals')]
+)
+def get_data_behaviour_status(n):
+    i = len(Outliers)-1
+    while i > max(len(Outliers)-10, 0):
+        if Outliers[i]:
+            return (html.B('Resource Usage Status'), html.Br(),
+                html.B('Abnormal usage detected',style={'color':'red'}))
+        i-=1
+    return html.B('Resource Usage Status'), html.H3('Normal',style={'color':'green'})
+
+
+
+@app.callback(
+    Output('real_time_data_outlier_status', 'children'),
+    [Input('graph-update', 'n_intervals')]
+)
+def get_outlier_status(n):
+    i = len(Outliers)-1
+    while i > max(len(Outliers)-10, 0):
+        if Outliers[i]:
+            return (html.B('Outlier Status'), html.Br(),
+                html.B('Time: ' + str(XTime[i].hour) + ':'
+                 + str(XTime[i].minute) + ' CPU Usage: '
+                 + str(Y[i]),style={'color':'red'}))
+        i-=1
+    return html.B('Outlier Status'), html.H3('N/A',style={'color':'green'})
 
 
 @app.callback(
