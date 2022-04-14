@@ -28,9 +28,10 @@ tab_style = {
     'padding': '6px',
     'fontWeight': 'bold'
 }
-
+app.title = 'Outlier Detection Dashboard'
 app.layout = html.Div([
-    html.H1('Outlier Detection Dashboard'),
+    html.Img(src='assets/icon.png'),
+    html.H1('Outlier Detection Dashboard',style={'display':'inline-block'}),
     dcc.Tabs([
         dcc.Tab(label='Real Time Detection', children=[
             ### A live update graph demonstrating real time outlier detection ### 
