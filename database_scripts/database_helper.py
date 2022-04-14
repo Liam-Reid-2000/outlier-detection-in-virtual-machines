@@ -166,3 +166,7 @@ class database_helper:
             if len(key[0])!=0:
                 return database_helper.execute_query('SELECT * FROM real_time_outliers WHERE real_time_session_id == ' + str(key[0][0]))
         return []
+
+    def reset_real_time_session_data():
+        database_helper.execute_query('DELETE FROM real_time_detection')
+        database_helper.execute_query('DELETE FROM real_time_outliers')

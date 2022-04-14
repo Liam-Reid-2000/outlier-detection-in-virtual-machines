@@ -1,4 +1,3 @@
-from click import style
 from dash import dcc
 from dash import html
 from dash import dash_table
@@ -21,6 +20,14 @@ from ensemble_detectors.ensemble_detection import get_ensemble_detection_data
 from som.outlier_detection_som import detect_som_outliers, detect_som_outliers_circle
 
 app = dash.Dash(__name__)
+box_info_style = {'width': '20%', 'display': 'inline-block', 'border':'2px black solid', 'margin-left':'50px', 'background-color':'white','border-radius':'20px', 'padding': '7px'}
+box_info_style_extended = {'width': '20%', 'display': 'inline-block', 'border':'2px black solid', 'margin-left':'50px', 'background-color':'white','border-radius':'20px', 'padding': '7px'}
+
+tab_style = {
+    'borderBottom': '1px solid #d6d6d6',
+    'padding': '6px',
+    'fontWeight': 'bold'
+}
 
 app.layout = html.Div([
     html.H1('Outlier Detection Dashboard'),
@@ -51,14 +58,15 @@ app.layout = html.Div([
                     ],style={'width': '100%', 'display': 'inline-block'}),
                 ],style={'width': '30%', 'display': 'inline-block', 'border':'2px black solid', 'background-color':'white','border-radius':'25px', 'padding': '10px', 'margin-bottom':'20px'}),
                 html.Div([
-                    html.Div(id='real_time_stream_status',style={'width': '20%', 'display': 'inline-block', 'border':'2px black solid', 'margin-left':'50px', 'background-color':'white','border-radius':'20px', 'padding': '7px'}),
-                    html.Div(id='real_time_data_behaviour_status',style={'width': '20%', 'display': 'inline-block', 'border':'2px black solid', 'margin-left':'50px', 'background-color':'white','border-radius':'20px', 'padding': '7px'}),
-                    html.Div(id='real_time_outlier_count',style={'width': '20%', 'display': 'inline-block', 'border':'2px black solid', 'margin-left':'50px', 'background-color':'white','border-radius':'20px', 'padding': '7px'}),
-                    html.Div(id='real_time_data_outlier_status',style={'width': '20%', 'display': 'inline-block', 'border':'2px black solid', 'margin-left':'50px', 'background-color':'white','border-radius':'20px', 'padding': '7px'}),
+                    html.Div(id='real_time_stream_status',style=box_info_style),
+                    html.Div(id='real_time_data_behaviour_status',style=box_info_style),
+                    html.Div(id='real_time_stream_last_update_time',style=box_info_style),
+                    html.Div(id='real_time_stream_session_start',style=box_info_style),
                 ],style={'width': '70%', 'display': 'inline-block', 'padding': '10px', 'margin-bottom':'20px'}),
 
                 html.Div([
                     html.Div([
+                        html.Div([html.H4(id='live-graph-update-title')],style={'textAlign': 'center'}),
                         dcc.Graph(id = 'live-graph', animate = True),
                     ], style={'border':'2px black solid', 'border-radius':'25px', 'padding': '10px', 'background-color':'white'}),
                     dcc.Interval(
@@ -72,7 +80,7 @@ app.layout = html.Div([
                     html.H4('CPU Usage'),
                     dcc.Graph(id='cpu_usage_pie_chart'),
                 ],style={'width': '29%', 'float': 'right', 'display': 'inline-block', 'border':'2px black solid', 'background-color':'white','border-radius':'25px', 'padding': '10px'}),
-                
+                html.Div(),
                 html.Div([
                     html.H4('Outlier Data'),
                     html.Div(id='cpu_usage_dataset_title'),
@@ -81,14 +89,22 @@ app.layout = html.Div([
                         data = pd.DataFrame({'timestamp':[],'data':[]}).to_dict('records'),
                         columns = [{'name':i, 'id':i} for i in {'timestamp', 'data'}],
                     ),
-                ],style={'width': '29%', 'display': 'inline-block', 'margin-right':'50px'}),
-                #html.Div([
-                #    html.Div(id='real_time_outlier_count',style={'width': '30%', 'display': 'inline-block', 'border':'2px black solid', 'margin-right':'50px', 'background-color':'white','border-radius':'20px', 'padding': '7px'}),
-                #    html.Div(id='real_time_stream_status',style={'width': '30%', 'display': 'inline-block', 'border':'2px black solid', 'margin-right':'50px', 'background-color':'white','border-radius':'20px', 'padding': '7px'}),
-                #],style={'width': '30%', 'display': 'inline-block'}),
+                ],style={'width': '30%', 'display': 'inline-block','border-radius':'25px', 'padding': '10px', 'margin-bottom':'20px'}),
+                html.Div([
+                    html.Div(id='real_time_outlier_count',style=box_info_style_extended),
+                    html.Div(id='real_time_data_outlier_status',style=box_info_style_extended),
+                    html.Div([
+                        html.Button('Reset session data', id='session-restart-btn', n_clicks=0,style={'border':'2px black solid', 'margin-left':'50px', 'background-color':'white','border-radius':'20px', 'padding': '7px'})
+                    ],style={'width': '20%', 'display': 'inline-block'}),
+                ],style={'width': '70%', 'display': 'inline-block', 'margin-top':'20px', 'padding': '10px', 'margin-bottom':'20px'}),
 
             ],style={"border":"2px black solid"}),
         ]),
+
+
+
+
+
         dcc.Tab(label='Experimental Space', children=[
 
             dcc.Tabs([
@@ -375,7 +391,7 @@ app.layout = html.Div([
                 ]),
             ]),
         ]),
-    ])
+    ],style=tab_style)
 ])
 
 ###########################################################################
@@ -641,7 +657,7 @@ def reset_ques(dataset_name):
     Output('live-graph', 'figure'),
     [Input('graph-update', 'n_intervals'),
     Input('available_data_real_time_detection','value'),
-    Input('available_detectors_real_time_detection', 'value') ]
+    Input('available_detectors_real_time_detection', 'value')]
 )
 def update_graph_scatter(n,dataset_name, detector_name):
     current_dataset = ''
@@ -735,8 +751,8 @@ def get_data_behaviour_status(n):
     i = len(Outliers)-1
     while i > max(len(Outliers)-10, 0):
         if Outliers[i]:
-            return (html.B('Resource Usage Status'), html.Br(),
-                html.B('Abnormal usage detected',style={'color':'red'}))
+            return (html.B('Resource Usage Status'),
+                html.H3('Alert',style={'color':'red'}))
         i-=1
     return html.B('Resource Usage Status'), html.H3('Normal',style={'color':'green'})
 
@@ -750,12 +766,34 @@ def get_outlier_status(n):
     i = len(Outliers)-1
     while i > max(len(Outliers)-10, 0):
         if Outliers[i]:
-            return (html.B('Outlier Status'), html.Br(),
-                html.B('Time: ' + str(XTime[i].hour) + ':'
-                 + str(XTime[i].minute) + ' CPU Usage: '
-                 + str(Y[i]),style={'color':'red'}))
+            return (html.B('Outlier detected',style={'color':'red'}), html.Br(),
+                html.B('Time: ' + str(XTime[i].hour) + ':' + str(XTime[i].minute)), html.Br(),
+                 html.B('CPU Usage: ' + str(Y[i])))
         i-=1
     return html.B('Outlier Status'), html.H3('N/A',style={'color':'green'})
+
+
+@app.callback(
+    Output('real_time_stream_last_update_time', 'children'),
+    [Input('graph-update', 'n_intervals')]
+)
+def get_last_update_time(n):
+    return html.B('Last Update'), html.H3(str(XTime[len(XTime)-1].strftime('%H:%M.%S')))
+
+
+@app.callback(
+    Output('live-graph-update-title', 'children'),
+    [Input('graph-update', 'n_intervals')]
+)
+def update_live_graph_title(n):
+    current_dataset = ''
+    with open("temp_storage.txt", "r") as file:
+        current_dataset = file.readline()
+    return ('Real time detection on ' + current_dataset)
+
+
+
+
 
 
 @app.callback(
@@ -774,6 +812,16 @@ def get_outlier_count(n):
     if (error == False):
         return (html.B('Stream Status'), html.H3('LIVE',style={'color':'green'}))
     return (html.B('Stream Status'), html.H3('DOWN',style={'color':'red'}))
+
+
+@app.callback(
+    Output('real_time_stream_session_start', 'children'),
+    [Input('session-restart-btn', 'n_clicks')]
+)
+def get_session_start_time(n):
+    database_helper.reset_real_time_session_data()
+    return (html.B('Session start'), html.H3(datetime.now().strftime('%H:%M.%S')))
+    
 
 
 
