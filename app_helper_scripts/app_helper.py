@@ -3,6 +3,7 @@ from database_scripts.database_helper import database_helper
 import json
 from dash import html
 from app_helper_scripts.app_detection import detection_runner
+import pandas as pd
 
 class detection_helper:
     def get_detector_threshold(ref):
@@ -18,7 +19,7 @@ class detection_helper:
     def get_result_data(detector_name, dataset_name):
         if database_helper.does_data_exist(detector_name, dataset_name) == False:
             print('ERROR: attemping to access database for ' + detector_name + ' ' + dataset_name)
-            return (html.B('No data generated yet - This could take several minutes'))
+            return pd.DataFrame({'Evaluation_Metric':['No data generated','This could take several minutes'],'Result':['n/a','n/a']})
         
         detection_data = database_helper.load_generated_data_from_database(detector_name, dataset_name)
 
@@ -35,14 +36,15 @@ class detection_helper:
         precision = metric_calculations.calculate_precision(tp, fp)
         f1 = metric_calculations.calculate_f1(precision, recall)
 
-        output = []
-        output.append('Accuracy: ' + str(round(float(accuracy)*100,4))+'%\n')
-        output.append('Recall: ' + str(round(float(recall)*100,4))+'%\n')
-        output.append('Precision: ' + str(round(float(precision)*100,4))+'%\n')
-        output.append('F1 score: ' + str(round(float(f1)*100,4))+'%\n')
-        output.append('Detection time: ' + str(round(float(detection_time),4))+' seconds\n')
+        output_results = []
+        output_results.append(str(round(float(accuracy)*100,4))+'%\n')
+        output_results.append(str(round(float(recall)*100,4))+'%\n')
+        output_results.append(str(round(float(precision)*100,4))+'%\n')
+        output_results.append(str(round(float(f1)*100,4))+'%\n')
+        output_results.append(str(round(float(detection_time),4))+' seconds\n')
 
-        return (html.P([output[0],html.Br(),output[1],html.Br(),output[2],html.Br(),output[3],html.Br(),output[4]]))
+        output_text = ['Accuracy','Recall','Precision','F1 Score','Detection Time']
+        return pd.DataFrame({'Evaluation_Metric':output_text,'Result':output_results})
 
 
     def get_detection_data(model, data_to_run, data_coordinates, threshold=0):

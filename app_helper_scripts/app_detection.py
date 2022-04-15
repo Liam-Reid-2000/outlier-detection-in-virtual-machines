@@ -97,7 +97,7 @@ class detection_runner:
         outliers = do_isolation_forest_detection(split_ratio, data_coordinates, true_outliers_csv)
         toc = time.perf_counter()
         detection_time = toc - tic
-        return detection_data_collector.collect_detection_data_for_database('supervised_isolation_forest_' + str(split_ratio), data_to_run, outliers, true_outliers_csv, data_coordinates['timestamp'], data_coordinates['data'], detection_time)
+        return detection_data_collector.collect_detection_data_for_database(detector + '_' + str(split_ratio), data_to_run, outliers, true_outliers_csv, data_coordinates['timestamp'], data_coordinates['data'], detection_time)
 
 
     def split_data_to_months(timestamps, data):
