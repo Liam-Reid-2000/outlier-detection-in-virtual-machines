@@ -87,7 +87,7 @@ class moving_boxplot_detection:
         predictions_y = []
         confidence = []
 
-        if (threshold<0 or boxplot_dataset_size<0):
+        if (int(threshold)<0 or int(boxplot_dataset_size)<0):
             print('invalid parameters passed')
             return []
 

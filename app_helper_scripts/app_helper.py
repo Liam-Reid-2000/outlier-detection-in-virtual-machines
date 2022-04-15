@@ -56,6 +56,7 @@ class detection_helper:
 
     def get_detection_data_known_outliers(detector_name, dataset_name, target_data, threshold, interval=10):
         if database_helper.does_data_exist(detector_name, dataset_name):
+            print('data exists')
             return database_helper.load_generated_data_from_database(detector_name, dataset_name)
         detection_data = detection_runner.run_detection_known_outliers(detector_name, dataset_name, target_data, threshold, interval)
         database_helper.save_generated_data(detection_data)

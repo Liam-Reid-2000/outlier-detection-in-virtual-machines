@@ -119,101 +119,6 @@ app.layout = html.Div([
         dcc.Tab(label='Experimental Space', children=[
 
             dcc.Tabs([
-
-                dcc.Tab(label='Cloud Resource Usage Experiment', children=[
-
-
-                    ##################### CLOUD RESOURCE DATA TESTING SPACE ##########################
-
-                    html.Div([
-                        html.H4('Cloud Resource Experimental Space'),
-                            html.Div([
-                                html.Div([
-                                    html.Div([
-                                        html.Div([html.B('Detector:')],style={'width': '20%', 'display': 'inline-block'}),
-                                        html.Div([dcc.Dropdown(
-                                            id='available_detectors_cloud_resource_data',
-                                            options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_detectors', 'detector_config')],
-                                            value='moving_average'
-                                        )],style={'width': '80%', 'display': 'inline-block'}),
-                                    ],style={'width': '100%', 'display': 'inline-block'}),
-                                    html.Div([
-                                        html.Div([html.B('Dataset:')],style={'width': '20%', 'display': 'inline-block'}),
-                                        html.Div([dcc.Dropdown(
-                                            id='available_data_cloud_resource_data',
-                                            options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_datasets_cloud_resource_data', 'dataset_config')],
-                                            value='ec2_cpu_utilization_5f5533'
-                                        )],style={'width': '80%', 'display': 'inline-block'}),
-                                    ],style={'width': '100%', 'display': 'inline-block'}),
-                                ],style=dropdown_box_style_full),
-                                html.Div([
-                                    html.H4('Detection Results'),
-                                    html.Div(id='results_title_cloud_resource', children='...'),
-                                    dash_table.DataTable(
-                                        id='live_update_results_cloud_resource',
-                                        data = pd.DataFrame({'Evaluation_Metric':[],'Result':[]}).to_dict('records'),
-                                        columns = [{'name':i, 'id':i} for i in {'Evaluation_Metric', 'Result'}],
-                                        style_header=table_style
-                                    ),
-                                ],style={'width': '100%', 'float': 'right', 'display': 'inline-block','border':'2px black solid', 'border-radius':'25px', 'padding': '10px', 'background-color':'white'}),
-                                html.Div(),
-                                html.Div(),
-                            ],style={'width': '27%', 'display': 'inline-block'}),
-                            html.Div([
-                                dcc.Graph(
-                                    id='graph_cloud_resource_data',style=graph_style
-                                ),
-                            ],style={'width': '70%', 'display': 'inline-block', 'float': 'right'}),
-                        ],style={'border':'2px black solid','border-bottom':'2px white'}),
-                ]),
-
-
-
-                dcc.Tab(label='Dengue Fever Experiment', children=[
-            
-                    ##################### Dengue Fever Data DATA TESTING SPACE ##########################
-
-                    html.Div([
-                        html.H4('Dengue Fever Data Experimental Space'),
-                            html.Div([
-
-                                ### Drop down boxes with options for user ###
-
-                                #### drop down box style for detector
-                                html.Div([
-                                    html.Div([html.B('Detector:')],style={'width': '20%', 'display': 'inline-block'}),
-                                    html.Div([dcc.Dropdown(
-                                        id='available_detectors_health_data',
-                                        options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_detectors', 'detector_config')],
-                                        value='full_ensemble'
-                                    )],style={'width': '80%', 'display': 'inline-block'}),
-                                ],style=dropdown_box_with_margin),
-
-                                #### drop down box for datasets
-                                html.Div([
-                                    html.Div([html.B('Region:')],style={'width': '20%', 'display': 'inline-block'}),
-                                    html.Div([dcc.Dropdown(
-                                        id='available_data_health_data',
-                                        options=[{'label': i, 'value': i} for i in config_utlilities.get_config('available_datasets_health_data', 'dataset_config')[0]],
-                                        value='AnGiang.xlsx'
-                                    )],style={'width': '80%', 'display': 'inline-block'}),
-                                    html.Div([html.B('Dataset:')],style={'width': '20%', 'display': 'inline-block'}),
-                                    html.Div([dcc.Dropdown(
-                                        id='available_data_health_data_subsets',
-                                        options=[{'label': i, 'value': i} for i in config_utlilities.get_config('available_datasets_health_data_subsets', 'dataset_config')[0]],
-                                        value='Average_temperature'
-                                    )],style={'width': '80%', 'display': 'inline-block'}),
-                                ],style=dropdown_box_style),
-                            ]),
-                            html.Div([
-                                ### The Graph ### 
-                                dcc.Graph(
-                                    id='dengue_fever_graph',style=graph_style
-                                ),
-                            ],style={'width': '70%', 'display': 'inline-block'}),
-
-                        ],style={'padding': '10px 5px',"border":"2px black solid"}),
-                ]),
             
                 dcc.Tab(label='Unsupervised Detection', children=[
 
@@ -413,6 +318,102 @@ app.layout = html.Div([
                         ],style={'width': '100%', 'float': 'right', 'display': 'inline-block','margin-top':'40px'}),
                     ],style={"border-top":"2px black solid"}),
                 ]),
+
+                
+                dcc.Tab(label='Cloud Resource Usage Experiment', children=[
+
+
+                    ##################### CLOUD RESOURCE DATA TESTING SPACE ##########################
+
+                    html.Div([
+                        html.H4('Cloud Resource Experimental Space'),
+                            html.Div([
+                                html.Div([
+                                    html.Div([
+                                        html.Div([html.B('Detector:')],style={'width': '20%', 'display': 'inline-block'}),
+                                        html.Div([dcc.Dropdown(
+                                            id='available_detectors_cloud_resource_data',
+                                            options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_detectors', 'detector_config')],
+                                            value='moving_average'
+                                        )],style={'width': '80%', 'display': 'inline-block'}),
+                                    ],style={'width': '100%', 'display': 'inline-block'}),
+                                    html.Div([
+                                        html.Div([html.B('Dataset:')],style={'width': '20%', 'display': 'inline-block'}),
+                                        html.Div([dcc.Dropdown(
+                                            id='available_data_cloud_resource_data',
+                                            options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_datasets_cloud_resource_data', 'dataset_config')],
+                                            value='ec2_cpu_utilization_5f5533'
+                                        )],style={'width': '80%', 'display': 'inline-block'}),
+                                    ],style={'width': '100%', 'display': 'inline-block'}),
+                                ],style=dropdown_box_style_full),
+                                html.Div([
+                                    html.H4('Detection Results'),
+                                    html.Div(id='results_title_cloud_resource', children='...'),
+                                    dash_table.DataTable(
+                                        id='live_update_results_cloud_resource',
+                                        data = pd.DataFrame({'Evaluation_Metric':[],'Result':[]}).to_dict('records'),
+                                        columns = [{'name':i, 'id':i} for i in {'Evaluation_Metric', 'Result'}],
+                                        style_header=table_style
+                                    ),
+                                ],style={'width': '100%', 'float': 'right', 'display': 'inline-block','border':'2px black solid', 'border-radius':'25px', 'padding': '10px', 'background-color':'white'}),
+                                html.Div(),
+                                html.Div(),
+                            ],style={'width': '27%', 'display': 'inline-block'}),
+                            html.Div([
+                                dcc.Graph(
+                                    id='graph_cloud_resource_data',style=graph_style
+                                ),
+                            ],style={'width': '70%', 'display': 'inline-block', 'float': 'right'}),
+                        ],style={'border':'2px black solid','border-bottom':'2px white'}),
+                ]),
+
+
+
+                dcc.Tab(label='Dengue Fever Experiment', children=[
+            
+                    ##################### Dengue Fever Data DATA TESTING SPACE ##########################
+
+                    html.Div([
+                        html.H4('Dengue Fever Data Experimental Space'),
+                            html.Div([
+
+                                ### Drop down boxes with options for user ###
+
+                                #### drop down box style for detector
+                                html.Div([
+                                    html.Div([html.B('Detector:')],style={'width': '20%', 'display': 'inline-block'}),
+                                    html.Div([dcc.Dropdown(
+                                        id='available_detectors_health_data',
+                                        options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_detectors', 'detector_config')],
+                                        value='full_ensemble'
+                                    )],style={'width': '80%', 'display': 'inline-block'}),
+                                ],style=dropdown_box_with_margin),
+
+                                #### drop down box for datasets
+                                html.Div([
+                                    html.Div([html.B('Region:')],style={'width': '20%', 'display': 'inline-block'}),
+                                    html.Div([dcc.Dropdown(
+                                        id='available_data_health_data',
+                                        options=[{'label': i, 'value': i} for i in config_utlilities.get_config('available_datasets_health_data', 'dataset_config')[0]],
+                                        value='AnGiang.xlsx'
+                                    )],style={'width': '80%', 'display': 'inline-block'}),
+                                    html.Div([html.B('Dataset:')],style={'width': '20%', 'display': 'inline-block'}),
+                                    html.Div([dcc.Dropdown(
+                                        id='available_data_health_data_subsets',
+                                        options=[{'label': i, 'value': i} for i in config_utlilities.get_config('available_datasets_health_data_subsets', 'dataset_config')[0]],
+                                        value='Average_temperature'
+                                    )],style={'width': '80%', 'display': 'inline-block'}),
+                                ],style=dropdown_box_style),
+                            ]),
+                            html.Div([
+                                ### The Graph ### 
+                                dcc.Graph(
+                                    id='dengue_fever_graph',style=graph_style
+                                ),
+                            ],style={'width': '70%', 'display': 'inline-block'}),
+
+                        ],style={'padding': '10px 5px',"border":"2px black solid"}),
+                ]),
             ]),
         ]),
     ],style=tab_style)
@@ -493,7 +494,8 @@ def update_results(data, detector, fig):
 )
 def plot_graph(data, detector):
     detection_data = detection_helper.get_detection_data_known_outliers(detector, data, config_utlilities.get_true_outliers(data), detection_helper.get_detector_threshold(detector))
-    return fig_generator.get_fig_plot_outliers(detection_data, data, detector)
+    fig = fig_generator.get_fig_plot_outliers(detection_data, data, detector)
+    return fig
 
 ##################### UNSUPERVISED DETECTION
 ###########################################################################

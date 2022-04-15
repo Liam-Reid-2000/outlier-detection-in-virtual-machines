@@ -32,7 +32,7 @@ class detection_runner:
 
 
     def run_detection(detector_name, data_coordinates, threshold, interval=10):
-        if (int(threshold)<=0 or int(interval) <=0):
+        if (int(threshold)<0 or int(interval) <0):
             print('Invalid parameters passed for: ' + detector_name)
             return
         points_x = data_coordinates['timestamp']
@@ -145,7 +145,7 @@ class detection_runner:
     
 
     def run_detection_known_outliers(detector, data_to_run, true_outliers_csv, threshold, interval=10):
-        if (int(threshold)<=0 or int(interval)<=0):
+        if (int(threshold)<0 or int(interval)<0):
             print('Error: Invalid parameters passed')
             return
         data_coordinates = csv_helper.load_data_coordinates(data_to_run)
