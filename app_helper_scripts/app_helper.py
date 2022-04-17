@@ -29,6 +29,11 @@ class detection_helper:
         tn = detection_data[5][0]
         n = detection_data[6][0]
 
+        print('true positive')
+        print(tp)
+        print('false positive')
+        print(fp)
+
         detection_time = detection_data[7]
 
         accuracy = metric_calculations.calculate_accuracy(tn, tp, n)

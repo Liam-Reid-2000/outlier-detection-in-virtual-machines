@@ -8,14 +8,14 @@ class metric_calculations:
         return accuracy
 
     def calculate_precision(tp, fp):
-        if (fp<=0 or tp<=0):
+        if (fp<0 or tp<0 or fp+tp==0):
             print('Invalid parameters passed to calculate precision')
             return 0
         precision = tp/(tp+fp)
         return precision
 
     def calulate_recall(tp, fn):
-        if (fn<=0 or tp<=0):
+        if (fn<0 or tp<0 or fn+tp==0):
             print('Invalid parameters passed to calculate recall')
             return 0
         recall = tp/(tp+fn)

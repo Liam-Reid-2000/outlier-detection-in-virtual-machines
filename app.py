@@ -41,6 +41,11 @@ app.title = 'Outlier Detection Dashboard'
 app.layout = html.Div([
     html.Img(src='assets/icon.png'),
     html.H1('Outlier Detection Dashboard',style={'display':'inline-block'}),
+    dcc.Interval(
+        id = 'graph-update',
+        interval = 1000*300,
+        n_intervals=0
+    ),
     dcc.Tabs([
         dcc.Tab(label='Real Time Detection', children=[
             ### A live update graph demonstrating real time outlier detection ### 
@@ -79,11 +84,6 @@ app.layout = html.Div([
                         html.Div([html.H4(id='live-graph-update-title')],style={'textAlign': 'center'}),
                         dcc.Graph(id = 'live-graph', animate = True),
                     ], style=graph_style),
-                    dcc.Interval(
-                        id = 'graph-update',
-                        interval = 10000,
-                        n_intervals=0
-                    ),
                 ],style={'width': '70%', 'display': 'inline-block'}),
 
                 html.Div([

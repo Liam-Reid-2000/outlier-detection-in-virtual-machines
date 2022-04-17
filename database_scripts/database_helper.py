@@ -92,7 +92,7 @@ class database_helper:
         if database_helper.does_data_exist(detector_name, dataset_name):
             database_helper.delete_data(detector_name, dataset_name)
 
-        database_helper.execute_query('INSERT INTO DETECTION (detector_name, dataset_name, fn_count, data_size, detection_time) VALUES ' 
+        database_helper.execute_query('INSERT INTO DETECTION (detector_name, dataset_name, tn_count, data_size, detection_time) VALUES ' 
             + '(\''+ detector_name +'\', '
             + '\''+ dataset_name +'\', '
             + str(true_negative_count) + ', '

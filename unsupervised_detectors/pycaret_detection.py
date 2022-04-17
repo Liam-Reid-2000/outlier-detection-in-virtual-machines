@@ -12,12 +12,12 @@ def detect_outliers_with_pycaret(model, data_coordinates):
     data['day_name'] = [i.day_name() for i in data.index]
     data['day_of_year'] = [i.dayofyear for i in data.index]
     data['week_of_year'] = [i.weekofyear for i in data.index]
-    data['hour'] = [i.hour for i in data.index] # only use this for speed data, commetn rest
+    data['hour'] = [i.hour for i in data.index] 
     data['is_weekday'] = [i.isoweekday() for i in data.index]
     data.head()
 
     s = setup(data, session_id = 123, silent = True)
-    myModel = create_model(model, fraction = 0.05)#, fraction = outlierCount/len(points_x))
+    myModel = create_model(model, fraction = 0.0125)
 
     myModel_results = assign_model(myModel)
     myModel_results.head()
