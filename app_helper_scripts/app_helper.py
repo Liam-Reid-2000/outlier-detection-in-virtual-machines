@@ -1,3 +1,4 @@
+from app_helper_scripts.app_exceptions import InvalidPercentageFloatValueError, InvalidValueForCalculationError
 from app_helper_scripts.metric_calculations import metric_calculations
 from database_scripts.database_helper import database_helper
 import json
@@ -15,41 +16,37 @@ class detection_helper:
                 return i[1]
         f.close()
 
+    
+    def get_evaluation_metrics_as_list(tp, fp, fn, tn, n):
+        evaluation_metrics = []
+        try:
+            evaluation_metrics.append(metric_calculations.calculate_accuracy(tn, tp, n))    # Accuracy
+            evaluation_metrics.append(metric_calculations.calulate_recall(tp, fn))          # Recall
+            evaluation_metrics.append(metric_calculations.calculate_precision(tp, fp))      # Precision
+            evaluation_metrics.append(metric_calculations.calculate_f1(metric_calculations.calculate_precision(tp, fp), 
+                                                                        metric_calculations.calulate_recall(tp, fn)))  # F1 Score
+        except(InvalidValueForCalculationError, InvalidPercentageFloatValueError):
+            # Return empty list
+            return evaluation_metrics
+        return evaluation_metrics
 
     def get_result_data(detector_name, dataset_name):
         if database_helper.does_data_exist(detector_name, dataset_name) == False:
             print('ERROR: attemping to access database for ' + detector_name + ' ' + dataset_name)
             return pd.DataFrame({'Evaluation_Metric':['No data generated','This could take several minutes'],'Result':['n/a','n/a']})
-        
         detection_data = database_helper.load_generated_data_from_database(detector_name, dataset_name)
-
         tp = len(detection_data[2])
         fp = len(detection_data[3])
         fn = len(detection_data[4])
         tn = detection_data[5][0]
         n = detection_data[6][0]
-
-        print('true positive')
-        print(tp)
-        print('false positive')
-        print(fp)
-
         detection_time = detection_data[7]
-
-        accuracy = metric_calculations.calculate_accuracy(tn, tp, n)
-        recall = metric_calculations.calulate_recall(tp, fn)
-        precision = metric_calculations.calculate_precision(tp, fp)
-        f1 = metric_calculations.calculate_f1(precision, recall)
-
-        output_results = []
-        output_results.append(str(round(float(accuracy)*100,4))+'%\n')
-        output_results.append(str(round(float(recall)*100,4))+'%\n')
-        output_results.append(str(round(float(precision)*100,4))+'%\n')
-        output_results.append(str(round(float(f1)*100,4))+'%\n')
-        output_results.append(str(round(float(detection_time),4))+' seconds\n')
-
+        evalution_metrics = detection_helper.get_evaluation_metrics_as_list(tp, fp, fn, tn, n)
+        for metric in evalution_metrics:
+            evalution_metrics.append(str(round(float(metric)*100,4))+'%\n')
+        evalution_metrics.append(str(round(float(detection_time),4))+' seconds\n')
         output_text = ['Accuracy','Recall','Precision','F1 Score','Detection Time']
-        return pd.DataFrame({'Evaluation_Metric':output_text,'Result':output_results})
+        return pd.DataFrame({'Evaluation_Metric':output_text,'Result':evalution_metrics})
 
 
     def get_detection_data(model, data_to_run, data_coordinates, threshold=0):

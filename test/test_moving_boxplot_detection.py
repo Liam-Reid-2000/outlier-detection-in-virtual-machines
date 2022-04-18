@@ -1,5 +1,6 @@
 import unittest
 import pandas as pd
+from app_helper_scripts.app_exceptions import InvalidValueForCalculationError
 
 from ensemble_detectors.moving_boxplot import moving_boxplot_detection
 from test.test_utilitiy import get_data_for_test
@@ -84,12 +85,12 @@ class moving_boxplot_detection_detection_test(unittest.TestCase):
         self.assertEqual(0, lower_bound)
 
     def test_calculate_lower_bound_negative_iqr(self):
-        lower_bound = moving_boxplot_detection.calculate_lower_bound(70, -10, 5)
-        self.assertEqual(0, lower_bound)
+        with self.assertRaises(InvalidValueForCalculationError):
+            moving_boxplot_detection.calculate_lower_bound(70, -10, 5)
 
     def test_calculate_lower_bound_negative_threshold(self):
-        lower_bound = moving_boxplot_detection.calculate_lower_bound(70, 10, -5)
-        self.assertEqual(0, lower_bound)
+        with self.assertRaises(InvalidValueForCalculationError):
+            moving_boxplot_detection.calculate_lower_bound(70, 10, -5)
 
     
     # TEST CALCULATE CONFIDENCE

@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 
+from app_helper_scripts.app_exceptions import InvalidValueForCalculationError
+
 class moving_boxplot_detection:
 
     def create_subset_dataframe(data_points, boxplot_dataset_size, i):
@@ -15,11 +17,10 @@ class moving_boxplot_detection:
 
     
     def calculate_lower_bound(q1, iqr, threshold):
+        if (int(iqr)<=0 or int(threshold) <=0):
+            raise InvalidValueForCalculationError([iqr, threshold])
         if (q1 - iqr*float(threshold) > 0):
             return q1 - iqr*float(threshold)
-        if (int(iqr)<=0 or int(threshold) <=0):
-            print('Invalid parameters')
-            return 0
         return 0
 
     
