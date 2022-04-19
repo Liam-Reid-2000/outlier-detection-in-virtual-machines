@@ -58,6 +58,12 @@ class moving_histogram_detection_test(unittest.TestCase):
         outliers = moving_histogram_detection.detect_histogram_outliers(3, 2, dataframe_renamed)
         self.assertIsNotNone(outliers)
 
+    def test_detect_histogram_outliers_low_interval(self):
+        data_coordinates = get_data_for_test('test_data_coordinates')
+        dataframe_renamed = pd.DataFrame({'points_x':data_coordinates['timestamp'],'points_y':data_coordinates['data']})
+        outliers = moving_histogram_detection.detect_histogram_outliers(3, 1, dataframe_renamed)
+        self.assertIsNotNone(outliers)
+
     def test_detect_histogram_outliers_invalid_threshold(self):
         data_coordinates = get_data_for_test('test_data_coordinates')
         dataframe_renamed = pd.DataFrame({'points_x':data_coordinates['timestamp'],'points_y':data_coordinates['data']})
