@@ -11,9 +11,16 @@ class moving_average_detection_test(unittest.TestCase):
         outliers_detected = do_isolation_forest_detection(0.5, data_coordinates, 'realTraffic/speed_7578.csv')
         self.assertIsNotNone(outliers_detected)
 
+    def test_do_isolation_forest_detection_with_plot(self):
+        data_coordinates = csv_helper.load_data_coordinates('speed_7578')
+        plot_data = do_isolation_forest_detection(0.5, data_coordinates, 'realTraffic/speed_7578.csv', True)
+        self.assertIsNotNone(plot_data)
+
     def test_do_isolation_forest_detection_invlaid_ratio(self):
         with self.assertRaises(InvalidPercentageFloatValueError):
             do_isolation_forest_detection(1.2, 'test_dataset', 'test_outlier_ref')
+
+    
 
 if __name__ == '__main__':
     unittest.main()
