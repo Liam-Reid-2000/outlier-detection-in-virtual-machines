@@ -10,26 +10,13 @@ def train_model(X_train):
     return clf.fit(X_train)
 
 
-def make_prediction(model, x, y):
-    new_data_to_predict_x = []
-    new_data_to_predict_y = []
-    new_data_to_predict_x.append(x)
-    new_data_to_predict_y.append(y)
-    to_predict = np.r_['1,2,0', new_data_to_predict_x, new_data_to_predict_y]
-    print(model.predict(to_predict))
-
-
-
-def get_max(arr1, arr2):
-    max_arr_1 = np.max(arr1)
-    max_arr_2 = np.max(arr2)
-    return np.maximum(max_arr_1, max_arr_2)
-
-def get_min(arr1, arr2):
-    min_arr_1 = np.min(arr1)
-    min_arr_2 = np.min(arr2)
-    return np.minimum(min_arr_1, min_arr_2)
-    
+#def make_prediction(model, x, y):
+#    new_data_to_predict_x = []
+#    new_data_to_predict_y = []
+#    new_data_to_predict_x.append(x)
+#    new_data_to_predict_y.append(y)
+#    to_predict = np.r_['1,2,0', new_data_to_predict_x, new_data_to_predict_y]
+#    print(model.predict(to_predict))    
 
 
 def split_outliers_inliers(labeled_test_data):
