@@ -34,8 +34,11 @@ class database_helper:
         with sqlite3.connect(db_file) as conn:
             cursor = conn.cursor()
             cursor.execute("select * from " + table_name)
+            rows = []
             for row in cursor.fetchall():
                 print(row)
+                rows.append(row)
+            return rows
 
 
     def execute_query(query):
