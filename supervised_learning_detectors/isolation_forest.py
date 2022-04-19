@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import IsolationForest
+from app_helper_scripts.app_exceptions import InvalidPercentageFloatValueError
 from supervised_learning_detectors.data_splitter import *
 
 def train_model(X_train):
@@ -57,8 +58,7 @@ def split_outliers_inliers(labeled_test_data):
 def do_isolation_forest_detection(split_ratio, dataset, outlier_ref, plot=False):
 
     if (split_ratio >= 1 or split_ratio <=0):
-        print('Invalid split ratio')
-        return
+        raise InvalidPercentageFloatValueError(split_ratio)
 
     # Load data and outliers
     split_data = load_data(dataset, split_ratio)
