@@ -1,5 +1,4 @@
 import unittest
-from app_helper_scripts.app_helper import detection_helper
 from database_scripts.database_helper import database_helper
 
 class database_test(unittest.TestCase):

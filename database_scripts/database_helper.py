@@ -30,17 +30,6 @@ class database_helper:
         print('Closed the connection!')
 
 
-    def get_data_from_table(table_name):
-        with sqlite3.connect(db_file) as conn:
-            cursor = conn.cursor()
-            cursor.execute("select * from " + table_name)
-            rows = []
-            for row in cursor.fetchall():
-                print(row)
-                rows.append(row)
-            return rows
-
-
     def execute_query(query):
         with sqlite3.connect(db_file) as conn:
             #print('Created the connection!')
