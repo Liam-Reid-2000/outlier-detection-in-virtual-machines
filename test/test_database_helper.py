@@ -17,6 +17,7 @@ class database_test(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        database_helper.create_database()
         detection_data = []
         detection_data.append('test_detector')
         detection_data.append('test_dataset')
@@ -93,6 +94,16 @@ class database_test(unittest.TestCase):
     def test_execute_query(self):
         returned_rows =  database_helper.execute_query("SELECT * FROM DETECTION WHERE detector_name == \'test_detector\' AND dataset_name == \'test_dataset\';")
         self.assertTrue(len(returned_rows) > 0)
+
+
+    # TEST STORE REAL TIME DATA
+    def test_store_real_time_data(self):
+        database_helper.store_real_time_outlier_in_database('TEST_SESSION', '2015-09-08 14:51:00', 70)
+        session_data = database_helper.get_real_time_detections_for_session('TEST_SESSION')
+        self.assertEqual(70, session_data[0][3])
+        database_helper.reset_real_time_session_data()
+        session_data = database_helper.get_real_time_detections_for_session('TEST_SESSION')
+        self.assertEqual(0, len(session_data))
 
 if __name__ == '__main__':
     unittest.main()

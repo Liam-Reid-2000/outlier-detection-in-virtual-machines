@@ -1,10 +1,10 @@
 import sqlite3
 import os
 
-database_prefix = 'database_scripts/'
-database_name = 'detection_db'
-schema_file = 'database_scripts/schema.sql'
-db_file = database_prefix + database_name
+DATABASE_PREFIX = 'database_scripts/'
+DATABASE_NAME = 'detection_db'
+SCHEMA_FILE = 'database_scripts/schema.sql'
+db_file = DATABASE_PREFIX + DATABASE_NAME
 
 
 class database_helper:
@@ -18,7 +18,7 @@ class database_helper:
             print('Database already exists. Returning...')
             return
         
-        with open(schema_file, 'r') as rf:
+        with open(SCHEMA_FILE, 'r') as rf:
             # Read the schema from the file
             schema = rf.read()
         
@@ -152,7 +152,7 @@ class database_helper:
             key = rows_returned[0][0]
         else:
             database_helper.execute_query('INSERT INTO real_time_detection (real_time_session_name) VALUES (\'' + session_name + '\');')
-            key = database_helper.execute_query("Select real_time_session_id FROM real_time_detection ORDER BY real_time_session_id DESC LIMIT 1")
+            key = database_helper.execute_query("Select real_time_session_id FROM real_time_detection ORDER BY real_time_session_id DESC LIMIT 1")[0][0]
         print('Attempting to execute query')
         print('INSERT INTO real_time_outliers (real_time_session_id, outlier_datetime, outlier_data) VALUES (' +
                 str(key) + ', \'' + str(outlier_datetime) + '\', ' + str(outlier_data) + ');')
