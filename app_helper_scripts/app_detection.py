@@ -1,5 +1,6 @@
 import pandas as pd
 import time
+from app_helper_scripts.app_exceptions import InvalidValueForCalculationError
 from app_helper_scripts.csv_helper import csv_helper
 from ensemble_detectors.ensemble_voting import ensemble_voting
 from ensemble_detectors.moving_average_detection import moving_average_detection
@@ -12,36 +13,68 @@ from unsupervised_detectors.pycaret_detection import detect_outliers_with_pycare
 
 
 class detection_runner:
+    """
+    Runs detection on datasets.
 
-    def detect_in_real_time(detector_name, Y):
+    Most methods return lists of outliers or lists of detection data.
+    """
+
+    def detect_in_real_time(detector_name, data_window):
+        """
+        Give real time prediection.
+    
+        Args:
+        detector_name (string): Name of detector selected to perform detection.
+        data_window (array of floats): Data window to use for detection.
+        
+        Returns:
+        float: Confidence score (negative = outlier) closer to 0 = less confident.
+    
+        """
+
         confidence = 0
         if (detector_name == 'moving_average'):
-            confidence = moving_average_detection.real_time_prediction(Y, Y[len(Y)-1])
+            confidence = moving_average_detection.real_time_prediction(data_window, data_window[len(data_window)-1])
         elif (detector_name == 'moving_median'):
-            confidence = moving_median_detection.real_time_prediction(Y, Y[len(Y)-1])
+            confidence = moving_median_detection.real_time_prediction(data_window, data_window[len(data_window)-1])
         elif (detector_name == 'moving_boxplot'):
-            confidence = moving_boxplot_detection.real_time_prediction(Y, Y[len(Y)-1])
+            confidence = moving_boxplot_detection.real_time_prediction(data_window, data_window[len(data_window)-1])
         elif (detector_name == 'moving_histogram'):
-            confidence = moving_histogram_detection.real_time_prediction(Y, Y[len(Y)-1])
+            confidence = moving_histogram_detection.real_time_prediction(data_window, data_window[len(data_window)-1])
         else: # FULL ENSEMBLE
-            confidence += moving_average_detection.real_time_prediction(Y, Y[len(Y)-1])
-            confidence += moving_median_detection.real_time_prediction(Y, Y[len(Y)-1])
-            confidence += moving_boxplot_detection.real_time_prediction(Y, Y[len(Y)-1])
-            confidence += moving_histogram_detection.real_time_prediction(Y, Y[len(Y)-1])
+            confidence += moving_average_detection.real_time_prediction(data_window, data_window[len(data_window)-1])
+            confidence += moving_median_detection.real_time_prediction(data_window, data_window[len(data_window)-1])
+            confidence += moving_boxplot_detection.real_time_prediction(data_window, data_window[len(data_window)-1])
+            confidence += moving_histogram_detection.real_time_prediction(data_window, data_window[len(data_window)-1])
         return confidence
 
 
     def run_detection(detector_name, data_coordinates, threshold, interval=10):
+        """
+        Detection outliers using specified detector.
+    
+        Args:
+        detector_name (string): Name of detector selected to perform detection.
+        data_coordinates (dataframe): Dataset used for detection.
+        threshold (int): Threshold for detector.
+        interval (int): window interval.
+
+        Returns:
+        dataframe: cooridnates of outliers.
+
+        Raises:
+        InvalidValueForCalculationError: If any input variables are invalid.
+
+        """
+
         if (int(threshold)<0 or int(interval) <0):
-            print('Invalid parameters passed for: ' + detector_name)
-            return
+            raise(InvalidValueForCalculationError([threshold, interval]))
         points_x = data_coordinates['timestamp']
         points_y = data_coordinates['data']
         if len(points_x)==0:
             print('Error: Data coordinates passed do not contain data')
             return
         data_coordinates_renamed = pd.DataFrame({'points_x': points_x,'points_y': points_y})
-
         outliers_x = []
         outliers_y = []
         if (detector_name == 'moving_average'):
@@ -61,15 +94,6 @@ class detection_runner:
             outliers_x = outliers_['timestamp']
             outliers_y = outliers_['data']
         elif (detector_name == 'full_ensemble'):
-            #ensemble_outliers = []
-            #ensemble_outliers.append(detect_average_outliers(threshold, get_moving_average_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
-            #ensemble_outliers.append(detect_median_outliers(threshold, get_moving_median_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
-            #ensemble_outliers.append(detect_boxplot_outliers(threshold, interval, data_coordinates_renamed))
-            #ensemble_outliers.append(detect_histogram_outliers(1,1, data_coordinates_renamed))
-            #outliers_after_voting = get_ensemble_result(ensemble_outliers, 4)
-            #outliers_x = outliers_after_voting['timestamp']
-            #outliers_y = outliers_after_voting['data']
-
             ensemble_outliers_confidence = []
             ensemble_outliers_confidence.append(moving_average_detection.detect_average_outliers_labelled_prediction(threshold, moving_average_detection.get_moving_average_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
             ensemble_outliers_confidence.append(moving_median_detection.detect_median_outliers_labelled_prediction(threshold, moving_median_detection.get_moving_median_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
@@ -87,11 +111,24 @@ class detection_runner:
                 print('Error: Detector does not exist')
                 return
         outliers = pd.DataFrame({'timestamp': outliers_x,'data': outliers_y})
-
         return detection_data_collector.collect_detection_data(outliers, points_x, points_y)
 
 
-    def run_detection_supervised_model(detector, data_to_run, true_outliers_csv, split_ratio):  
+    def run_detection_supervised_model(detector, data_to_run, true_outliers_csv, split_ratio):
+        """
+        Run detection for supervised models.
+    
+        Args:
+        detector (string): Name of detector selected to perform detection.
+        data_to_run (dataframe): Dataset used for detection.
+        true_outliers_csv (int): Location of where the true outliers for this data are stored.
+        split_ratio (int): Ratio of test to train split.
+
+        Returns:
+        List: Contains the detection data and classifications.
+
+        """  
+
         data_coordinates = csv_helper.load_data_coordinates(data_to_run)
         tic = time.perf_counter()
         outliers = do_isolation_forest_detection(split_ratio, data_coordinates, true_outliers_csv)
@@ -101,6 +138,18 @@ class detection_runner:
 
 
     def split_data_to_months(timestamps, data):
+        """
+        Splits data into dataframes by month.
+    
+        Args:
+        timestamps (date): Timestamp (x-coordinate).
+        data (float): Data (y-coordinate).
+
+        Returns:
+        List: List of 12 dataframes
+
+        """
+
         data_split_to_months_x = []
         data_split_to_months_y = []
         i = 0
@@ -110,7 +159,6 @@ class detection_runner:
             arrtoo = []
             data_split_to_months_y.append(arrtoo)
             i += 1
-
         i = 0
         while i < len(timestamps):
             data_split_to_months_x[timestamps[i].month-1].append(timestamps[i])
@@ -128,6 +176,19 @@ class detection_runner:
 
 
     def run_detection_months(detector_name, data_coordinates, threshold, interval=7):
+        """
+        Run detection for unlabelled data based on monthss.
+    
+        Args:
+        detector (string): Name of detector selected to perform detection.
+        data_to_run (dataframe): Dataset used for detection.
+        true_outliers_csv (int): Location of where the true outliers for this data are stored.
+        interval (int): Window interval.
+
+        Returns:
+        List: Contains the detection data and classifications.
+
+        """
         if (threshold<=0 or interval<=0):
             print('invalid parameters passed')
             return
@@ -145,27 +206,50 @@ class detection_runner:
     
 
     def run_detection_known_outliers(detector, data_to_run, true_outliers_csv, threshold, interval=10):
+        """
+        Run detection for labelled datasets.
+    
+        Args:
+        detector (string): Name of detector selected to perform detection.
+        data_to_run (dataframe): Dataset used for detection.
+        true_outliers_csv (int): Location of where the true outliers for this data are stored.
+        interval (int): Window interval.
+
+        Returns:
+        List: Contains the detection data and classifications.
+
+        """
+
         if (int(threshold)<0 or int(interval)<0):
-            print('Error: Invalid parameters passed')
-            return
+            raise(InvalidValueForCalculationError([threshold, interval]))
         data_coordinates = csv_helper.load_data_coordinates(data_to_run)
         tic = time.perf_counter()
         detection_data = detection_runner.run_detection(detector, data_coordinates, threshold)
         toc = time.perf_counter()
         detection_time = toc - tic
         outliers_df = pd.DataFrame({'timestamp': detection_data[2],'data': detection_data[3]})
-
         return detection_data_collector.collect_detection_data_for_database(detector, data_to_run, outliers_df, true_outliers_csv, data_coordinates['timestamp'], data_coordinates['data'], detection_time)
 
 
 class detection_data_collector:
+    """
+    Returns detection data as lists.
+
+    Useful for passing large amounts of detection between methods/classes.
+
+    """
+
     def collect_detection_data_for_database(detector, data, outliers_df, true_outliers_csv_reference, points_x_passed, points_y_passed, detection_time):
+        """
+        Collects data from arguments.
+
+        Returns data as list.
+
+        """
         detection_data = []
         outliers_x_detected = outliers_df['timestamp']
-
         classification_outcomes = detector_evaluation(true_outliers_csv_reference, points_x_passed, outliers_x_detected)
         result_data = classification_outcomes.get_detector_classification_evalutaion_data()
-
         detection_data.append(detector)
         detection_data.append(data)
         detection_data.append(result_data[0])
@@ -174,10 +258,16 @@ class detection_data_collector:
         detection_data.append(result_data[3])
         detection_data.append(result_data[4])
         detection_data.append(detection_time)
-
         return detection_data
 
+
     def collect_detection_data(outliers_df, points_x, points_y):
+        """
+        Collects coordinates and outliers.
+
+        Returns them as list.
+
+        """
         detection_data = []
         detection_data.append(points_x)
         detection_data.append(points_y)

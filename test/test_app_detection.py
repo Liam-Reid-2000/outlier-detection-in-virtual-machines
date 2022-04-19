@@ -1,5 +1,6 @@
 import unittest
 from app_helper_scripts.app_detection import detection_runner
+from app_helper_scripts.app_exceptions import InvalidValueForCalculationError
 from test.test_utilitiy import get_data_for_test
 
 class app_detection_test(unittest.TestCase):
@@ -78,12 +79,12 @@ class app_detection_test(unittest.TestCase):
         self.assertIsNone(detection_data)
 
     def test_run_detection_invalid_threshold(self):
-        detection_data = detection_runner.run_detection('moving_average', get_data_for_test('test_data_coordinates'), threshold=-5, interval=10)
-        self.assertIsNone(detection_data)
+        with self.assertRaises(InvalidValueForCalculationError):
+            detection_runner.run_detection('moving_average', get_data_for_test('test_data_coordinates'), threshold=-5, interval=10)
 
     def test_run_detection_invalid_interval(self):
-        detection_data = detection_runner.run_detection('moving_average', get_data_for_test('test_data_coordinates'), threshold=5, interval=-10)
-        self.assertIsNone(detection_data)
+        with self.assertRaises(InvalidValueForCalculationError):
+            detection_runner.run_detection('moving_average', get_data_for_test('test_data_coordinates'), threshold=5, interval=-10)
 
 
     # TEST SPLIT DATA TO MONTHS
@@ -110,12 +111,12 @@ class app_detection_test(unittest.TestCase):
         self.assertIsNotNone(detection_data)
 
     def test_run_detection_known_outliers_invalid_threshold(self):
-        detection_data = detection_runner.run_detection_known_outliers('moving_average', 'speed_7578', 'realTraffic/speed_7578.csv', threshold=-5, interval=10)
-        self.assertIsNone(detection_data)
+        with self.assertRaises(InvalidValueForCalculationError):
+            detection_runner.run_detection_known_outliers('moving_average', 'speed_7578', 'realTraffic/speed_7578.csv', threshold=-5, interval=10)
 
     def test_run_detection_known_outliers_invalid_interval(self):
-        detection_data = detection_runner.run_detection_known_outliers('moving_average', 'speed_7578', 'realTraffic/speed_7578.csv', threshold=5, interval=-10)
-        self.assertIsNone(detection_data)
+        with self.assertRaises(InvalidValueForCalculationError):
+            detection_runner.run_detection_known_outliers('moving_average', 'speed_7578', 'realTraffic/speed_7578.csv', threshold=5, interval=-10)
 
 if __name__ == '__main__':
     unittest.main()

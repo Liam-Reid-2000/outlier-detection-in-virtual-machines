@@ -1,6 +1,9 @@
 import unittest
 
+import pandas as pd
+
 from ensemble_detectors.ensemble_shared_methods import shared_methods
+from test.test_utilitiy import get_data_for_test
 
 class test_ensemble_shared_methods(unittest.TestCase):
 
@@ -40,6 +43,12 @@ class test_ensemble_shared_methods(unittest.TestCase):
         threshold = shared_methods.find_threshold(arr)
         self.assertEqual(0, threshold)
 
+    # TEST CREATE SUBSET
+    def test_create_subset_dataframe(self):
+        data_coordinates = get_data_for_test('test_data_coordinates')
+        dataframe_renamed = pd.DataFrame({'points_x':data_coordinates['timestamp'],'points_y':data_coordinates['data']})
+        subset = shared_methods.create_subset_dataframe(dataframe_renamed, 10, 0)
+        self.assertEqual(10, len(subset))
 
 if __name__ == '__main__':
     unittest.main()

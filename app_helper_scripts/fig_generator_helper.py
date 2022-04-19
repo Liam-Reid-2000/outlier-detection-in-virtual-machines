@@ -6,7 +6,10 @@ from app_helper_scripts.csv_helper import csv_helper
 from supervised_learning_detectors.isolation_forest import do_isolation_forest_detection
 
 class fig_generator:
+    """Generates figs for the UI"""
+
     def get_fig(detection_data, dataset_name, detector):
+        """Generates and returns figure based on detection data"""
         try:
             timeseries_data = pd.DataFrame({'timestamp': detection_data[0],'data': detection_data[1]})
             fig = px.line(timeseries_data, x='timestamp', y='data',title= dataset_name + ' Data against Time (Using '+detector+'-based outlier detection)')
@@ -20,6 +23,7 @@ class fig_generator:
 
 
     def change_x_values_to_dates(points_x):
+        """Converts an array of string dates to data types"""
         x_as_dates = []
         for point_x in points_x:
             x_as_dates.append(datetime.datetime.strptime(str(point_x), '%Y-%m-%d %H:%M:%S'))
@@ -27,6 +31,7 @@ class fig_generator:
 
 
     def get_coordinates_dataframe(all_points_x, all_points_y, points_x):
+        """Returns a dataframe of coordinates to plot"""
         points_y = []
         points_x_new = []
         if (len(points_x) > 0):
@@ -40,12 +45,11 @@ class fig_generator:
             except:
                 print('ValueError: data not found to plot')
                 points_x.remove(this_point_x)
-            print(len(points_x))
-            print(len(points_y))
         return pd.DataFrame({'timestamp': points_x_new,'data': points_y})
 
 
     def split_timeseries_data(points_x, points_y, split):
+        """Splits timeseries data based on a percentage split point"""
         data_size = len(points_x)
         data_split_point = round(float(data_size) * float(split))
         points_x_after_split = []
@@ -59,6 +63,7 @@ class fig_generator:
 
 
     def get_fig_plot_outliers(detection_data, data_to_run, model, split=0):
+        """Returns a figure with confusion matrix colour coordinated"""
         timeseries_data = csv_helper.load_data_coordinates(data_to_run)
         if (split != 0):
             timeseries_data = fig_generator.split_timeseries_data(timeseries_data['timestamp'], timeseries_data['data'], split)
@@ -86,11 +91,11 @@ class fig_generator:
                 fig.add_trace(go.Scatter(x=tp_df['timestamp'], y=tp_df['data'], mode='markers',name='True Positives', line=dict(color='green')))
 
         fig.update_layout(autotypenumbers='convert types', xaxis_title='timestamp', yaxis_title=data_to_run)
-
         return fig
 
 
     def get_stream_fig(Outliers, XTime, Y, title):
+        """Generates and returns animated graph for real time detection"""
         outlier_indexes = []
         i = 0
         while i < len(Outliers):
@@ -110,25 +115,18 @@ class fig_generator:
 
 
     def plot_iso_detection_data(split_ratio, dataset, outlier_ref):
-
+        """Plots training graph for supervised learning"""
         timeseries_data = csv_helper.load_data_coordinates(dataset)
-
-        print(timeseries_data)
-
         supervised_training_data = do_isolation_forest_detection(split_ratio, timeseries_data, outlier_ref, plot=True)
-        
         X_train = supervised_training_data[0]
         inliers_detected_x = supervised_training_data[1]
         inliers_detected_y = supervised_training_data[2]
         outliers_detected_x = supervised_training_data[3]
         outliers_detected_y = supervised_training_data[4]
-   
         train_data_df = pd.DataFrame({'minutes': X_train[:, 0],'data': X_train[:, 1]})
         inliers_data_df = pd.DataFrame({'minutes': inliers_detected_x,'data':inliers_detected_y})
         outliers_data_df = pd.DataFrame({'minutes': outliers_detected_x,'data':outliers_detected_y})
-
         fig = px.scatter(train_data_df, x='minutes', y='data',title= 'Data against Time (Using supervised isolation forest based outlier detection)')
-    
         fig.add_trace(go.Scatter(x=inliers_data_df['minutes'], y=inliers_data_df['data'], mode='markers',name='Inliers Detected', line=dict(color='green')))
         fig.add_trace(go.Scatter(x=outliers_data_df['minutes'], y=outliers_data_df['data'], mode='markers',name='Outliers Detected', line=dict(color='red')))
 

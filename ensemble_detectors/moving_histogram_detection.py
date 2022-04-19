@@ -1,29 +1,20 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from app_helper_scripts.app_exceptions import InvalidStartIndexError
+from ensemble_detectors.ensemble_shared_methods import shared_methods
 
 class moving_histogram_detection:
-    def create_subset(index_of_start_of_subset, subset_size, points_x, points_y):
-        subset_x = []
-        subset_y = []
-        if (int(index_of_start_of_subset)<0 or int(subset_size)<0):
-            raise(InvalidStartIndexError(index_of_start_of_subset))
-        i = index_of_start_of_subset
-        while (i < index_of_start_of_subset + subset_size):
-            subset_x.append(points_x[i])
-            subset_y.append(points_y[i])
-            i += 1
-        return pd.DataFrame({'timestamp':subset_x,'data':subset_y})
-
+    """Methods for performing moving histogram"""
 
     def get_histogram(subset_y):
+        """Return histogram data"""
         plt.hist(subset_y)
         ax = plt.gca()
         return ax.patches
 
 
     def get_outlier_ranges(heights, x_left_corners, bin_widths, threshold):
+        """Return outlier ranges"""
         outlier_ranges = []
         i = 0
         while i < len(heights):
@@ -52,6 +43,7 @@ class moving_histogram_detection:
 
 
     def detect_histogram_outliers_for_subset(subset_y, threshold, points_x, points_y):
+        """Return coordinates of outliers detected by histogram based outlier detection in subset"""
         histogram_data = moving_histogram_detection.get_histogram(subset_y)
         heights = []
         x_left_corners = []
@@ -74,6 +66,7 @@ class moving_histogram_detection:
 
 
     def detect_histogram_outliers(threshold,interval,data_points):
+        """Return coordinates of outliers detected by histogram based outlier detection"""
         outliers_x = []
         outliers_y = []
         if (int(threshold)<0 or int(interval)<0):
@@ -86,7 +79,7 @@ class moving_histogram_detection:
             subset_size = (len(points_y) - 1)
         i = 0
         while (i < len(points_y) - subset_size):
-            subset = moving_histogram_detection.create_subset(i, subset_size, points_x, points_y)
+            subset = shared_methods.create_subset_dataframe(data_points, subset_size, i)
             outliers = moving_histogram_detection.detect_histogram_outliers_for_subset(subset['data'], threshold, points_x, points_y)
             for outlier_x in outliers['timestamp']:
                 outliers_x.append(outlier_x)
@@ -103,30 +96,25 @@ class moving_histogram_detection:
         return False
 
 
-    def detect_histogram_outliers_predictions_confidence(threshold,interval,data_points):                                                                                                                                                                                                                                                                                                                                                                                                     
-
+    def detect_histogram_outliers_predictions_confidence(threshold,interval,data_points):
+        """Return coordinates of outliers detection by histogram based outlier detection with confidence"""
         confidence = []
         outliers_x = []
-
         points_x = data_points['points_x']
         points_y = data_points['points_y']
-
         if (threshold<0 or interval<0):
             print('invalid parameters passed')
             return []
-
         subset_size = int(len(points_y)/interval)
         if (interval == 1):
             subset_size = (len(points_y) - 1)
-
         i = 0
         while (i < len(points_y) - subset_size):
-            subset = moving_histogram_detection.create_subset(i, subset_size, points_x, points_y)
+            subset = shared_methods.create_subset_dataframe(data_points, subset_size, i)
             outliers = moving_histogram_detection.detect_histogram_outliers_for_subset(subset['data'], threshold, points_x, points_y)
             for outlier_x in outliers['timestamp']:
                 outliers_x.append(outlier_x)
             i += subset_size
-
         i = 0
         while (i < len(points_y)):
             if moving_histogram_detection.is_outlier(points_x[i], outliers_x):
@@ -134,11 +122,11 @@ class moving_histogram_detection:
             else:
                 confidence.append(0.7)
             i += 1
-        
         return pd.DataFrame({'timestamp': points_x,'data': points_y,'confidence':confidence})
 
     
     def real_time_prediction(previous_data_values, next_data_value):
+        """Return confidence of next data value using histogram"""
         confidence = 0
         # get last 10 items in previous data
         i = len(previous_data_values)-2
@@ -149,20 +137,15 @@ class moving_histogram_detection:
             temp.append(previous_data_values[i])
             i -= 1
         previous_data_values = temp
-        
-        
         histogram_data = moving_histogram_detection.get_histogram(previous_data_values)
         heights = []
         x_left_corners = []
         bin_widths = [] 
-
         for bin in histogram_data:
             heights.append(bin.get_height())
             x_left_corners.append(bin.get_xy()[0])
             bin_widths.append(bin.get_width())
-
         outlier_ranges = moving_histogram_detection.get_outlier_ranges(heights, x_left_corners, bin_widths, 1)
-
         for range in outlier_ranges:
             if ((next_data_value < range[0]) and (next_data_value >= range[1])):
                 return(-0.5)

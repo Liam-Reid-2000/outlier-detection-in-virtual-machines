@@ -8,31 +8,28 @@ db_file = DATABASE_PREFIX + DATABASE_NAME
 
 
 class database_helper:
+    """Methods for manipulating data in the database"""
 
     def does_database_exist(filename):
         return os.path.exists(filename)
 
 
     def create_database():
+        """Create the database if it does not exist"""
         if database_helper.does_database_exist(db_file):
             print('Database already exists. Returning...')
             return
-        
         with open(SCHEMA_FILE, 'r') as rf:
             # Read the schema from the file
             schema = rf.read()
-        
         with sqlite3.connect(db_file) as conn:
-            print('Created the connection!')
             # Execute the SQL query to create the table
             conn.executescript(schema)
-            print('Created the Tables!')
-        print('Closed the connection!')
 
 
     def execute_query(query):
+        """Execute SQL query and return the rows"""
         with sqlite3.connect(db_file) as conn:
-            #print('Created the connection!')
             cursor = conn.cursor()
             cursor.execute(query)
             rows = []
@@ -42,11 +39,13 @@ class database_helper:
 
 
     def get_primary_key_of_added_row():
+        """Return the primary key of the most recently added row."""
         primary_key_added_row = database_helper.execute_query("Select detection_id FROM detection ORDER BY detection_id DESC LIMIT 1")
         return(primary_key_added_row[0][0])
 
 
     def does_data_exist(detector_name, dataset_name):
+        """Check if data already exists in the detection table."""
         returned_data = database_helper.execute_query("SELECT * FROM DETECTION WHERE detector_name == \'" + detector_name + "\' AND dataset_name == \'" + dataset_name + "\';")
         if len(returned_data) > 0:
             return True
@@ -54,6 +53,7 @@ class database_helper:
 
 
     def get_primary_keys_of_generated_data(detector_name, dataset_name):
+        """Return the primary keys of the detection data requested"""
         keys = []
         rows = database_helper.execute_query("SELECT * FROM DETECTION WHERE detector_name == \'" + detector_name + "\' AND dataset_name == \'" + dataset_name + "\';")
         for row in rows:
@@ -62,6 +62,7 @@ class database_helper:
 
 
     def delete_data(detector_name, dataset_name):
+        """Delete the requested data from the database."""
         keys = database_helper.get_primary_keys_of_generated_data(detector_name, dataset_name)
         for key in keys:
             database_helper.execute_query("DELETE FROM detection WHERE detection_id == \'" + str(key) + "\';")
@@ -71,6 +72,12 @@ class database_helper:
 
     
     def save_generated_data(detection_data):
+        """
+        Save the detection data generated to the database
+        
+        Parameters:
+        detection_data (list): List containing all the information needed about the detection
+        """
         detector_name = detection_data[0]
         dataset_name = detection_data[1]
         true_positives = detection_data[2]
@@ -104,6 +111,7 @@ class database_helper:
 
 
     def load_generated_data_from_database(detector_name, dataset_name):
+        """Return a list of the requested detection data from the database"""
         returned_detection_data = database_helper.execute_query('SELECT * FROM DETECTION WHERE detector_name == \'' + detector_name + '\' AND dataset_name == \'' + dataset_name + '\';')
         if (len(returned_detection_data) == 0):
             print('Error: Could not load data from database, data could not be found')
@@ -138,6 +146,7 @@ class database_helper:
 
     
     def store_real_time_outlier_in_database(session_name, outlier_datetime, outlier_data):
+        """Store outlier data in database"""
         rows_returned = database_helper.execute_query('SELECT * FROM real_time_detection WHERE real_time_session_name == \'' + session_name + '\'')
         key = 0
         if len(rows_returned)>0:
@@ -153,6 +162,7 @@ class database_helper:
 
     
     def get_real_time_detections_for_session(session_name):
+        """Return session outlier data."""
         key = database_helper.execute_query('Select real_time_session_id FROM real_time_detection WHERE real_time_session_name == \'' + session_name + '\' ORDER BY real_time_session_id DESC LIMIT 1')
         if len(key)!=0:
             if len(key[0])!=0:
@@ -160,5 +170,6 @@ class database_helper:
         return []
 
     def reset_real_time_session_data():
+        """Delete all data from real time detection tables."""
         database_helper.execute_query('DELETE FROM real_time_detection')
         database_helper.execute_query('DELETE FROM real_time_outliers')

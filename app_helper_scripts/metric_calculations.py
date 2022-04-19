@@ -1,6 +1,7 @@
 from app_helper_scripts.app_exceptions import InvalidPercentageFloatValueError, InvalidValueForCalculationError
 
 class metric_calculations:
+    """Calcaultes evaluation metrics based on confusion matrix data"""
     
     def calculate_accuracy(tn, tp, n):
         if (tn<0 or tp<0 or n <= 0 or (int(tp) + int(tn)>n)):

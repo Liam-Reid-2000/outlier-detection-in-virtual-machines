@@ -4,6 +4,7 @@ import pandas as pd
 from os.path import exists
 
 class csv_helper:
+    """Methods to aid in accessing csv files"""
 
     def write_to_csv(path, data, action):
         file = open(path,action,newline='')
@@ -12,6 +13,7 @@ class csv_helper:
         file.close()
 
     def load_data_coordinates(dataset_name):
+        """Loads data coordinates and resturns them as dataframe"""
         path_to_data = 'resources/' + dataset_name + '.csv'
         if (exists(path_to_data) == False):
             path_to_data = 'resources/cloud_resource_data/'+dataset_name+'.csv'

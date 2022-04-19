@@ -27,14 +27,6 @@ class moving_boxplot_detection_detection_test(unittest.TestCase):
         self.assertTrue(confidence_outlier < 0)
 
 
-    # TEST CREATE SUBSET
-    def test_create_subset_dataframe(self):
-        data_coordinates = get_data_for_test('test_data_coordinates')
-        dataframe_renamed = pd.DataFrame({'points_x':data_coordinates['timestamp'],'points_y':data_coordinates['data']})
-        subset = moving_boxplot_detection.create_subset_dataframe(dataframe_renamed, 10, 0)
-        self.assertEqual(10, len(subset))
-
-
     # TEST DETECT BOXPLOT OUTLIERS
     def test_detect_boxplot_outliers(self):
         data_coordinates = get_data_for_test('test_data_coordinates')

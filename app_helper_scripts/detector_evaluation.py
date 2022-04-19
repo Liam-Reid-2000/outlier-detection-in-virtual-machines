@@ -1,6 +1,7 @@
 import json
 
 class detector_evaluation:
+    """Calculates evaluation metrics."""
 
     def __init__(self, true_outliers_csv, points_x, outliers_x):
         self.true_outliers_csv = true_outliers_csv
@@ -13,6 +14,7 @@ class detector_evaluation:
     
 
     def get_detector_classification_evalutaion_data(self):
+        """Return the confusion matrix for the detection as a list"""
         outlier_labels_file = open('resources/combined_labels.json')
         outlier_labels = json.load(outlier_labels_file)
 

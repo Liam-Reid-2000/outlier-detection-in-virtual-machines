@@ -2,12 +2,14 @@ import json
 from os import path
 
 class config_utlilities:
+    """Utility methods for accessing configuration files"""
 
     def does_path_exist(path_name):
-        return path.exists(path_name)
+        return path.exists(path_name) # True if exists
 
 
     def get_config(requested_config, config_file_name):
+        """Returns requested config from config file"""
         path_name = 'resources/'+ config_file_name +'.json'
         if (config_utlilities.does_path_exist(path_name) == False):
             print('Could not find requested JSON')
@@ -25,8 +27,8 @@ class config_utlilities:
         return requested_config_list
 
 
-
     def get_true_outliers(ref):
+        """Gets the name of the true outliers location in config"""
         f = open('resources/dataset_config.json',)
         data = json.load(f)
         for i in data['available_datasets']:

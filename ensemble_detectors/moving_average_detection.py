@@ -2,6 +2,8 @@ import pandas as pd
 from ensemble_detectors.ensemble_shared_methods import shared_methods
 
 class moving_average_detection:
+    """Methods for performing moving average detection"""
+    
     def get_average(arr):
         if len(arr)==0:
             print('Empty list passed')
@@ -15,13 +17,11 @@ class moving_average_detection:
 
 
     def get_moving_average_coordinates(average_interval, data_points):
-        
+        """Return the coordinates of the average based on window of last data points"""
         points_x = data_points['points_x']
         points_y = data_points['points_y']
-        
         average_point_y = []
         average_point_x = []
-
         i = 0
         while (i < (len(points_y))):
             previous_points = []
@@ -34,13 +34,11 @@ class moving_average_detection:
                 average_point_y.append(moving_average_detection.get_average(previous_points))
                 average_point_x.append(points_x[i])
             i = i + 1
-        
-
         return pd.DataFrame({'points_average_x': average_point_x,'points_average_y': average_point_y})
 
 
     def detect_average_outliers(threshold, average_points, data_points):
-
+        """Return the coordinates of the outliers"""
         detected_ouliters_x = []
         detected_ouliters_y = []
         average_points_x = average_points['points_average_x']
@@ -61,7 +59,7 @@ class moving_average_detection:
 
 
     def detect_average_outliers_labelled_prediction(threshold, average_points, data_points):
-
+        """Return the coordinates of the outliers with confidence score"""
         predictions_x = []
         predictions_y = []
         confidence = []
@@ -82,11 +80,11 @@ class moving_average_detection:
             else:
                 confidence.append((points_y[i] - (average_points_y[i]-int(bound)))/bound)
             i += 1
-        
         return pd.DataFrame({'timestamp': predictions_x,'data': predictions_y,'confidence':confidence})
 
 
     def real_time_prediction(previous_data_values, next_data_value):
+        """Return confidence of next data value using moving average"""
         confidence = 0
         # get last 10 items in previous data
         i = len(previous_data_values)-2

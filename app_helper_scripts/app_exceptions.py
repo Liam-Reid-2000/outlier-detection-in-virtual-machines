@@ -4,7 +4,7 @@ class InvalidValueForCalculationError(Exception):
     
     def __str__(self):
         """Raised when input is less than 0"""
-        return '{} contains invalid input. Metric calculations can only accept' \
+        return '{} contains invalid input. This method can only accept' \
                 ' positive integers'.format(str(self.value))
 
 class InvalidPercentageFloatValueError(Exception):

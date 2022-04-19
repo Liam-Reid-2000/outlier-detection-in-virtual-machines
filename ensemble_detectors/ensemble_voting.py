@@ -1,8 +1,20 @@
 import pandas as pd
 
 class ensemble_voting:
-    def get_ensemble_result_majority(all_outliers):
+    """Class containing voting systems for ensemble detection."""
 
+    def get_ensemble_result_majority(all_outliers):
+        """
+        Outliers determined based on majority of classifications by detectors.
+
+        Parameters:
+        all_outliers (list): List of all outlier coordinates returned by each detector.
+
+        Returns:
+        dataframe: The final predicitons after voting
+
+        """
+        
         all_points_x = []
         all_points_y = []
         predicted_actual_outliers_x = []
@@ -26,7 +38,17 @@ class ensemble_voting:
 
 
     def get_ensemble_result_confidence(detector_results):
-        
+        """
+        Outliers determined based on combined confidence.
+
+        Parameters:
+        all_outliers (list): List of all outlier coordinates with confidence returned by each detector.
+
+        Returns:
+        dataframe: The final predicitons after voting
+
+        """
+
         #print('Starting vote')
         all_points_x = []
         all_points_y = []

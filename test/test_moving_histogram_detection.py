@@ -1,6 +1,7 @@
 import unittest
 import pandas as pd
 from app_helper_scripts.app_exceptions import InvalidStartIndexError
+from ensemble_detectors.ensemble_shared_methods import shared_methods
 
 from ensemble_detectors.moving_histogram_detection import moving_histogram_detection
 from test.test_utilitiy import get_data_for_test
@@ -19,28 +20,12 @@ class moving_histogram_detection_test(unittest.TestCase):
             i += 1
         return list_data_points
 
-    
-    # TEST CREATE SUBSET
-    def test_create_subset(self):
-        data_coordinates = get_data_for_test('test_data_coordinates')
-        subset = moving_histogram_detection.create_subset(0, 10, data_coordinates['timestamp'], data_coordinates['data'])
-        self.assertTrue(len(subset['timestamp'])==10)
-    
-    def test_create_subset_negative_index(self):
-        data_coordinates = get_data_for_test('test_data_coordinates')
-        with self.assertRaises(InvalidStartIndexError):
-            moving_histogram_detection.create_subset(-10, 10, data_coordinates['timestamp'], data_coordinates['data'])
-
-    def test_create_subset_negative_size(self):
-        data_coordinates = get_data_for_test('test_data_coordinates')
-        with self.assertRaises(InvalidStartIndexError):
-            moving_histogram_detection.create_subset(0, -10, data_coordinates['timestamp'], data_coordinates['data'])
-
 
     # TEST GET HISTOGRAM
     def test_get_histogram(self):
         data_coordinates = get_data_for_test('test_data_coordinates')
-        subset = moving_histogram_detection.create_subset(0, 10, data_coordinates['timestamp'], data_coordinates['data'])
+        dataframe_renamed = pd.DataFrame({'points_x':data_coordinates['timestamp'],'points_y':data_coordinates['data']})
+        subset = shared_methods.create_subset_dataframe(dataframe_renamed, 10, 0)
         histogram_data = moving_histogram_detection.get_histogram(subset['data'])
         self.assertIsNotNone(histogram_data)
 

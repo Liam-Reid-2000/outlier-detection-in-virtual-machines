@@ -7,6 +7,12 @@ import pandas as pd
 import time
 
 def get_ensemble_detection_data(ensemble_detector_list, dataset, known_outliers_csv):
+    """
+    Perform the ensemble detection using detectors specified.
+
+    Does vote and returns predicted outlier coordinates.
+
+    """
 
     if (len(ensemble_detector_list) == 0):
         return []
