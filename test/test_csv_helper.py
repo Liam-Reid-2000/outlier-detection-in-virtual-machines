@@ -1,3 +1,4 @@
+import csv
 import unittest
 
 from app_helper_scripts.csv_helper import csv_helper
@@ -19,6 +20,15 @@ class csv_test(unittest.TestCase):
         data = csv_helper.load_data_coordinates('invalid_dataset_name')
         self.assertTrue(len(data['timestamp'])==0) #should return empty dataframe
         self.assertTrue(len(data['data'])==0)
+
+    # TEST WRITE DATA
+    def test_write_to_csv(self):
+        data = ['test_data', 'test_data']
+        csv_helper.write_to_csv('test/test_resource/test_write.csv', data,'w')
+        with open('test/test_resource/test_write.csv','r') as csvfile:
+            lines = csv.reader(csvfile, delimiter=',')
+            for row in lines:
+                self.assertEqual('test_data', row[0])
 
 
 if __name__ == '__main__':
