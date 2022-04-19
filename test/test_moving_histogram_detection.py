@@ -1,5 +1,6 @@
 import unittest
 import pandas as pd
+from app_helper_scripts.app_exceptions import InvalidStartIndexError
 
 from ensemble_detectors.moving_histogram_detection import moving_histogram_detection
 from test.test_utilitiy import get_data_for_test
@@ -27,13 +28,13 @@ class moving_histogram_detection_test(unittest.TestCase):
     
     def test_create_subset_negative_index(self):
         data_coordinates = get_data_for_test('test_data_coordinates')
-        subset = moving_histogram_detection.create_subset(-10, 10, data_coordinates['timestamp'], data_coordinates['data'])
-        self.assertTrue(len(subset['timestamp'])==0)
+        with self.assertRaises(InvalidStartIndexError):
+            moving_histogram_detection.create_subset(-10, 10, data_coordinates['timestamp'], data_coordinates['data'])
 
     def test_create_subset_negative_size(self):
         data_coordinates = get_data_for_test('test_data_coordinates')
-        subset = moving_histogram_detection.create_subset(0, -10, data_coordinates['timestamp'], data_coordinates['data'])
-        self.assertTrue(len(subset['timestamp'])==0)
+        with self.assertRaises(InvalidStartIndexError):
+            moving_histogram_detection.create_subset(0, -10, data_coordinates['timestamp'], data_coordinates['data'])
 
 
     # TEST GET HISTOGRAM
@@ -89,6 +90,14 @@ class moving_histogram_detection_test(unittest.TestCase):
         dataframe_renamed = pd.DataFrame({'points_x':data_coordinates['timestamp'],'points_y':data_coordinates['data']})
         outliers = moving_histogram_detection.detect_histogram_outliers_predictions_confidence(3, -2, dataframe_renamed)
         self.assertEqual(0, len(outliers))
+
+
+    ## TEST IS OUTLIER
+    def test_is_outlier(self):
+        self.assertTrue(moving_histogram_detection.is_outlier(45, [45,67,89]))
+
+    def test_is_outlier_not(self):
+        self.assertFalse(moving_histogram_detection.is_outlier(33, [45,67,89]))
 
 
     
