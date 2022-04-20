@@ -5,6 +5,7 @@ from app_helper_scripts.app_exceptions import InvalidPercentageFloatValueError
 from supervised_learning_detectors.data_splitter import *
 
 def train_model(X_train):
+    """Train isolation forest model"""
     rng = np.random.RandomState(42)
     clf = IsolationForest(max_samples=20, random_state=rng)
     return clf.fit(X_train)
@@ -20,9 +21,8 @@ def train_model(X_train):
 
 
 def split_outliers_inliers(labeled_test_data):
-    
+    """Separate outlier predictions made by the model"""
     outlier_inlier_split = []
-    
     outliers_detected_x = []
     outliers_detected_y = []
     inliers_detected_x = []
@@ -38,12 +38,11 @@ def split_outliers_inliers(labeled_test_data):
         i += 1
     outlier_inlier_split.append(pd.DataFrame({'timestamp':inliers_detected_x,'data':inliers_detected_y}))
     outlier_inlier_split.append(pd.DataFrame({'timestamp':outliers_detected_x,'data':outliers_detected_y}))
-
     return outlier_inlier_split
     
 
 def do_isolation_forest_detection(split_ratio, dataset, outlier_ref, plot=False):
-
+    """Detect outliers using isolation forest model. Return outliers detected."""
     if (split_ratio >= 1 or split_ratio <=0):
         raise InvalidPercentageFloatValueError(split_ratio)
 

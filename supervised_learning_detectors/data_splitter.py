@@ -5,37 +5,30 @@ from datetime import *
 import numpy as np
 
 def load_data(dataset, split_ratio):
-    
+    """Load data and split test and train return list of arrays containing the split data"""
     all_points_x = []
     all_points_y = []
-
     j = 0
     while j < len(dataset['timestamp']):
         all_points_y.append(dataset['data'][j])
         all_points_x.append(dataset['timestamp'][j])
         j += 1
-
     no_data_points = len(dataset)
     train_test_point = split_ratio * no_data_points
-
     train_points_x = []
     train_points_y = []
-
     test_points_x = []
     test_points_y = []
-
     i = 0
     while (i < int(train_test_point)):
         train_points_x.append(all_points_x[i])
         train_points_y.append(all_points_y[i])
         i+=1
-    
     i = int(train_test_point)
     while (i < len(all_points_x)):
         test_points_x.append(all_points_x[i])
         test_points_y.append(all_points_y[i])
         i+=1
-
     split_data = []
     split_data.append(all_points_x)
     split_data.append(all_points_x)
@@ -43,17 +36,14 @@ def load_data(dataset, split_ratio):
     split_data.append(train_points_y)
     split_data.append(test_points_x)
     split_data.append(test_points_y)
-
     return split_data
 
 
 def split_outliers(target_data, split_date):
-
+    """Split the outliers so that only test outliers considered for evaluation"""
     train_outliers = []
     test_outliers = []
-
     all_outliers = []
-
     f = open('resources/combined_labels.json')
     data = json.load(f)
     for i in data[target_data]:
@@ -77,16 +67,14 @@ def convert_time_data_to_minutes_of_day(points_x):
     return points_x_as_minutes
 
 
-
 def get_data_as_matrix(points_x, points_y):
     return(np.r_['1,2,0', points_x, points_y])
 
 
-
 def remove_outliers_from_training_data(train_outliers, train_points_x, train_points_y):
+    """Remove outliers from training data - Semi supervised"""
     data_without_outliers_x = []
     data_without_outliers_y = []
-
     k = 0
     for i in train_points_x:
         for j in train_outliers:
@@ -96,5 +84,4 @@ def remove_outliers_from_training_data(train_outliers, train_points_x, train_poi
             else:
                 print('Outlier removed')
         k += 1
-    
     return pd.DataFrame({'timestamp':data_without_outliers_x,'data':data_without_outliers_y})

@@ -47,11 +47,12 @@ class detection_helper:
         n = detection_data[6][0]
         detection_time = detection_data[7]
         evalution_metrics = detection_helper.get_evaluation_metrics_as_list(tp, fp, fn, tn, n)
+        evaluation_output = []
         for metric in evalution_metrics:
-            evalution_metrics.append(str(round(float(metric)*100,4))+'%\n')
-        evalution_metrics.append(str(round(float(detection_time),4))+' seconds\n')
+            evaluation_output.append(str(round(metric*100,4))+'%\n')
+        evaluation_output.append(str(round(float(detection_time),4))+' seconds\n')
         output_text = ['Accuracy','Recall','Precision','F1 Score','Detection Time']
-        return pd.DataFrame({'Evaluation_Metric':output_text,'Result':evalution_metrics})
+        return pd.DataFrame({'Evaluation_Metric':output_text,'Result':evaluation_output})
 
 
     def get_detection_data(model, data_to_run, data_coordinates, threshold=0):

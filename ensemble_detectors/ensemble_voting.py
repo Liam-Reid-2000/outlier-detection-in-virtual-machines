@@ -37,7 +37,7 @@ class ensemble_voting:
         return pd.DataFrame({'timestamp': predicted_actual_outliers_x,'data': predicted_actual_outliers_y})
 
 
-    def get_ensemble_result_confidence(detector_results):
+    def get_ensemble_result_confidence(detector_results, outlier_confidence_threshold=-0.4):
         """
         Outliers determined based on combined confidence.
 
@@ -85,7 +85,7 @@ class ensemble_voting:
 
         i = 0
         while (i < len(final_confidence)):
-            if (final_confidence[i] < -0.4):
+            if (final_confidence[i] < outlier_confidence_threshold):
                 print(final_confidence[i])
                 predicted_actual_outliers_x.append(all_points_x[i])
                 predicted_actual_outliers_y.append(all_points_y[i])

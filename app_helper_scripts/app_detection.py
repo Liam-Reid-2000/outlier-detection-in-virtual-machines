@@ -49,7 +49,7 @@ class detection_runner:
         return confidence
 
 
-    def run_detection(detector_name, data_coordinates, threshold, interval=10):
+    def run_detection(detector_name, data_coordinates, threshold, interval=10, confidence_threshold=-0.4):
         """
         Detection outliers using specified detector.
     
@@ -58,6 +58,7 @@ class detection_runner:
         data_coordinates (dataframe): Dataset used for detection.
         threshold (int): Threshold for detector.
         interval (int): window interval.
+        confidence threshold (float): Confidence score of outliers.
 
         Returns:
         dataframe: cooridnates of outliers.
@@ -99,7 +100,7 @@ class detection_runner:
             ensemble_outliers_confidence.append(moving_median_detection.detect_median_outliers_labelled_prediction(threshold, moving_median_detection.get_moving_median_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
             ensemble_outliers_confidence.append(moving_boxplot_detection.detect_boxplot_outliers_predictions_confidence(threshold, interval, data_coordinates_renamed))
             ensemble_outliers_confidence.append(moving_histogram_detection.detect_histogram_outliers_predictions_confidence(1,1, data_coordinates_renamed))
-            outliers_after_voting = ensemble_voting.get_ensemble_result_confidence(ensemble_outliers_confidence)
+            outliers_after_voting = ensemble_voting.get_ensemble_result_confidence(ensemble_outliers_confidence, confidence_threshold)
             outliers_x = outliers_after_voting['timestamp']
             outliers_y = outliers_after_voting['data']
         else:
@@ -177,7 +178,7 @@ class detection_runner:
 
     def run_detection_months(detector_name, data_coordinates, threshold, interval=7):
         """
-        Run detection for unlabelled data based on monthss.
+        Run detection for unlabelled data based on months.
     
         Args:
         detector (string): Name of detector selected to perform detection.
@@ -196,7 +197,7 @@ class detection_runner:
         all_outliers_x = []
         all_outliers_y = []
         for i in separated_months_as_dataframes:
-            detection_data = detection_runner.run_detection(detector_name, i, threshold, interval)
+            detection_data = detection_runner.run_detection(detector_name, i, threshold, interval, confidence_threshold=0)
             for j in detection_data[2]:
                 all_outliers_x.append(j)
             for j in detection_data[3]:

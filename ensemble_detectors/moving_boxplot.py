@@ -1,4 +1,3 @@
-from this import s
 import numpy as np
 import pandas as pd
 
@@ -11,7 +10,7 @@ class moving_boxplot_detection:
     
     def calculate_lower_bound(q1, iqr, threshold):
         """Returns lower bound. Calculating from lower quartile, iqr and threshold. Returns 0 if negative."""
-        if (int(iqr)<=0 or int(threshold) <=0):
+        if (float(iqr)<0 or int(threshold) <=0):
             raise InvalidValueForCalculationError([iqr, threshold])
         if (q1 - iqr*float(threshold) > 0):
             return q1 - iqr*float(threshold)
