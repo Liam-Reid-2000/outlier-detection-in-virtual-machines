@@ -5,8 +5,8 @@ RUN apt-get update && apt-get install -y python3 python3-pip
 WORKDIR /app
 COPY . /app
 
-RUN pip install requests
+RUN pip install -r requirements.txt
 
 ENTRYPOINT [ "python3" ]
 
-CMD [ "cpu_usage_server.py" ]
+CMD [ "app.py" ]

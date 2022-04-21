@@ -1,4 +1,9 @@
 pandas
+plotly
 matplotlib
-coverage
+statistics
+sklearn
+dash
+requests
 pycaret
+numpy==1.20

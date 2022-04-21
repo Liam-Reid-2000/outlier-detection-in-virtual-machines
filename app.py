@@ -43,7 +43,7 @@ app.layout = html.Div([
     html.H1('Outlier Detection Dashboard',style={'display':'inline-block'}),
     dcc.Interval(
         id = 'graph-update',
-        interval = 1000*300,
+        interval = 1000*120,
         n_intervals=0
     ),
     dcc.Tabs([
@@ -675,7 +675,7 @@ def reset_ques(dataset_name):
         Outliers.clear()
         Outliers.append(False)
 
-
+CPU_SERVER_PREFIX = 'http://cpu-usage-server.eastus.azurecontainer.io/'
 @app.callback(
     Output('live-graph', 'figure'),
     [Input('graph-update', 'n_intervals'),
@@ -692,7 +692,7 @@ def update_graph_scatter(n,dataset_name, detector_name):
     cpu_usage = 0
     try:
         headers = {'Accept': 'application/json'}
-        r = requests.get('http://localhost:8000/' + dataset_name + '/' + str(X[-1]+1), headers=headers,timeout=5)
+        r = requests.get(CPU_SERVER_PREFIX + dataset_name + '/' + str(X[-1]+1), headers=headers,timeout=30)
         cpu_usage = r.json()['cpu_usage']
     except(requests.ConnectionError, requests.ConnectTimeout) as exception:
         print('Could not connect to server')
@@ -708,7 +708,6 @@ def update_graph_scatter(n,dataset_name, detector_name):
     else:
         Outliers.append(False)
     return fig_generator.get_stream_fig(Outliers, XTime, Y, detector_name + ' on ' + dataset_name)
-
 
 
 @app.callback(
@@ -823,7 +822,7 @@ def get_outlier_count(n):
     error = True
     try:
         headers = {'Accept': 'application/json'}
-        r = requests.get('http://localhost:8000/' + 'ec2_cpu_utilization_5f5533' + '/' + '1', headers=headers,timeout=5)
+        r = requests.get(CPU_SERVER_PREFIX + 'ec2_cpu_utilization_5f5533' + '/' + '1', headers=headers,timeout=30)
         error = r.json()['error']
     except(requests.ConnectionError, requests.ConnectTimeout) as exception:
         print('Could not connect to server')
@@ -846,4 +845,5 @@ def get_session_start_time(n):
 
 if __name__ == '__main__':
     database_helper.create_database()
-    app.run_server()
+    app.run_server(host='0.0.0.0', port='80')
+    #app.run_server()
