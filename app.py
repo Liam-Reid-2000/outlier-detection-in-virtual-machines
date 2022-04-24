@@ -3,7 +3,6 @@ from dash import html
 from dash import dash_table
 import dash
 from dash.dependencies import Output, Input
-import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 import time
@@ -15,45 +14,32 @@ from database_scripts.database_helper import database_helper
 from app_helper_scripts.config_utilities import config_utlilities
 from app_helper_scripts.fig_generator_helper import fig_generator
 from app_helper_scripts.app_helper import detection_helper
-
 from ensemble_detectors.ensemble_detection import get_ensemble_detection_data
-from som.outlier_detection_som import detect_som_outliers, detect_som_outliers_circle
+from assets.specific_style import *
 
 app = dash.Dash(__name__)
 
-box_info_style = {'width': '20%', 'display': 'inline-block', 'border':'2px black solid', 'margin-left':'50px', 'background-color':'white','border-radius':'20px', 'padding': '7px'}
-box_info_style_extended = {'width': '20%', 'display': 'inline-block', 'border':'2px black solid', 'margin-left':'50px', 'background-color':'white','border-radius':'20px', 'padding': '7px'}
-dropdown_box_style = {'width': '30%', 'display': 'inline-block', 'border':'2px black solid', 'background-color':'white','border-radius':'25px', 'padding': '10px', 'margin-bottom':'20px'}
-dropdown_box_style_full = {'width': '100%', 'display': 'inline-block', 'border':'2px black solid', 'background-color':'white','border-radius':'25px', 'padding': '10px', 'margin-bottom':'20px'}
-dropdown_box_with_margin = {'width': '30%', 'display': 'inline-block', 'border':'2px black solid', 'background-color':'white','border-radius':'25px', 'padding': '10px', 'margin-bottom':'20px','margin-right':'20px'}
-graph_style = {'border':'2px black solid', 'border-radius':'25px', 'padding': '10px', 'background-color':'white'}
-tab_style = {
-    'borderBottom': '1px solid #d6d6d6',
-    'padding': '6px',
-    'fontWeight': 'bold'
-}
-table_style={
-    'backgroundColor': '#82a5a3',
-    'fontWeight': 'bold'
-}
-
 app.title = 'Outlier Detection Dashboard'
+
+"""
+App layout, defines the html of the web application
+"""
 app.layout = html.Div([
     html.Img(src='assets/icon.png'),
     html.H1('Outlier Detection Dashboard',style={'display':'inline-block'}),
     dcc.Interval(
         id = 'graph-update',
-        interval = 1000*120,
+        interval = 1000*10,
         n_intervals=0
     ),
     dcc.Tabs([
+        ########################## Real time detection tab ##########################
+        # A live update graph demonstrating real time outlier detection
         dcc.Tab(label='Real Time Detection', children=[
-            ### A live update graph demonstrating real time outlier detection ### 
-
             html.Div([
                 html.H4("Real Time Outlier Detection"),
                 html.P("Data streamed and outliers detected in real time."),
-                
+                # Drop down boxes, select detector and dataset
                 html.Div([
                     html.Div([
                         html.Div([html.B('Detector:')],style={'width': '20%', 'display': 'inline-block'}),
@@ -72,25 +58,27 @@ app.layout = html.Div([
                         )],style={'width': '80%', 'display': 'inline-block'}),
                     ],style={'width': '100%', 'display': 'inline-block'}),
                 ],style=dropdown_box_style),
+                # Server status information
                 html.Div([
                     html.Div(id='real_time_stream_status',style=box_info_style),
                     html.Div(id='real_time_data_behaviour_status',style=box_info_style),
                     html.Div(id='real_time_stream_last_update_time',style=box_info_style),
                     html.Div(id='real_time_stream_session_start',style=box_info_style),
                 ],style={'width': '70%', 'display': 'inline-block', 'padding': '10px', 'margin-bottom':'20px'}),
-
+                # The graph, updates periodically
                 html.Div([
                     html.Div([
                         html.Div([html.H4(id='live-graph-update-title')],style={'textAlign': 'center'}),
                         dcc.Graph(id = 'live-graph', animate = True),
                     ], style=graph_style),
                 ],style={'width': '70%', 'display': 'inline-block'}),
-
+                # CPU Usage pie chart
                 html.Div([
                     html.H4('CPU Usage'),
                     dcc.Graph(id='cpu_usage_pie_chart'),
                 ],style={'width': '29%', 'float': 'right', 'display': 'inline-block', 'border':'2px black solid', 'background-color':'white','border-radius':'25px', 'padding': '10px'}),
                 html.Div(),
+                # Outlier data, presented in a dash table
                 html.Div([
                     html.H4('Outlier Data'),
                     html.Div(id='cpu_usage_dataset_title'),
@@ -101,6 +89,7 @@ app.layout = html.Div([
                         style_header=table_style,
                     ),
                 ],style={'width': '30%', 'display': 'inline-block','border-radius':'25px', 'padding': '10px', 'margin-bottom':'20px'}),
+                # Outlier status information
                 html.Div([
                     html.Div(id='real_time_outlier_count',style=box_info_style_extended),
                     html.Div(id='real_time_data_outlier_status',style=box_info_style_extended),
@@ -112,22 +101,16 @@ app.layout = html.Div([
             ],style={"border":"2px black solid"}),
         ]),
 
-
-
-
-
+        ########################## Experimental space tab ##########################
+        # Contains tabs with different functionality to perform experiments
         dcc.Tab(label='Experimental Space', children=[
-
             dcc.Tabs([
-            
+                # Unsupervised detection tab
                 dcc.Tab(label='Unsupervised Detection', children=[
-
-                    ### Graph to display classifier detection results for unsupervised methods ###
-
                     html.Div([
                         html.H4('Unsupervised Detection'),
                         html.Div([
-                            ### Drop down boxes with options for user ###
+                            # Drop down boxes, select dataset and detector
                             html.Div([
                                 html.Div([
                                     html.Div([html.B('Detector:')],style={'width': '20%', 'display': 'inline-block'}),
@@ -147,6 +130,7 @@ app.layout = html.Div([
                                 ],style={'width': '100%', 'display': 'inline-block'}),
                             ],style=dropdown_box_style_full),
                             html.Div([
+                                # The detection results displayed in a dash table
                                 html.H4('Detection Results'),
                                 html.Div(id='unsupervised_detection_results_title', children='...'),
                                 dash_table.DataTable(
@@ -159,22 +143,19 @@ app.layout = html.Div([
                         ],style={'width': '27%', 'display': 'inline-block'}),
 
                         html.Div([
-                            ### The Graph ### 
-                            dcc.Graph(
-                                id='unsupervised_detection_graph',style=graph_style
-                            ),
+                            # Unsupervised detection graph with classifications
+                            dcc.Graph(id='unsupervised_detection_graph',style=graph_style),
                         ],style={'width': '70%', 'display': 'inline-block', 'float': 'right'}),
-                        
-                        ### The detection results as text ###
                     ],style={'padding': '10px 5px',"border":"2px black solid",'border-bottom':'2px white'}),
                 ]),
+
+                ########################## Unsupervised detecion tab ##########################
                 dcc.Tab(label='Supervised Detection', children=[
                     html.Div([
-                   ### Graph to display classifier detection results using supervised training ###
-
                         html.H4('Supervised Detection'),
                         html.Div([
                             html.Div([
+                                # Dropdown boxes for detector and dataset
                                 html.Div([
                                     html.Div([html.B('Detector:')],style={'width': '20%', 'display': 'inline-block'}),
                                     html.Div([dcc.Dropdown(
@@ -191,6 +172,7 @@ app.layout = html.Div([
                                         value='speed_7578'
                                     )],style={'width': '80%', 'display': 'inline-block'}),
                                 ],style={'width': '100%', 'display': 'inline-block'}),
+                                # Text input box for split ratio
                                 html.Div([
                                     html.Div([html.B('Split Ratio:')],style={'width': '20%', 'display': 'inline-block'}),
                                     html.Div([
@@ -202,6 +184,7 @@ app.layout = html.Div([
                                     ],style={'width': '70%', 'display': 'inline-block'}),
                                 ],style={'width': '100%', 'display': 'inline-block'}),
                             ],style=dropdown_box_style_full),
+                            # Detection results displayed in a dash table
                             html.Div([
                                 html.H4('Detection Results'),
                                 html.Div(id='results_title_supervised', children='...'),
@@ -213,49 +196,25 @@ app.layout = html.Div([
                                 ),
                             ],style={'width': '100%', 'float': 'right', 'display': 'inline-block','border':'2px black solid', 'border-radius':'25px', 'padding': '10px', 'background-color':'white'}),
                         ],style={'width': '27%', 'display': 'inline-block'}),
-                        
-                        
                         html.Div([
-                            ### The Graph ### 
-                            dcc.Graph(
-                                id='supervised_learning_graph',style=graph_style
-                            ),
+                            # Supervised detection time series graph 
+                            dcc.Graph(id='supervised_learning_graph',style=graph_style),
                         ],style={'width': '70%', 'display': 'inline-block', 'float': 'right'}),
-
-                            ### The detection results as text ###
                         html.Div([
-                            ### The Graph ### 
-                            dcc.Graph(
-                                id='supervised_train_test_graph',style=graph_style
-                            ),
+                            # Supervised graph showing training points
+                            dcc.Graph(id='supervised_train_test_graph',style=graph_style),
                         ],style={'width': '100%', 'display': 'inline-block', 'float': 'right','margin-top':'40px'})
                     ],style={'padding': '10px 5px',"border":"2px black solid",'border-bottom':'2px white'}),
-
                 ]),
-                #dcc.Tab(label='SOM', children=[
-                #    ### Demonstration of SOM ####
-#
-#                    html.Div([
-#                        html.Div(),
-#                        html.H4("SOM"),
-#                        html.H4("Demonstrating SOM outlier detection using 'Minisom' library."),
-#                        html.Div([
-#                            dcc.Graph(id = 'som-graph')
-#                        ],style={'width': '49%', 'display': 'inline-block'}),
-#                        html.Div([
-#                            dcc.Graph(id = 'som-graph-2')
-#                        ],style={'width': '49%', 'display': 'inline-block'}),
-#                    ],style={"border":"2px black solid"}),
-#                ]),
 
+                ########################## Ensemble experimenting tab ##########################
                 dcc.Tab(label='Ensemble Testing Space', children=[
-                    ### A graph demonstrating how weak ensembes are strong outlier detectors ### 
                     html.Div([
                         html.Div([
                             html.H4("Ensemble of Detectors"),
                             html.B("Graph demonstrating how an ensemble of weak classifiers are strong outlier detectors"),
                         ],style={'width': '100%'}),
-                        ### Drop down boxes with options for user ###
+                        # Dropdown box for user to select a dataset
                         html.Div([
                             html.Div([html.B('Dataset:')],style={'width': '30%'}),
                             html.Div([dcc.Dropdown(
@@ -263,7 +222,7 @@ app.layout = html.Div([
                                 options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_datasets_cloud_resource_data', 'dataset_config')],
                                 value='ec2_cpu_utilization_5f5533'
                             )],style={'width': '100%'}),
-
+                            # Radio buttons for user to select detectors
                             # Moving Average
                             html.B('Moving Average'),
                             dcc.RadioItems(
@@ -272,7 +231,6 @@ app.layout = html.Div([
                                 value='Off',
                                 labelStyle={'display': 'inline-block', 'marginTop': '5px'}
                             ),
-
                             # Moving Median
                             html.B('Moving Median'),
                             dcc.RadioItems(
@@ -281,7 +239,6 @@ app.layout = html.Div([
                                 value='Off',
                                 labelStyle={'display': 'inline-block', 'marginTop': '5px'}
                             ),
-
                             # Moving Boxplot
                             html.B('Moving Boxplot'),
                             dcc.RadioItems(
@@ -290,7 +247,6 @@ app.layout = html.Div([
                                 value='Off',
                                 labelStyle={'display': 'inline-block', 'marginTop': '5px'}
                             ),
-
                             # Moving Histogram
                             html.B('Moving Histogram'),
                             dcc.RadioItems(
@@ -302,8 +258,8 @@ app.layout = html.Div([
                         ],style={'width': '30%', 'float': 'left', 'display': 'inline-block','border':'2px black solid', 'border-radius':'25px', 'padding': '10px', 'background-color':'white','margin-right':'30px'}),
                         html.Div([
                             html.Div([
+                                # Detection results in a dash table
                                 html.H4('Detection Results'),
-                                #html.Div(id='unsupervised_detection_results_title', children='...'),
                                 dash_table.DataTable(
                                     id='update_results_ensemble',
                                     data = pd.DataFrame({'Evaluation_Metric':[],'Result':[]}).to_dict('records'),
@@ -313,22 +269,20 @@ app.layout = html.Div([
                             ]),
                         ],style={'width': '30%', 'float': 'left', 'display': 'inline-block','border':'2px black solid', 'border-radius':'25px', 'padding': '10px', 'background-color':'white'}),
                         html.Div([
-                            # Graph
+                            # Ensemble detection graph
                             dcc.Graph(id = 'ensemble-graph',style=graph_style),
                         ],style={'width': '100%', 'float': 'right', 'display': 'inline-block','margin-top':'40px'}),
                     ],style={"border-top":"2px black solid"}),
                 ]),
 
-                
-                dcc.Tab(label='Cloud Resource Usage Experiment', children=[
 
-
-                    ##################### CLOUD RESOURCE DATA TESTING SPACE ##########################
-
+                ##################### CLOUD RESOURCE DATA TESTING SPACE ##########################
+                dcc.Tab(label='Cloud Resource Usage Experiment', children=[                 
                     html.Div([
                         html.H4('Cloud Resource Experimental Space'),
                             html.Div([
                                 html.Div([
+                                    # Dropdown boxes for detector and dataset
                                     html.Div([
                                         html.Div([html.B('Detector:')],style={'width': '20%', 'display': 'inline-block'}),
                                         html.Div([dcc.Dropdown(
@@ -347,6 +301,7 @@ app.layout = html.Div([
                                     ],style={'width': '100%', 'display': 'inline-block'}),
                                 ],style=dropdown_box_style_full),
                                 html.Div([
+                                    # Detection results in dash table
                                     html.H4('Detection Results'),
                                     html.Div(id='results_title_cloud_resource', children='...'),
                                     dash_table.DataTable(
@@ -356,30 +311,21 @@ app.layout = html.Div([
                                         style_header=table_style
                                     ),
                                 ],style={'width': '100%', 'float': 'right', 'display': 'inline-block','border':'2px black solid', 'border-radius':'25px', 'padding': '10px', 'background-color':'white'}),
-                                html.Div(),
-                                html.Div(),
                             ],style={'width': '27%', 'display': 'inline-block'}),
+                            # The graph with classifications
                             html.Div([
-                                dcc.Graph(
-                                    id='graph_cloud_resource_data',style=graph_style
-                                ),
+                                dcc.Graph( id='graph_cloud_resource_data',style=graph_style),
                             ],style={'width': '70%', 'display': 'inline-block', 'float': 'right'}),
                         ],style={'border':'2px black solid','border-bottom':'2px white'}),
                 ]),
 
 
-
+                ##################### Dengue Fever TESTING SPACE ##########################
                 dcc.Tab(label='Dengue Fever Experiment', children=[
-            
-                    ##################### Dengue Fever Data DATA TESTING SPACE ##########################
-
                     html.Div([
                         html.H4('Dengue Fever Data Experimental Space'),
                             html.Div([
-
-                                ### Drop down boxes with options for user ###
-
-                                #### drop down box style for detector
+                                # dropdown box style for detector
                                 html.Div([
                                     html.Div([html.B('Detector:')],style={'width': '20%', 'display': 'inline-block'}),
                                     html.Div([dcc.Dropdown(
@@ -388,8 +334,7 @@ app.layout = html.Div([
                                         value='full_ensemble'
                                     )],style={'width': '80%', 'display': 'inline-block'}),
                                 ],style=dropdown_box_with_margin),
-
-                                #### drop down box for datasets
+                                # dropdown box for datasets
                                 html.Div([
                                     html.Div([html.B('Region:')],style={'width': '20%', 'display': 'inline-block'}),
                                     html.Div([dcc.Dropdown(
@@ -406,12 +351,9 @@ app.layout = html.Div([
                                 ],style=dropdown_box_style),
                             ]),
                             html.Div([
-                                ### The Graph ### 
-                                dcc.Graph(
-                                    id='dengue_fever_graph',style=graph_style
-                                ),
+                                # Graph showing outliers detected
+                                dcc.Graph( id='dengue_fever_graph',style=graph_style),
                             ],style={'width': '70%', 'display': 'inline-block'}),
-
                         ],style={'padding': '10px 5px',"border":"2px black solid"}),
                 ]),
             ]),
@@ -419,8 +361,11 @@ app.layout = html.Div([
     ],style=tab_style)
 ])
 
-###########################################################################
-################### Ensemble 
+
+"""
+App callback functions, call off to other scripts to preform detection
+"""
+##################### Ensemble #####################
 
 @app.callback(
     Output('ensemble-graph', 'figure'),
@@ -431,9 +376,8 @@ app.layout = html.Div([
     Input('available_data_ensemble','value')]
 )
 def update_ensemble_graph(average_rd, median_rd, histogram_rd, boxplot_rd, data):
-
+    """Do detection using user specified detectors and return graph with classifications."""
     ensemble_detector_list = []
-
     # Check which detectors user has selected
     if (average_rd == 'On'):
         ensemble_detector_list.append('moving_average')
@@ -443,12 +387,9 @@ def update_ensemble_graph(average_rd, median_rd, histogram_rd, boxplot_rd, data)
         ensemble_detector_list.append('moving_boxplot')
     if (histogram_rd == 'On'):
         ensemble_detector_list.append('moving_histogram')
-
     detection_data = get_ensemble_detection_data(ensemble_detector_list, data, config_utlilities.get_true_outliers(data))
-    ## return the figure
     fig = fig_generator.get_fig_plot_outliers(detection_data, data, 'moving ensemble')
     return fig
-
 
 @app.callback(
     Output('update_results_ensemble', 'data'),
@@ -460,13 +401,11 @@ def update_ensemble_graph(average_rd, median_rd, histogram_rd, boxplot_rd, data)
     Input('ensemble-graph', 'figure')]
 )
 def update_results(average_rad, median_rad, boxplot_rad, histogram_rad, data, fig):
+    """Fill results table with evaluation metrics."""
     return detection_helper.get_result_data('ensemble', data).to_dict('records')
 
-###########################################################################
-        
 
-###########################################################################
-##################### UNSUPERVISED DETECTION
+##################### UNSUPERVISED DETECTION #####################
 @app.callback(
     Output('unsupervised_detection_results_title', 'children'),
     [Input('available_data','value'),
@@ -474,8 +413,8 @@ def update_results(average_rad, median_rad, boxplot_rad, histogram_rad, data, fi
     Input('unsupervised_detection_graph', 'figure')]
 )
 def update_results_title(data, detector, fig):
+    """Update title of results table with detector and dataset name."""
     return html.H4(detector.upper() + ' on \'' + data + '\' data')
-
 
 @app.callback(
     Output('unsupervised_detection_results', 'data'),
@@ -484,8 +423,8 @@ def update_results_title(data, detector, fig):
     Input('unsupervised_detection_graph', 'figure')]
 )
 def update_results(data, detector, fig):
+    """Fill results table with evaluation metrics."""
     return detection_helper.get_result_data(detector, data).to_dict('records')
-
 
 @app.callback(
     Output('unsupervised_detection_graph', 'figure'),
@@ -493,17 +432,13 @@ def update_results(data, detector, fig):
     Input('available_detectors','value')]
 )
 def plot_graph(data, detector):
+    """Do unsupervised detection and return the generated graph"""
     detection_data = detection_helper.get_detection_data_known_outliers(detector, data, config_utlilities.get_true_outliers(data), detection_helper.get_detector_threshold(detector))
     fig = fig_generator.get_fig_plot_outliers(detection_data, data, detector)
     return fig
 
-##################### UNSUPERVISED DETECTION
-###########################################################################
 
-
-################################
-# HEALTH DATA
-
+##################### DENGUE FEVER EXPERIMENT #####################
 
 @app.callback(
     Output('dengue_fever_graph', 'figure'),
@@ -512,6 +447,7 @@ def plot_graph(data, detector):
     Input('available_data_health_data','value')]
 )
 def plot_graph(detector, data_subset, dataset):
+    """Do unsupervised unlabelled detection, return graph with outliers detected."""
     file = 'resources/health_data/' + dataset
     data = pd.read_excel(file)
     timestamp = data['year_month']
@@ -524,11 +460,7 @@ def plot_graph(detector, data_subset, dataset):
     return fig_generator.get_fig(detection_data, dataset.replace('.xlsx','') + '_' + data_subset, detector)
 
 
-# HEALTH DATA
-################################
-
-################################
-# CLOUD RESOURCE DATA
+##################### CLOUD RESOURCE DATA EXPERIMENT #####################
 
 @app.callback(
     Output('graph_cloud_resource_data', 'figure'),
@@ -536,10 +468,10 @@ def plot_graph(detector, data_subset, dataset):
     Input('available_data_cloud_resource_data','value')]
 )
 def plot_graph(detector, data):
+    """Do unsupervised detection and return the generated graph"""
     detection_data = detection_helper.get_detection_data_known_outliers(detector, data, config_utlilities.get_true_outliers(data), detection_helper.get_detector_threshold(detector)) 
     fig = fig_generator.get_fig_plot_outliers(detection_data, data, detector)
     return fig
-
 
 @app.callback(
     Output('results_title_cloud_resource', 'children'),
@@ -548,6 +480,7 @@ def plot_graph(detector, data):
     Input('graph_cloud_resource_data', 'figure')]
 )
 def update_results_title(data, detector, fig):
+    """Update title of results table with detector and dataset name."""
     return html.B(detector.upper() + ' on \'' + data + '\' data')
 
 
@@ -558,13 +491,11 @@ def update_results_title(data, detector, fig):
     Input('graph_cloud_resource_data', 'figure')]
 )
 def update_results(data, detector, fig):
+    """Fill results table with evaluation metrics."""
     return detection_helper.get_result_data(detector, data).to_dict('records')
 
-# CLOUD RESOURCE DATA
-################################
 
-####################################################################################
-### SUPERVISED LEARNING ###
+##################### SUPERVISED LEARNING #####################
 
 @app.callback(
     Output('supervised_learning_graph', 'figure'),
@@ -573,6 +504,7 @@ def update_results(data, detector, fig):
     Input('supervised_test_train_split_ratio', 'value')]
 )
 def update_supervised_learning_graph(data, detector, ratio):
+    """Do supervised detection and return the generated graph"""
     detection_data = detection_helper.get_detection_data_supervised(detector, data, config_utlilities.get_true_outliers(data), float(ratio))
     return fig_generator.get_fig_plot_outliers(detection_data, "speed_7578", "isolation forest", ratio)
 
@@ -584,6 +516,7 @@ def update_supervised_learning_graph(data, detector, ratio):
     Input('supervised_learning_graph', 'figure')]
 )
 def update_supervised_learning_results(data, detector, ratio, fig):
+    """Fill results table with evaluation metrics."""
     return detection_helper.get_result_data(detector + '_' + str(ratio), data).to_dict('records')
 
 @app.callback(
@@ -593,6 +526,7 @@ def update_supervised_learning_results(data, detector, ratio, fig):
     Input('supervised_learning_graph', 'figure')]
 )
 def update_supervised_learning_graph(data, ratio, fig):
+    """Do supervised detection and return the generated graph with training points"""
     return fig_generator.plot_iso_detection_data(float(ratio), data, config_utlilities.get_true_outliers(data))   
 
 @app.callback(
@@ -602,67 +536,26 @@ def update_supervised_learning_graph(data, ratio, fig):
     Input('supervised_test_train_split_ratio', 'value')]
 )
 def update_results_title(data, detector, split):
+    """Update title of results table with detector and dataset name."""
     return html.B(detector.upper() + ' on \'' + data + '\' data with split ratio ' + str(split))
 
-### SUPERVISED LEARNING ###
-####################################################################################
 
+##################### REAL TIME STREAMING DATA #####################
 
-###################################################
-## SOM
-
-@app.callback(
-    Output('som-graph', 'figure'),
-    [ Input('btn_refresh', 'n_clicks') ]
-)
-def update_graph_scatter(n):
-    som_detection_data = detect_som_outliers()
-    outliers_x = som_detection_data[0]
-    outliers_y = som_detection_data[1]
-    inliers_x = som_detection_data[2]
-    inliers_y = som_detection_data[3]
-    try:
-        fig = px.scatter(x=inliers_x,y=inliers_y,title='SOM Outlier Detection for Clustered Data')
-        fig.add_scatter(x=outliers_x,y=outliers_y,mode='markers',name='Outliers')
-        return fig
-    except:
-        print('Error when getting som figure')
-
-@app.callback(
-    Output('som-graph-2', 'figure'),
-    [ Input('btn_refresh', 'n_clicks') ]
-)
-def update_graph_scatter(n):
-    som_detection_data = detect_som_outliers_circle()
-    outliers_x = som_detection_data[0]
-    outliers_y = som_detection_data[1]
-    inliers_x = som_detection_data[2]
-    inliers_y = som_detection_data[3]
-
-    fig = px.scatter(x=inliers_x,y=inliers_y,title='SOM Outlier Detection for Data appearing Circular')
-    fig.add_scatter(x=outliers_x,y=outliers_y,mode='markers',name='Outliers')
-
-    return fig
-
-## SOM
-###################################################
-
-#######################################################################################
-####### REAL TIME STREAMING DATA #######
-  
+# Queues - Store windows of data 
 X = deque(maxlen = 50)
 X.append(1)
-
 XTime = deque(maxlen = 50)
 XTime.append(datetime.now())
-  
 Y = deque(maxlen = 50)
 Y.append(1)
-
 Outliers = deque(maxlen = 50)
 Outliers.append(False)
 
+CPU_SERVER_PREFIX = 'http://localhost:8000/'#'http://cpu-usage-server.eastus.azurecontainer.io/'
+
 def reset_ques(dataset_name):
+    """Resets queues - Deletes all values in window."""
     print('swaping dataset_name')
     with open('temp_storage.txt', 'w') as f:
         f.write(dataset_name)
@@ -675,18 +568,17 @@ def reset_ques(dataset_name):
         Outliers.clear()
         Outliers.append(False)
 
-CPU_SERVER_PREFIX = 'http://cpu-usage-server.eastus.azurecontainer.io/'
 @app.callback(
     Output('live-graph', 'figure'),
     [Input('graph-update', 'n_intervals'),
     Input('available_data_real_time_detection','value'),
     Input('available_detectors_real_time_detection', 'value')]
 )
-def update_graph_scatter(n,dataset_name, detector_name):
+def update_real_time_graph(n,dataset_name, detector_name):
+    """Update the real time outlier detection graph based on update interval."""
     current_dataset = ''
     with open("temp_storage.txt", "r") as file:
         current_dataset = file.readline()
-    print(current_dataset)
     if (dataset_name != current_dataset):
         reset_ques(dataset_name)
     cpu_usage = 0
@@ -696,9 +588,7 @@ def update_graph_scatter(n,dataset_name, detector_name):
         cpu_usage = r.json()['cpu_usage']
     except(requests.ConnectionError, requests.ConnectTimeout) as exception:
         print('Could not connect to server')
-
     time = datetime.now()
-
     X.append(X[-1]+1)
     Y.append(cpu_usage)
     XTime.append(time)
@@ -709,12 +599,12 @@ def update_graph_scatter(n,dataset_name, detector_name):
         Outliers.append(False)
     return fig_generator.get_stream_fig(Outliers, XTime, Y, detector_name + ' on ' + dataset_name)
 
-
 @app.callback(
     Output('cpu_usage_pie_chart', 'figure'),
     [Input('graph-update', 'n_intervals')]
 )
 def generate_pie_chat(n):
+    """Update the cpu usage pie chart with most recent data."""
     colors = ['green', 'red']
     labels = ['Available', 'In use']
     values = [100-Y[len(Y)-1], Y[len(Y)-1]]
@@ -723,11 +613,13 @@ def generate_pie_chat(n):
                   marker=dict(colors=colors, line=dict(color='#000000', width=1)))
     return fig
 
+
 @app.callback(
     Output('real_time_outlier_data', 'data'),
     [Input('graph-update', 'n_intervals')]
 )
 def get_outlier_data_table(n):
+    """Update table of outlier data with new outlier data."""
     with open("temp_storage.txt", "r") as file:
         current_dataset = file.readline()
     outlier_real_time_data = database_helper.get_real_time_detections_for_session(current_dataset)
@@ -739,11 +631,13 @@ def get_outlier_data_table(n):
     outlier_df = pd.DataFrame({'timestamp':outlier_timestamp, 'data':outlier_data})
     return outlier_df.to_dict('records')
 
+
 @app.callback(
     Output('cpu_usage_dataset_title', 'children'),
     [Input('graph-update', 'n_intervals')]
 )
 def get_outlier_table_name(n):
+    """Get outlier table name based on current session."""
     current_dataset = ''
     with open("temp_storage.txt", "r") as file:
         current_dataset = file.readline()
@@ -764,7 +658,6 @@ def get_outlier_count(n):
         html.H3(str(len(outlier_real_time_data)))
     ])
 
-
 @app.callback(
     Output('real_time_data_behaviour_status', 'children'),
     [Input('graph-update', 'n_intervals')]
@@ -777,7 +670,6 @@ def get_data_behaviour_status(n):
                 html.H3('Alert',style={'color':'red'}))
         i-=1
     return html.B('Resource Usage Status'), html.H3('Normal',style={'color':'green'})
-
 
 
 @app.callback(
@@ -802,7 +694,6 @@ def get_outlier_status(n):
 def get_last_update_time(n):
     return html.B('Last Update'), html.H3(str(XTime[len(XTime)-1].strftime('%H:%M.%S')))
 
-
 @app.callback(
     Output('live-graph-update-title', 'children'),
     [Input('graph-update', 'n_intervals')]
@@ -826,11 +717,10 @@ def get_outlier_count(n):
         error = r.json()['error']
     except(requests.ConnectionError, requests.ConnectTimeout) as exception:
         print('Could not connect to server')
-
-    if (error == False):
-        return (html.B('Stream Status'), html.H3('LIVE',style={'color':'green'}))
-    return (html.B('Stream Status'), html.H3('DOWN',style={'color':'red'}))
-
+    if (error):
+        return (html.B('Stream Status'), html.H3('DOWN',style={'color':'red'}))
+    return (html.B('Stream Status'), html.H3('LIVE',style={'color':'green'}))
+    
 
 @app.callback(
     Output('real_time_stream_session_start', 'children'),
@@ -845,5 +735,5 @@ def get_session_start_time(n):
 
 if __name__ == '__main__':
     database_helper.create_database()
-    app.run_server(host='0.0.0.0', port='80')
-    #app.run_server()
+    #pp.run_server(host='0.0.0.0', port='80')
+    app.run_server()

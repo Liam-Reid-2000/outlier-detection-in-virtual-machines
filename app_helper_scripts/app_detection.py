@@ -76,24 +76,17 @@ class detection_runner:
             print('Error: Data coordinates passed do not contain data')
             return
         data_coordinates_renamed = pd.DataFrame({'points_x': points_x,'points_y': points_y})
+        outliers = []
         outliers_x = []
         outliers_y = []
         if (detector_name == 'moving_average'):
-            outliers_ = moving_average_detection.detect_average_outliers(threshold, moving_average_detection.get_moving_average_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed)
-            outliers_x = outliers_['timestamp']
-            outliers_y = outliers_['data']
+            outliers = moving_average_detection.detect_average_outliers(threshold, moving_average_detection.get_moving_average_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed)
         elif (detector_name == 'moving_median'):
-            outliers_ = moving_median_detection.detect_median_outliers(threshold, moving_median_detection.get_moving_median_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed)
-            outliers_x = outliers_['timestamp']
-            outliers_y = outliers_['data']
+            outliers = moving_median_detection.detect_median_outliers(threshold, moving_median_detection.get_moving_median_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed)
         elif (detector_name == 'moving_boxplot'):
-            outliers_ = moving_boxplot_detection.detect_boxplot_outliers(threshold, interval, data_coordinates_renamed)
-            outliers_x = outliers_['timestamp']
-            outliers_y = outliers_['data']
+            outliers = moving_boxplot_detection.detect_boxplot_outliers(threshold, interval, data_coordinates_renamed)
         elif (detector_name == 'moving_histogram'):
-            outliers_ = moving_histogram_detection.detect_histogram_outliers(threshold,1, data_coordinates_renamed)
-            outliers_x = outliers_['timestamp']
-            outliers_y = outliers_['data']
+            outliers = moving_histogram_detection.detect_histogram_outliers(threshold,1, data_coordinates_renamed)
         elif (detector_name == 'full_ensemble'):
             ensemble_outliers_confidence = []
             ensemble_outliers_confidence.append(moving_average_detection.detect_average_outliers_labelled_prediction(threshold, moving_average_detection.get_moving_average_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
@@ -101,13 +94,10 @@ class detection_runner:
             ensemble_outliers_confidence.append(moving_boxplot_detection.detect_boxplot_outliers_predictions_confidence(threshold, interval, data_coordinates_renamed))
             ensemble_outliers_confidence.append(moving_histogram_detection.detect_histogram_outliers_predictions_confidence(1,1, data_coordinates_renamed))
             outliers_after_voting = ensemble_voting.get_ensemble_result_confidence(ensemble_outliers_confidence, confidence_threshold)
-            outliers_x = outliers_after_voting['timestamp']
-            outliers_y = outliers_after_voting['data']
+            outliers = outliers_after_voting
         else:
             try:
-                outliers_ = detect_outliers_with_pycaret(detector_name, data_coordinates)
-                outliers_x = outliers_['timestamp']
-                outliers_y = outliers_['data']
+                outliers = detect_outliers_with_pycaret(detector_name, data_coordinates)
             except:
                 print('Error: Detector does not exist')
                 return

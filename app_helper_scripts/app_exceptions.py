@@ -22,5 +22,5 @@ class InvalidStartIndexError(Exception):
     
     def __str__(self):
         """Raised when input < 0"""
-        return '{} is invalid input. The start index of a subset' \
-                ' therefore this value must be greater than 0'.format(self.value)
+        return '{} is invalid input. This is the start index of a subset' \
+                ' therefore this value must be greater than or equal to 0'.format(self.value)
