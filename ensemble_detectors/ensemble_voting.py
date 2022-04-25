@@ -75,6 +75,9 @@ class ensemble_voting:
                 df = detector_result.loc[detector_result['timestamp'] == all_points_x[i]]
                 try:
                     current_conf += (df['confidence'].iloc[0])
+                    conf_this = df['confidence'].iloc[0]
+                    if (conf_this>1 or conf_this<-1):
+                        print(conf_this)
                 except:
                     poina = 0 #do nothing
                     #print("No confidence to add")
@@ -86,9 +89,10 @@ class ensemble_voting:
         i = 0
         while (i < len(final_confidence)):
             if (final_confidence[i] < outlier_confidence_threshold):
-                print(final_confidence[i])
                 predicted_actual_outliers_x.append(all_points_x[i])
                 predicted_actual_outliers_y.append(all_points_y[i])
+            else:
+                print(final_confidence[i])
             i += 1
 
         return pd.DataFrame({'timestamp': predicted_actual_outliers_x,'data': predicted_actual_outliers_y})

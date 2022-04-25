@@ -67,11 +67,13 @@ class moving_boxplot_detection:
                 conf = 1
             return (-1 * conf) 
         elif (next_data_value > q3):
-            distance_to_threshold = next_data_value - q3
-            return (distance_to_threshold/upper_bound)
+            distance_to_threshold = upper_bound - next_data_value 
+            conf = distance_to_threshold/(upper_bound-q3)
+            return conf
         elif (next_data_value < q1):
-            distance_to_threshold = q1 - next_data_value
-            return (distance_to_threshold/lower_bound)
+            distance_to_threshold = next_data_value - lower_bound
+            conf = distance_to_threshold/(q1-lower_bound)
+            return conf
         else:
             return (1)
 

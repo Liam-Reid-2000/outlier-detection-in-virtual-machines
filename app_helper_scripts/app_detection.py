@@ -67,7 +67,9 @@ class detection_runner:
         InvalidValueForCalculationError: If any input variables are invalid.
 
         """
-
+        print('threshold = ' + str(threshold))
+        print('interval = ' + str(interval))
+        print('conf thres = ' + str(confidence_threshold))
         if (int(threshold)<0 or int(interval) <0):
             raise(InvalidValueForCalculationError([threshold, interval]))
         points_x = data_coordinates['timestamp']
@@ -77,8 +79,6 @@ class detection_runner:
             return
         data_coordinates_renamed = pd.DataFrame({'points_x': points_x,'points_y': points_y})
         outliers = []
-        outliers_x = []
-        outliers_y = []
         if (detector_name == 'moving_average'):
             outliers = moving_average_detection.detect_average_outliers(threshold, moving_average_detection.get_moving_average_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed)
         elif (detector_name == 'moving_median'):
@@ -101,7 +101,6 @@ class detection_runner:
             except:
                 print('Error: Detector does not exist')
                 return
-        outliers = pd.DataFrame({'timestamp': outliers_x,'data': outliers_y})
         return detection_data_collector.collect_detection_data(outliers, points_x, points_y)
 
 
@@ -232,7 +231,7 @@ class detection_data_collector:
 
     def collect_detection_data_for_database(detector, data, outliers_df, true_outliers_csv_reference, points_x_passed, points_y_passed, detection_time):
         """
-        Collects data from arguments.
+        Collects data from arguments into a list ready to be saved to the database.
 
         Returns data as list.
 
