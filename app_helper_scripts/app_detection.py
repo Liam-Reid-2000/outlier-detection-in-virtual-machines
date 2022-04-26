@@ -67,9 +67,7 @@ class detection_runner:
         InvalidValueForCalculationError: If any input variables are invalid.
 
         """
-        print('threshold = ' + str(threshold))
-        print('interval = ' + str(interval))
-        print('conf thres = ' + str(confidence_threshold))
+        
         if (int(threshold)<0 or int(interval) <0):
             raise(InvalidValueForCalculationError([threshold, interval]))
         points_x = data_coordinates['timestamp']

@@ -91,8 +91,6 @@ class ensemble_voting:
             if (final_confidence[i] < outlier_confidence_threshold):
                 predicted_actual_outliers_x.append(all_points_x[i])
                 predicted_actual_outliers_y.append(all_points_y[i])
-            else:
-                print(final_confidence[i])
             i += 1
 
         return pd.DataFrame({'timestamp': predicted_actual_outliers_x,'data': predicted_actual_outliers_y})
