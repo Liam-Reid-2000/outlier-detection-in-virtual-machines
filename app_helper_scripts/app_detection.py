@@ -1,3 +1,4 @@
+from calendar import day_abbr
 import pandas as pd
 import time
 from app_helper_scripts.app_exceptions import InvalidValueForCalculationError

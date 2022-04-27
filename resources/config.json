@@ -19,6 +19,26 @@
         [
             "Twitter_volume_UPS",
             "realTweets/Twitter_volume_UPS.csv"
+        ],
+        [
+            "grok_asg_anomaly",
+            "realAWSCloudwatch/grok_asg_anomaly.csv"
+        ],
+        [
+            "ec2_cpu_utilization_5f5533",
+            "realAWSCloudwatch/ec2_cpu_utilization_5f5533.csv"
+        ],
+        [
+            "ec2_disk_write_bytes_c0d644",
+            "realAWSCloudwatch/ec2_disk_write_bytes_c0d644.csv"
+        ],
+        [
+            "TravelTime_387",
+            "realTraffic/TravelTime_387.csv"
+        ],
+        [
+            "occupancy_t4013",
+            "realTraffic/occupancy_t4013.csv"
         ]
     ],
     "available_detectors": [

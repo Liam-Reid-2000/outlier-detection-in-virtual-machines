@@ -29,7 +29,7 @@ app.layout = html.Div([
     html.H1('Outlier Detection Dashboard',style={'display':'inline-block'}),
     dcc.Interval(
         id = 'graph-update',
-        interval = 1000*10,
+        interval = 1000*120,
         n_intervals=0
     ),
     dcc.Tabs([
