@@ -4,6 +4,13 @@ import plotly.express as px
 import plotly.graph_objects as go
 from app_helper_scripts.csv_helper import csv_helper
 from supervised_learning_detectors.isolation_forest import do_isolation_forest_detection
+import logging
+
+logging.basicConfig(filename="app_logs.log",
+                    format='%(asctime)s %(message)s',
+                    filemode='a')
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class fig_generator:
     """Generates figs for the UI"""
@@ -19,7 +26,7 @@ class fig_generator:
 
             return fig
         except:
-            print('Error getting figure for ' + detector + ' on ' + dataset_name + 'data')
+            logger.error('Error getting figure for ' + detector + ' on ' + dataset_name + 'data')
 
 
     def change_x_values_to_dates(points_x):
@@ -43,7 +50,7 @@ class fig_generator:
                     points_y.append(all_points_y[index])
                     points_x_new.append(all_points_x[index])
             except:
-                print('ValueError: data not found to plot')
+                logger.error('ValueError: data not found to plot')
                 points_x.remove(this_point_x)
         return pd.DataFrame({'timestamp': points_x_new,'data': points_y})
 

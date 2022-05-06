@@ -2,6 +2,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from ensemble_detectors.ensemble_shared_methods import shared_methods
+import logging
+
+logging.basicConfig(filename="app_logs.log",
+                    format='%(asctime)s %(message)s',
+                    filemode='a')
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class moving_histogram_detection:
     """Methods for performing moving histogram"""
@@ -70,7 +77,7 @@ class moving_histogram_detection:
         outliers_x = []
         outliers_y = []
         if (int(threshold)<0 or int(interval)<0):
-            print('invalid parameters passed')
+            logger.error('invalid parameters passed')
             return pd.DataFrame({'timestamp':outliers_x,'data':outliers_y})
         points_x = data_points['points_x']
         points_y = data_points['points_y']
@@ -103,7 +110,7 @@ class moving_histogram_detection:
         points_x = data_points['points_x']
         points_y = data_points['points_y']
         if (threshold<0 or interval<0):
-            print('invalid parameters passed')
+            logger.error('invalid parameters passed')
             return []
         subset_size = int(len(points_y)/interval)
         if (interval == 1):

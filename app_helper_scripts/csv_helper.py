@@ -2,6 +2,13 @@ import csv
 from datetime import datetime
 import pandas as pd
 from os.path import exists
+import logging
+
+logging.basicConfig(filename="app_logs.log",
+                    format='%(asctime)s %(message)s',
+                    filemode='a')
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class csv_helper:
     """Methods to aid in accessing csv files"""
@@ -18,7 +25,7 @@ class csv_helper:
         if (exists(path_to_data) == False):
             path_to_data = 'resources/cloud_resource_data/'+dataset_name+'.csv'
         if (exists(path_to_data) == False):
-            print('Error: data could not be found')
+            logger.error('Error: data could not be found')
             return pd.DataFrame({'timestamp':[],'data':[]})
         with open(path_to_data,'r') as csvfile:
             lines = csv.reader(csvfile, delimiter=',')
@@ -29,5 +36,5 @@ class csv_helper:
                     points_y.append(float(row[1]))
                     points_x.append(datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S'))
                 except ValueError:
-                    print("Error accessing data for request: " + dataset_name)
+                    logger.error("Error accessing data for request: " + dataset_name)
             return pd.DataFrame({'timestamp':points_x,'data':points_y}) 

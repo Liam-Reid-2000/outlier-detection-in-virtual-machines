@@ -1,5 +1,12 @@
 import sqlite3
 import os
+import logging
+
+logging.basicConfig(filename="app_logs.log",
+                    format='%(asctime)s %(message)s',
+                    filemode='a')
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 DATABASE_PREFIX = 'database_scripts/'
 DATABASE_NAME = 'detection_db'
@@ -17,7 +24,7 @@ class database_helper:
     def create_database():
         """Create the database if it does not exist"""
         if database_helper.does_database_exist(db_file):
-            print('Database already exists. Returning...')
+            logger.info('Database already exists. Returning...')
             return
         with open(SCHEMA_FILE, 'r') as rf:
             # Read the schema from the file
@@ -114,7 +121,7 @@ class database_helper:
         """Return a list of the requested detection data from the database"""
         returned_detection_data = database_helper.execute_query('SELECT * FROM DETECTION WHERE detector_name == \'' + detector_name + '\' AND dataset_name == \'' + dataset_name + '\';')
         if (len(returned_detection_data) == 0):
-            print('Error: Could not load data from database, data could not be found')
+            logger.error('Error: Could not load data from database, data could not be found')
             return []
         returned_detection_data = returned_detection_data[0]
         key = returned_detection_data[0]
@@ -154,8 +161,8 @@ class database_helper:
         else:
             database_helper.execute_query('INSERT INTO real_time_detection (real_time_session_name) VALUES (\'' + session_name + '\');')
             key = database_helper.execute_query("Select real_time_session_id FROM real_time_detection ORDER BY real_time_session_id DESC LIMIT 1")[0][0]
-        print('Attempting to execute query')
-        print('INSERT INTO real_time_outliers (real_time_session_id, outlier_datetime, outlier_data) VALUES (' +
+        logger.debug('Attempting to execute query')
+        logger.debug('INSERT INTO real_time_outliers (real_time_session_id, outlier_datetime, outlier_data) VALUES (' +
                 str(key) + ', \'' + str(outlier_datetime) + '\', ' + str(outlier_data) + ');')
         database_helper.execute_query('INSERT INTO real_time_outliers (real_time_session_id, outlier_datetime, outlier_data) VALUES (' +
                 str(key) + ', \'' + str(outlier_datetime) + '\', ' + str(outlier_data) + ');')

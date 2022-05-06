@@ -4,13 +4,20 @@ from database_scripts.database_helper import database_helper
 import json
 from app_helper_scripts.app_detection import detection_runner
 import pandas as pd
+import logging
+
+logging.basicConfig(filename="app_logs.log",
+                    format='%(asctime)s %(message)s',
+                    filemode='a')
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class detection_helper:
     """Methods to support detection of outliers."""
 
     def get_detector_threshold(ref):
         """Returns detector threshold from config using reference."""
-        f = open('resources/config.json',)
+        f = open('resources/detector_config.json',)
         data = json.load(f)
         for i in data['available_detectors']:
             if (i[0] ==ref):
@@ -37,7 +44,7 @@ class detection_helper:
     def get_result_data(detector_name, dataset_name):
         """Returns dataframe of evaluation metrics."""
         if database_helper.does_data_exist(detector_name, dataset_name) == False:
-            print('ERROR: attemping to access database for ' + detector_name + ' ' + dataset_name)
+            logger.error('ERROR: attemping to access database for ' + detector_name + ' ' + dataset_name)
             return pd.DataFrame({'Evaluation_Metric':['No data generated','This could take several minutes'],'Result':['n/a','n/a']})
         detection_data = database_helper.load_generated_data_from_database(detector_name, dataset_name)
         tp = len(detection_data[2])
@@ -71,7 +78,7 @@ class detection_helper:
 
         """
         if database_helper.does_data_exist(detector_name, dataset_name):
-            print('data exists')
+            logger.debug('data exists')
             return database_helper.load_generated_data_from_database(detector_name, dataset_name)
         detection_data = detection_runner.run_detection_known_outliers(detector_name, dataset_name, target_data, threshold, interval)
         database_helper.save_generated_data(detection_data)

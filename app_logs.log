@@ -1,0 +1,398 @@
+2022-05-06 12:29:22,061 Dash is running on http://127.0.0.1:8050/
+
+2022-05-06 12:29:22,077  * Running on http://127.0.0.1:8050/ (Press CTRL+C to quit)
+2022-05-06 12:29:26,620 127.0.0.1 - - [06/May/2022 12:29:26] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:26,620 127.0.0.1 - - [06/May/2022 12:29:26] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:26,621 127.0.0.1 - - [06/May/2022 12:29:26] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:26,622 127.0.0.1 - - [06/May/2022 12:29:26] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:26,627 127.0.0.1 - - [06/May/2022 12:29:26] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:26,630 127.0.0.1 - - [06/May/2022 12:29:26] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:26,640 127.0.0.1 - - [06/May/2022 12:29:26] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:26,696 127.0.0.1 - - [06/May/2022 12:29:26] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:30,708 Could not connect to server
+2022-05-06 12:29:30,739 Could not connect to server
+2022-05-06 12:29:30,740 127.0.0.1 - - [06/May/2022 12:29:30] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:30,943 127.0.0.1 - - [06/May/2022 12:29:30] "GET / HTTP/1.1" 200 -
+2022-05-06 12:29:30,967 127.0.0.1 - - [06/May/2022 12:29:30] "[36mGET /assets/style.css?m=1650982866.2152016 HTTP/1.1[0m" 304 -
+2022-05-06 12:29:31,021 127.0.0.1 - - [06/May/2022 12:29:31] "GET /_dash-layout HTTP/1.1" 200 -
+2022-05-06 12:29:31,027 127.0.0.1 - - [06/May/2022 12:29:31] "GET /_dash-dependencies HTTP/1.1" 200 -
+2022-05-06 12:29:31,031 127.0.0.1 - - [06/May/2022 12:29:31] "[36mGET /assets/favicon.ico?m=1649938876.7801867 HTTP/1.1[0m" 304 -
+2022-05-06 12:29:31,045 127.0.0.1 - - [06/May/2022 12:29:31] "[36mGET /assets/icon.png HTTP/1.1[0m" 304 -
+2022-05-06 12:29:31,051 127.0.0.1 - - [06/May/2022 12:29:31] "GET /_dash-component-suites/dash/dcc/async-dropdown.js HTTP/1.1" 200 -
+2022-05-06 12:29:31,060 127.0.0.1 - - [06/May/2022 12:29:31] "GET /_dash-component-suites/dash/dcc/async-graph.js HTTP/1.1" 200 -
+2022-05-06 12:29:31,061 127.0.0.1 - - [06/May/2022 12:29:31] "GET /_dash-component-suites/dash/dash_table/async-highlight.js HTTP/1.1" 200 -
+2022-05-06 12:29:31,063 127.0.0.1 - - [06/May/2022 12:29:31] "GET /_dash-component-suites/dash/dcc/async-plotlyjs.js HTTP/1.1" 200 -
+2022-05-06 12:29:31,064 127.0.0.1 - - [06/May/2022 12:29:31] "GET /_dash-component-suites/dash/dash_table/async-table.js HTTP/1.1" 200 -
+2022-05-06 12:29:31,162 127.0.0.1 - - [06/May/2022 12:29:31] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:31,202 127.0.0.1 - - [06/May/2022 12:29:31] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:31,430 127.0.0.1 - - [06/May/2022 12:29:31] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:31,443 127.0.0.1 - - [06/May/2022 12:29:31] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:33,471 127.0.0.1 - - [06/May/2022 12:29:33] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:33,568 127.0.0.1 - - [06/May/2022 12:29:33] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:33,581 127.0.0.1 - - [06/May/2022 12:29:33] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:33,581 127.0.0.1 - - [06/May/2022 12:29:33] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:33,585 127.0.0.1 - - [06/May/2022 12:29:33] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:33,595 127.0.0.1 - - [06/May/2022 12:29:33] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:33,598 127.0.0.1 - - [06/May/2022 12:29:33] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:33,600 127.0.0.1 - - [06/May/2022 12:29:33] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:33,602 127.0.0.1 - - [06/May/2022 12:29:33] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:33,603 127.0.0.1 - - [06/May/2022 12:29:33] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:33,606 127.0.0.1 - - [06/May/2022 12:29:33] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:33,612 127.0.0.1 - - [06/May/2022 12:29:33] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:33,621 127.0.0.1 - - [06/May/2022 12:29:33] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:33,656 127.0.0.1 - - [06/May/2022 12:29:33] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:33,661 127.0.0.1 - - [06/May/2022 12:29:33] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:33,740 127.0.0.1 - - [06/May/2022 12:29:33] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:33,762 127.0.0.1 - - [06/May/2022 12:29:33] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:34,148 127.0.0.1 - - [06/May/2022 12:29:34] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:34,553 Did the detection in 0.5529 seconds
+2022-05-06 12:29:34,583 127.0.0.1 - - [06/May/2022 12:29:34] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:35,195 Could not connect to server
+2022-05-06 12:29:35,196 127.0.0.1 - - [06/May/2022 12:29:35] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:35,690 Could not connect to server
+2022-05-06 12:29:35,723 127.0.0.1 - - [06/May/2022 12:29:35] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:41,098 127.0.0.1 - - [06/May/2022 12:29:41] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:41,102 127.0.0.1 - - [06/May/2022 12:29:41] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:41,104 127.0.0.1 - - [06/May/2022 12:29:41] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:41,105 127.0.0.1 - - [06/May/2022 12:29:41] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:41,107 127.0.0.1 - - [06/May/2022 12:29:41] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:41,107 127.0.0.1 - - [06/May/2022 12:29:41] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:41,109 127.0.0.1 - - [06/May/2022 12:29:41] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:41,113 127.0.0.1 - - [06/May/2022 12:29:41] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:45,169 Could not connect to server
+2022-05-06 12:29:45,201 127.0.0.1 - - [06/May/2022 12:29:45] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:29:45,216 Could not connect to server
+2022-05-06 12:29:45,216 127.0.0.1 - - [06/May/2022 12:29:45] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:13,443 Database already exists. Returning...
+2022-05-06 12:38:13,444 Dash is running on http://127.0.0.1:8050/
+
+2022-05-06 12:38:13,460  * Running on http://127.0.0.1:8050/ (Press CTRL+C to quit)
+2022-05-06 12:38:14,992 127.0.0.1 - - [06/May/2022 12:38:14] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:14,993 127.0.0.1 - - [06/May/2022 12:38:14] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:14,994 127.0.0.1 - - [06/May/2022 12:38:14] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:14,996 127.0.0.1 - - [06/May/2022 12:38:14] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:14,997 127.0.0.1 - - [06/May/2022 12:38:14] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:14,999 127.0.0.1 - - [06/May/2022 12:38:14] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:15,001 127.0.0.1 - - [06/May/2022 12:38:15] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:15,043 127.0.0.1 - - [06/May/2022 12:38:15] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:16,304 127.0.0.1 - - [06/May/2022 12:38:16] "GET / HTTP/1.1" 200 -
+2022-05-06 12:38:16,326 127.0.0.1 - - [06/May/2022 12:38:16] "[36mGET /assets/style.css?m=1650982866.2152016 HTTP/1.1[0m" 304 -
+2022-05-06 12:38:16,440 127.0.0.1 - - [06/May/2022 12:38:16] "GET /_dash-layout HTTP/1.1" 200 -
+2022-05-06 12:38:16,443 127.0.0.1 - - [06/May/2022 12:38:16] "GET /_dash-dependencies HTTP/1.1" 200 -
+2022-05-06 12:38:16,445 127.0.0.1 - - [06/May/2022 12:38:16] "[36mGET /assets/favicon.ico?m=1649938876.7801867 HTTP/1.1[0m" 304 -
+2022-05-06 12:38:16,462 127.0.0.1 - - [06/May/2022 12:38:16] "[36mGET /assets/icon.png HTTP/1.1[0m" 304 -
+2022-05-06 12:38:16,468 127.0.0.1 - - [06/May/2022 12:38:16] "GET /_dash-component-suites/dash/dcc/async-dropdown.js HTTP/1.1" 200 -
+2022-05-06 12:38:16,475 127.0.0.1 - - [06/May/2022 12:38:16] "GET /_dash-component-suites/dash/dash_table/async-highlight.js HTTP/1.1" 200 -
+2022-05-06 12:38:16,475 127.0.0.1 - - [06/May/2022 12:38:16] "GET /_dash-component-suites/dash/dcc/async-graph.js HTTP/1.1" 200 -
+2022-05-06 12:38:16,477 127.0.0.1 - - [06/May/2022 12:38:16] "GET /_dash-component-suites/dash/dash_table/async-table.js HTTP/1.1" 200 -
+2022-05-06 12:38:16,478 127.0.0.1 - - [06/May/2022 12:38:16] "GET /_dash-component-suites/dash/dcc/async-plotlyjs.js HTTP/1.1" 200 -
+2022-05-06 12:38:16,506 Error accessing data for request: ec2_cpu_utilization_5f5533
+2022-05-06 12:38:16,570 127.0.0.1 - - [06/May/2022 12:38:16] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:16,638 127.0.0.1 - - [06/May/2022 12:38:16] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:16,639 Error accessing data for request: ec2_cpu_utilization_5f5533
+2022-05-06 12:38:16,639 Error accessing data for request: speed_7578
+2022-05-06 12:38:16,661 Error accessing data for request: speed_7578
+2022-05-06 12:38:16,764 127.0.0.1 - - [06/May/2022 12:38:16] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:16,767 127.0.0.1 - - [06/May/2022 12:38:16] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:16,786 Exception on /_dash-update-component [POST]
+Traceback (most recent call last):
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\flask\app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\flask\app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\flask\app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\flask\app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\dash\dash.py", line 1336, in dispatch
+    response.set_data(func(*args, outputs_list=outputs_list))
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\dash\_callback.py", line 151, in add_context
+    output_value = func(*func_args, **func_kwargs)  # %% callback invoked %%
+  File "app.py", line 399, in update_ensemble_graph
+    fig = fig_generator.get_fig_plot_outliers(detection_data, data, 'moving ensemble')
+  File "C:\Users\lreid\outlier-detection-in-virtual-machines\app_helper_scripts\fig_generator_helper.py", line 82, in get_fig_plot_outliers
+    fig = px.line(timeseries_data, x='timestamp', y='data',title= data_to_run + ' Data against Time (Using '+model+'-based outlier detection)')
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\express\_chart_types.py", line 262, in line
+    return make_figure(args=locals(), constructor=go.Scatter)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\express\_core.py", line 1943, in make_figure
+    apply_default_cascade(args)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\express\_core.py", line 946, in apply_default_cascade
+    args["symbol_sequence"] = [
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\express\_core.py", line 947, in <listcomp>
+    scatter.marker.symbol for scatter in args["template"].data.scatter
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\graph_objs\scatter\_marker.py", line 1054, in symbol
+    return self["symbol"]
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\basedatatypes.py", line 4701, in __getitem__
+    elif self._props is not None and prop in self._props:
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\basedatatypes.py", line 4396, in _props
+    return self.parent._get_child_props(self)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\basedatatypes.py", line 4410, in _get_child_props
+    if self._props is None:
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\basedatatypes.py", line 4396, in _props
+    return self.parent._get_child_props(self)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\basedatatypes.py", line 4430, in _get_child_props
+    child_ind = BaseFigure._index_is(children, child)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\basedatatypes.py", line 3960, in _index_is
+    raise ValueError("Invalid value")
+ValueError: Invalid value
+2022-05-06 12:38:16,800 127.0.0.1 - - [06/May/2022 12:38:16] "[35m[1mPOST /_dash-update-component HTTP/1.1[0m" 500 -
+2022-05-06 12:38:16,809 127.0.0.1 - - [06/May/2022 12:38:16] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:16,813 127.0.0.1 - - [06/May/2022 12:38:16] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:16,824 127.0.0.1 - - [06/May/2022 12:38:16] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:16,831 127.0.0.1 - - [06/May/2022 12:38:16] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:16,868 127.0.0.1 - - [06/May/2022 12:38:16] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:16,879 127.0.0.1 - - [06/May/2022 12:38:16] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:18,030 Did the detection in 0.7532 seconds
+2022-05-06 12:38:18,464 127.0.0.1 - - [06/May/2022 12:38:18] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:18,469 ValueError: data not found to plot
+2022-05-06 12:38:18,472 ERROR: attemping to access database for ensemble ec2_cpu_utilization_5f5533
+2022-05-06 12:38:18,472 127.0.0.1 - - [06/May/2022 12:38:18] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:18,502 127.0.0.1 - - [06/May/2022 12:38:18] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:18,512 127.0.0.1 - - [06/May/2022 12:38:18] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:18,524 127.0.0.1 - - [06/May/2022 12:38:18] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:18,528 127.0.0.1 - - [06/May/2022 12:38:18] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:18,535 Error accessing data for request: speed_7578
+2022-05-06 12:38:18,563 127.0.0.1 - - [06/May/2022 12:38:18] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:18,581 127.0.0.1 - - [06/May/2022 12:38:18] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:18,605 127.0.0.1 - - [06/May/2022 12:38:18] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:18,606 127.0.0.1 - - [06/May/2022 12:38:18] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:18,755 127.0.0.1 - - [06/May/2022 12:38:18] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:19,073 Could not connect to server
+2022-05-06 12:38:19,074 Could not connect to server
+2022-05-06 12:38:19,095 127.0.0.1 - - [06/May/2022 12:38:19] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:19,164 127.0.0.1 - - [06/May/2022 12:38:19] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:20,589 Could not connect to server
+2022-05-06 12:38:20,590 127.0.0.1 - - [06/May/2022 12:38:20] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:20,852 Could not connect to server
+2022-05-06 12:38:20,890 127.0.0.1 - - [06/May/2022 12:38:20] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:26,572 127.0.0.1 - - [06/May/2022 12:38:26] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:26,576 127.0.0.1 - - [06/May/2022 12:38:26] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:26,578 127.0.0.1 - - [06/May/2022 12:38:26] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:26,582 127.0.0.1 - - [06/May/2022 12:38:26] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:26,582 127.0.0.1 - - [06/May/2022 12:38:26] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:26,584 127.0.0.1 - - [06/May/2022 12:38:26] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:26,585 127.0.0.1 - - [06/May/2022 12:38:26] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:26,589 127.0.0.1 - - [06/May/2022 12:38:26] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:30,654 Could not connect to server
+2022-05-06 12:38:30,686 Could not connect to server
+2022-05-06 12:38:30,701 127.0.0.1 - - [06/May/2022 12:38:30] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:30,748 127.0.0.1 - - [06/May/2022 12:38:30] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:36,572 127.0.0.1 - - [06/May/2022 12:38:36] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:36,580 127.0.0.1 - - [06/May/2022 12:38:36] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:36,584 127.0.0.1 - - [06/May/2022 12:38:36] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:36,590 127.0.0.1 - - [06/May/2022 12:38:36] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:36,594 127.0.0.1 - - [06/May/2022 12:38:36] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:36,595 127.0.0.1 - - [06/May/2022 12:38:36] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:36,599 127.0.0.1 - - [06/May/2022 12:38:36] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:36,602 127.0.0.1 - - [06/May/2022 12:38:36] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:40,672 Could not connect to server
+2022-05-06 12:38:40,700 Could not connect to server
+2022-05-06 12:38:40,734 127.0.0.1 - - [06/May/2022 12:38:40] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:40,759 127.0.0.1 - - [06/May/2022 12:38:40] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:46,577 127.0.0.1 - - [06/May/2022 12:38:46] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:46,586 127.0.0.1 - - [06/May/2022 12:38:46] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:46,589 127.0.0.1 - - [06/May/2022 12:38:46] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:46,595 127.0.0.1 - - [06/May/2022 12:38:46] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:46,596 127.0.0.1 - - [06/May/2022 12:38:46] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:46,600 127.0.0.1 - - [06/May/2022 12:38:46] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:46,602 127.0.0.1 - - [06/May/2022 12:38:46] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:46,606 127.0.0.1 - - [06/May/2022 12:38:46] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:50,691 Could not connect to server
+2022-05-06 12:38:50,699 Could not connect to server
+2022-05-06 12:38:50,709 127.0.0.1 - - [06/May/2022 12:38:50] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:50,792 127.0.0.1 - - [06/May/2022 12:38:50] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:57,562 127.0.0.1 - - [06/May/2022 12:38:57] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:57,568 127.0.0.1 - - [06/May/2022 12:38:57] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:57,571 127.0.0.1 - - [06/May/2022 12:38:57] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:57,574 127.0.0.1 - - [06/May/2022 12:38:57] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:57,577 127.0.0.1 - - [06/May/2022 12:38:57] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:57,578 127.0.0.1 - - [06/May/2022 12:38:57] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:57,581 127.0.0.1 - - [06/May/2022 12:38:57] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:38:57,583 127.0.0.1 - - [06/May/2022 12:38:57] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:01,631 Could not connect to server
+2022-05-06 12:39:01,658 127.0.0.1 - - [06/May/2022 12:39:01] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:01,659 Could not connect to server
+2022-05-06 12:39:01,659 127.0.0.1 - - [06/May/2022 12:39:01] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:07,417 Database already exists. Returning...
+2022-05-06 12:39:07,418 Dash is running on http://127.0.0.1:8050/
+
+2022-05-06 12:39:07,429  * Running on http://127.0.0.1:8050/ (Press CTRL+C to quit)
+2022-05-06 12:39:07,549 127.0.0.1 - - [06/May/2022 12:39:07] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:07,550 127.0.0.1 - - [06/May/2022 12:39:07] "GET / HTTP/1.1" 200 -
+2022-05-06 12:39:07,551 127.0.0.1 - - [06/May/2022 12:39:07] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:07,553 127.0.0.1 - - [06/May/2022 12:39:07] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:07,556 127.0.0.1 - - [06/May/2022 12:39:07] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:07,557 127.0.0.1 - - [06/May/2022 12:39:07] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:07,559 127.0.0.1 - - [06/May/2022 12:39:07] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:07,563 127.0.0.1 - - [06/May/2022 12:39:07] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:07,588 127.0.0.1 - - [06/May/2022 12:39:07] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:07,613 127.0.0.1 - - [06/May/2022 12:39:07] "[36mGET /assets/style.css?m=1650982866.2152016 HTTP/1.1[0m" 304 -
+2022-05-06 12:39:07,716 127.0.0.1 - - [06/May/2022 12:39:07] "GET /_dash-layout HTTP/1.1" 200 -
+2022-05-06 12:39:07,719 127.0.0.1 - - [06/May/2022 12:39:07] "GET /_dash-dependencies HTTP/1.1" 200 -
+2022-05-06 12:39:07,721 127.0.0.1 - - [06/May/2022 12:39:07] "[36mGET /assets/favicon.ico?m=1649938876.7801867 HTTP/1.1[0m" 304 -
+2022-05-06 12:39:07,737 127.0.0.1 - - [06/May/2022 12:39:07] "[36mGET /assets/icon.png HTTP/1.1[0m" 304 -
+2022-05-06 12:39:07,744 127.0.0.1 - - [06/May/2022 12:39:07] "GET /_dash-component-suites/dash/dcc/async-dropdown.js HTTP/1.1" 200 -
+2022-05-06 12:39:07,748 127.0.0.1 - - [06/May/2022 12:39:07] "GET /_dash-component-suites/dash/dcc/async-graph.js HTTP/1.1" 200 -
+2022-05-06 12:39:07,751 127.0.0.1 - - [06/May/2022 12:39:07] "GET /_dash-component-suites/dash/dash_table/async-highlight.js HTTP/1.1" 200 -
+2022-05-06 12:39:07,752 127.0.0.1 - - [06/May/2022 12:39:07] "GET /_dash-component-suites/dash/dash_table/async-table.js HTTP/1.1" 200 -
+2022-05-06 12:39:07,753 127.0.0.1 - - [06/May/2022 12:39:07] "GET /_dash-component-suites/dash/dcc/async-plotlyjs.js HTTP/1.1" 200 -
+2022-05-06 12:39:07,785 Error accessing data for request: ec2_cpu_utilization_5f5533
+2022-05-06 12:39:07,834 127.0.0.1 - - [06/May/2022 12:39:07] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:07,863 Error accessing data for request: speed_7578
+2022-05-06 12:39:07,911 127.0.0.1 - - [06/May/2022 12:39:07] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:07,927 Error accessing data for request: ec2_cpu_utilization_5f5533
+2022-05-06 12:39:08,018 Exception on /_dash-update-component [POST]
+Traceback (most recent call last):
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\flask\app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\flask\app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\flask\app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\flask\app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\dash\dash.py", line 1336, in dispatch
+    response.set_data(func(*args, outputs_list=outputs_list))
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\dash\_callback.py", line 151, in add_context
+    output_value = func(*func_args, **func_kwargs)  # %% callback invoked %%
+  File "app.py", line 399, in update_ensemble_graph
+    fig = fig_generator.get_fig_plot_outliers(detection_data, data, 'moving ensemble')
+  File "C:\Users\lreid\outlier-detection-in-virtual-machines\app_helper_scripts\fig_generator_helper.py", line 82, in get_fig_plot_outliers
+    fig = px.line(timeseries_data, x='timestamp', y='data',title= data_to_run + ' Data against Time (Using '+model+'-based outlier detection)')
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\express\_chart_types.py", line 262, in line
+    return make_figure(args=locals(), constructor=go.Scatter)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\express\_core.py", line 1943, in make_figure
+    apply_default_cascade(args)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\express\_core.py", line 946, in apply_default_cascade
+    args["symbol_sequence"] = [
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\express\_core.py", line 947, in <listcomp>
+    scatter.marker.symbol for scatter in args["template"].data.scatter
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\graph_objs\scatter\_marker.py", line 1054, in symbol
+    return self["symbol"]
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\basedatatypes.py", line 4701, in __getitem__
+    elif self._props is not None and prop in self._props:
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\basedatatypes.py", line 4396, in _props
+    return self.parent._get_child_props(self)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\basedatatypes.py", line 4410, in _get_child_props
+    if self._props is None:
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\basedatatypes.py", line 4396, in _props
+    return self.parent._get_child_props(self)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\basedatatypes.py", line 4430, in _get_child_props
+    child_ind = BaseFigure._index_is(children, child)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\basedatatypes.py", line 3960, in _index_is
+    raise ValueError("Invalid value")
+ValueError: Invalid value
+2022-05-06 12:39:08,019 Exception on /_dash-update-component [POST]
+Traceback (most recent call last):
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\flask\app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\flask\app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\flask\app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\flask\app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\dash\dash.py", line 1336, in dispatch
+    response.set_data(func(*args, outputs_list=outputs_list))
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\dash\_callback.py", line 151, in add_context
+    output_value = func(*func_args, **func_kwargs)  # %% callback invoked %%
+  File "app.py", line 481, in plot_graph
+    fig = fig_generator.get_fig_plot_outliers(detection_data, data, detector)
+  File "C:\Users\lreid\outlier-detection-in-virtual-machines\app_helper_scripts\fig_generator_helper.py", line 82, in get_fig_plot_outliers
+    fig = px.line(timeseries_data, x='timestamp', y='data',title= data_to_run + ' Data against Time (Using '+model+'-based outlier detection)')
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\express\_chart_types.py", line 262, in line
+    return make_figure(args=locals(), constructor=go.Scatter)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\express\_core.py", line 1943, in make_figure
+    apply_default_cascade(args)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\express\_core.py", line 946, in apply_default_cascade
+    args["symbol_sequence"] = [
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\express\_core.py", line 947, in <listcomp>
+    scatter.marker.symbol for scatter in args["template"].data.scatter
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\graph_objs\scatter\_marker.py", line 1054, in symbol
+    return self["symbol"]
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\basedatatypes.py", line 4701, in __getitem__
+    elif self._props is not None and prop in self._props:
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\basedatatypes.py", line 4396, in _props
+    return self.parent._get_child_props(self)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\basedatatypes.py", line 4410, in _get_child_props
+    if self._props is None:
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\basedatatypes.py", line 4396, in _props
+    return self.parent._get_child_props(self)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\basedatatypes.py", line 4430, in _get_child_props
+    child_ind = BaseFigure._index_is(children, child)
+  File "C:\Users\lreid\AppData\Local\Programs\Python\Python38\lib\site-packages\plotly\basedatatypes.py", line 3960, in _index_is
+    raise ValueError("Invalid value")
+ValueError: Invalid value
+2022-05-06 12:39:08,027 127.0.0.1 - - [06/May/2022 12:39:08] "[35m[1mPOST /_dash-update-component HTTP/1.1[0m" 500 -
+2022-05-06 12:39:08,028 127.0.0.1 - - [06/May/2022 12:39:08] "[35m[1mPOST /_dash-update-component HTTP/1.1[0m" 500 -
+2022-05-06 12:39:08,035 127.0.0.1 - - [06/May/2022 12:39:08] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:08,037 127.0.0.1 - - [06/May/2022 12:39:08] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:08,044 127.0.0.1 - - [06/May/2022 12:39:08] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:08,048 127.0.0.1 - - [06/May/2022 12:39:08] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:08,055 Error accessing data for request: speed_7578
+2022-05-06 12:39:08,078 127.0.0.1 - - [06/May/2022 12:39:08] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:08,082 127.0.0.1 - - [06/May/2022 12:39:08] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:08,128 127.0.0.1 - - [06/May/2022 12:39:08] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:08,144 127.0.0.1 - - [06/May/2022 12:39:08] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:08,170 ERROR: attemping to access database for ensemble ec2_cpu_utilization_5f5533
+2022-05-06 12:39:08,171 127.0.0.1 - - [06/May/2022 12:39:08] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:08,207 127.0.0.1 - - [06/May/2022 12:39:08] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:08,216 127.0.0.1 - - [06/May/2022 12:39:08] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:09,155 Did the detection in 0.6982 seconds
+2022-05-06 12:39:09,438 127.0.0.1 - - [06/May/2022 12:39:09] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:09,442 ValueError: data not found to plot
+2022-05-06 12:39:09,453 127.0.0.1 - - [06/May/2022 12:39:09] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:09,462 127.0.0.1 - - [06/May/2022 12:39:09] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:09,476 127.0.0.1 - - [06/May/2022 12:39:09] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:09,484 Error accessing data for request: speed_7578
+2022-05-06 12:39:09,524 127.0.0.1 - - [06/May/2022 12:39:09] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:09,540 127.0.0.1 - - [06/May/2022 12:39:09] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:09,711 127.0.0.1 - - [06/May/2022 12:39:09] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:11,606 Could not connect to server
+2022-05-06 12:39:11,614 Could not connect to server
+2022-05-06 12:39:11,614 127.0.0.1 - - [06/May/2022 12:39:11] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:11,641 127.0.0.1 - - [06/May/2022 12:39:11] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:11,899 Could not connect to server
+2022-05-06 12:39:11,900 127.0.0.1 - - [06/May/2022 12:39:11] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:12,136 Could not connect to server
+2022-05-06 12:39:12,209 127.0.0.1 - - [06/May/2022 12:39:12] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:17,787 127.0.0.1 - - [06/May/2022 12:39:17] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:17,791 127.0.0.1 - - [06/May/2022 12:39:17] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:17,797 127.0.0.1 - - [06/May/2022 12:39:17] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:17,799 127.0.0.1 - - [06/May/2022 12:39:17] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:17,804 127.0.0.1 - - [06/May/2022 12:39:17] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:17,807 127.0.0.1 - - [06/May/2022 12:39:17] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:17,809 127.0.0.1 - - [06/May/2022 12:39:17] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:17,810 127.0.0.1 - - [06/May/2022 12:39:17] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:21,899 Could not connect to server
+2022-05-06 12:39:21,960 Could not connect to server
+2022-05-06 12:39:21,961 127.0.0.1 - - [06/May/2022 12:39:21] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:21,985 127.0.0.1 - - [06/May/2022 12:39:21] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:27,776 127.0.0.1 - - [06/May/2022 12:39:27] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:27,783 127.0.0.1 - - [06/May/2022 12:39:27] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:27,786 127.0.0.1 - - [06/May/2022 12:39:27] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:27,789 127.0.0.1 - - [06/May/2022 12:39:27] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:27,791 127.0.0.1 - - [06/May/2022 12:39:27] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:27,794 127.0.0.1 - - [06/May/2022 12:39:27] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:27,795 127.0.0.1 - - [06/May/2022 12:39:27] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:27,799 127.0.0.1 - - [06/May/2022 12:39:27] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:28,232 Error accessing data for request: ec2_cpu_utilization_5f5533
+2022-05-06 12:39:28,646 127.0.0.1 - - [06/May/2022 12:39:28] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:28,890 127.0.0.1 - - [06/May/2022 12:39:28] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:28,902 127.0.0.1 - - [06/May/2022 12:39:28] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:31,886 Could not connect to server
+2022-05-06 12:39:31,913 Could not connect to server
+2022-05-06 12:39:31,948 127.0.0.1 - - [06/May/2022 12:39:31] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:31,985 127.0.0.1 - - [06/May/2022 12:39:31] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:37,785 127.0.0.1 - - [06/May/2022 12:39:37] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:37,794 127.0.0.1 - - [06/May/2022 12:39:37] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:37,796 127.0.0.1 - - [06/May/2022 12:39:37] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:37,799 127.0.0.1 - - [06/May/2022 12:39:37] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:37,800 127.0.0.1 - - [06/May/2022 12:39:37] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:37,802 127.0.0.1 - - [06/May/2022 12:39:37] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:37,806 127.0.0.1 - - [06/May/2022 12:39:37] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:37,809 127.0.0.1 - - [06/May/2022 12:39:37] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:41,876 Could not connect to server
+2022-05-06 12:39:41,921 Could not connect to server
+2022-05-06 12:39:41,937 127.0.0.1 - - [06/May/2022 12:39:41] "POST /_dash-update-component HTTP/1.1" 200 -
+2022-05-06 12:39:41,958 127.0.0.1 - - [06/May/2022 12:39:41] "POST /_dash-update-component HTTP/1.1" 200 -

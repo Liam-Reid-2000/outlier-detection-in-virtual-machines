@@ -9,6 +9,7 @@ import time
 import requests
 from collections import deque
 from datetime import datetime
+import logging
 
 from database_scripts.database_helper import database_helper
 from app_helper_scripts.config_utilities import config_utlilities
@@ -18,6 +19,13 @@ from ensemble_detectors.ensemble_detection import get_ensemble_detection_data
 from assets.specific_style import *
 
 app = dash.Dash(__name__)
+
+# Configure logger
+logging.basicConfig(filename="app_logs.log",
+                    format='%(asctime)s %(message)s',
+                    filemode='w')
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 app.title = 'Outlier Detection Dashboard'
 
@@ -29,7 +37,7 @@ app.layout = html.Div([
     html.H1('Outlier Detection Dashboard',style={'display':'inline-block'}),
     dcc.Interval(
         id = 'graph-update',
-        interval = 1000*120,
+        interval = 1000*20,
         n_intervals=0
     ),
     dcc.Tabs([
@@ -46,7 +54,7 @@ app.layout = html.Div([
                         html.Div([dcc.Dropdown(
                             id='available_detectors_real_time_detection',
                             options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_real_time_detectors', 'detector_config')],
-                            value='full_ensemble'
+                            value='esmod'
                         )],style={'width': '80%', 'display': 'inline-block'}),
                     ],style={'width': '100%', 'display': 'inline-block'}),
                     html.Div([
@@ -331,7 +339,7 @@ app.layout = html.Div([
                                     html.Div([dcc.Dropdown(
                                         id='available_detectors_health_data',
                                         options=[{'label': i[0], 'value': i[0]} for i in config_utlilities.get_config('available_detectors', 'detector_config')],
-                                        value='full_ensemble'
+                                        value='esmod'
                                     )],style={'width': '80%', 'display': 'inline-block'}),
                                 ],style=dropdown_box_with_margin),
                                 # dropdown box for datasets
@@ -456,7 +464,7 @@ def plot_graph(detector, data_subset, dataset):
     tic = time.perf_counter()
     detection_data = detection_helper.get_detection_data_months(detector, dataset + '_' + data_subset, health_data)
     toc = time.perf_counter()
-    print(f"Did the detection in {toc - tic:0.4f} seconds")
+    logger.info(f"Did the detection in {toc - tic:0.4f} seconds")
     return fig_generator.get_fig(detection_data, dataset.replace('.xlsx','') + '_' + data_subset, detector)
 
 
@@ -556,7 +564,7 @@ CPU_SERVER_PREFIX = 'http://localhost:8000/'#'http://cpu-usage-server.eastus.azu
 
 def reset_ques(dataset_name):
     """Resets queues - Deletes all values in window."""
-    print('swaping dataset_name')
+    logger.info('swaping dataset_name')
     with open('temp_storage.txt', 'w') as f:
         f.write(dataset_name)
         X.clear()
@@ -587,7 +595,7 @@ def update_real_time_graph(n,dataset_name, detector_name):
         r = requests.get(CPU_SERVER_PREFIX + dataset_name + '/' + str(X[-1]+1), headers=headers,timeout=30)
         cpu_usage = r.json()['cpu_usage']
     except(requests.ConnectionError, requests.ConnectTimeout) as exception:
-        print('Could not connect to server')
+        logger.info('Could not connect to server')
     time = datetime.now()
     X.append(X[-1]+1)
     Y.append(cpu_usage)
@@ -716,7 +724,7 @@ def get_outlier_count(n):
         r = requests.get(CPU_SERVER_PREFIX + 'ec2_cpu_utilization_5f5533' + '/' + '1', headers=headers,timeout=30)
         error = r.json()['error']
     except(requests.ConnectionError, requests.ConnectTimeout) as exception:
-        print('Could not connect to server')
+        logger.info('Could not connect to server')
     if (error):
         return (html.B('Stream Status'), html.H3('DOWN',style={'color':'red'}))
     return (html.B('Stream Status'), html.H3('LIVE',style={'color':'green'}))
@@ -735,5 +743,5 @@ def get_session_start_time(n):
 
 if __name__ == '__main__':
     database_helper.create_database()
-    #pp.run_server(host='0.0.0.0', port='80')
+    #app.run_server(host='0.0.0.0', port='80')
     app.run_server()

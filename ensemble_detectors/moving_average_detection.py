@@ -1,12 +1,19 @@
 import pandas as pd
 from ensemble_detectors.ensemble_shared_methods import shared_methods
+import logging
+
+logging.basicConfig(filename="app_logs.log",
+                    format='%(asctime)s %(message)s',
+                    filemode='a')
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class moving_average_detection:
     """Methods for performing moving average detection"""
     
     def get_average(arr):
         if len(arr)==0:
-            print('Empty list passed')
+            logger.warning('Empty list passed')
             return 0
         total = 0
         count = 0

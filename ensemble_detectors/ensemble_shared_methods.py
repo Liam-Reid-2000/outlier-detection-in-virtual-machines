@@ -26,7 +26,6 @@ class shared_methods:
     def find_threshold(arr):
         """Calculates threshold based on standard devaited of values passed."""
         if (len(arr)==0):
-            print('No data in list passed')
             return 0
         return np.std(arr)
 

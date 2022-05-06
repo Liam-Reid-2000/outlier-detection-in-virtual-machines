@@ -3,6 +3,13 @@ import json
 import pandas as pd
 from datetime import *
 import numpy as np
+import logging
+
+logging.basicConfig(filename="app_logs.log",
+                    format='%(asctime)s %(message)s',
+                    filemode='a')
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 def load_data(dataset, split_ratio):
     """Load data and split test and train return list of arrays containing the split data"""
@@ -82,6 +89,6 @@ def remove_outliers_from_training_data(train_outliers, train_points_x, train_poi
                 data_without_outliers_x.append(i)
                 data_without_outliers_y.append(train_points_y[k])
             else:
-                print('Outlier removed')
+                logger.debug('Outlier removed')
         k += 1
     return pd.DataFrame({'timestamp':data_without_outliers_x,'data':data_without_outliers_y})

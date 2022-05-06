@@ -1,4 +1,11 @@
 import pandas as pd
+import logging
+
+logging.basicConfig(filename="app_logs.log",
+                    format='%(asctime)s %(message)s',
+                    filemode='a')
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class ensemble_voting:
     """Class containing voting systems for ensemble detection."""
@@ -48,8 +55,6 @@ class ensemble_voting:
         dataframe: The final predicitons after voting
 
         """
-
-        #print('Starting vote')
         all_points_x = []
         all_points_y = []
         final_confidence = []
@@ -76,11 +81,8 @@ class ensemble_voting:
                 try:
                     current_conf += (df['confidence'].iloc[0])
                     conf_this = df['confidence'].iloc[0]
-                    if (conf_this>1 or conf_this<-1):
-                        print(conf_this)
                 except:
-                    poina = 0 #do nothing
-                    #print("No confidence to add")
+                    logger.debug("No confidence for this datapoint from this detector")
             final_confidence.append(current_conf)
             i += 1
 

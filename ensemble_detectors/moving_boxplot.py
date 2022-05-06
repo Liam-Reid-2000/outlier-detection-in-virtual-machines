@@ -3,6 +3,13 @@ import pandas as pd
 
 from app_helper_scripts.app_exceptions import InvalidValueForCalculationError
 from ensemble_detectors.ensemble_shared_methods import shared_methods
+import logging
+
+logging.basicConfig(filename="app_logs.log",
+                    format='%(asctime)s %(message)s',
+                    filemode='a')
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class moving_boxplot_detection:
     """Methods for performing moving boxplot detection"""
@@ -22,7 +29,7 @@ class moving_boxplot_detection:
         outliers_x = []
         outliers_y = []
         if (int(threshold)<=0 or int(boxplot_dataset_size)<=0):
-            print('Invalid parameters passed')
+            logger.error('Invalid parameters passed')
             return pd.DataFrame({'timestamp': outliers_x,'data': outliers_y}) 
         points_x = data_points['points_x']
         points_y = data_points['points_y']
@@ -84,7 +91,7 @@ class moving_boxplot_detection:
         predictions_y = []
         confidence = []
         if (int(threshold)<0 or int(boxplot_dataset_size)<0):
-            print('invalid parameters passed')
+            logger.error('invalid parameters passed')
             return []
         points_x = data_points['points_x']
         points_y = data_points['points_y']

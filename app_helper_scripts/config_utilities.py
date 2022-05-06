@@ -1,5 +1,12 @@
 import json
 from os import path
+import logging
+
+logging.basicConfig(filename="app_logs.log",
+                    format='%(asctime)s %(message)s',
+                    filemode='a')
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class config_utlilities:
     """Utility methods for accessing configuration files"""
@@ -12,13 +19,13 @@ class config_utlilities:
         """Returns requested config from config file"""
         path_name = 'resources/'+ config_file_name +'.json'
         if (config_utlilities.does_path_exist(path_name) == False):
-            print('Could not find requested JSON')
+            logger.debug('Could not find requested JSON')
             return []
         f = open(path_name)
         data = json.load(f) 
         requested_config_list = []
         if (requested_config not in data):
-            print('Could not find requested config in JSON')
+            logger.debug('Could not find requested config in JSON')
             return []
         for i in data[requested_config]:
             requested_config_list.append(i)

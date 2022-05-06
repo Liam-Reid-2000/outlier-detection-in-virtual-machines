@@ -1,4 +1,3 @@
-from calendar import day_abbr
 import pandas as pd
 import time
 from app_helper_scripts.app_exceptions import InvalidValueForCalculationError
@@ -11,7 +10,13 @@ from ensemble_detectors.moving_histogram_detection import moving_histogram_detec
 from app_helper_scripts.detector_evaluation import detector_evaluation
 from supervised_learning_detectors.isolation_forest import do_isolation_forest_detection
 from unsupervised_detectors.pycaret_detection import detect_outliers_with_pycaret
+import logging
 
+logging.basicConfig(filename="app_logs.log",
+                    format='%(asctime)s %(message)s',
+                    filemode='a')
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class detection_runner:
     """
@@ -74,7 +79,7 @@ class detection_runner:
         points_x = data_coordinates['timestamp']
         points_y = data_coordinates['data']
         if len(points_x)==0:
-            print('Error: Data coordinates passed do not contain data')
+            logger.error('Error: Data coordinates passed do not contain data')
             return
         data_coordinates_renamed = pd.DataFrame({'points_x': points_x,'points_y': points_y})
         outliers = []
@@ -86,7 +91,7 @@ class detection_runner:
             outliers = moving_boxplot_detection.detect_boxplot_outliers(threshold, interval, data_coordinates_renamed)
         elif (detector_name == 'moving_histogram'):
             outliers = moving_histogram_detection.detect_histogram_outliers(threshold,1, data_coordinates_renamed)
-        elif (detector_name == 'full_ensemble'):
+        elif (detector_name == 'esmod'):
             ensemble_outliers_confidence = []
             ensemble_outliers_confidence.append(moving_average_detection.detect_average_outliers_labelled_prediction(threshold, moving_average_detection.get_moving_average_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
             ensemble_outliers_confidence.append(moving_median_detection.detect_median_outliers_labelled_prediction(threshold, moving_median_detection.get_moving_median_coordinates(interval, data_coordinates_renamed), data_coordinates_renamed))
@@ -98,7 +103,7 @@ class detection_runner:
             try:
                 outliers = detect_outliers_with_pycaret(detector_name, data_coordinates)
             except:
-                print('Error: Detector does not exist')
+                logger.error('Error: Detector does not exist')
                 return
         return detection_data_collector.collect_detection_data(outliers, points_x, points_y)
 
@@ -179,7 +184,7 @@ class detection_runner:
 
         """
         if (threshold<=0 or interval<=0):
-            print('invalid parameters passed')
+            logger.error('invalid parameters passed')
             return
         separated_months_as_dataframes = detection_runner.split_data_to_months(data_coordinates['timestamp'], data_coordinates['data'])
         all_outliers_x = []
